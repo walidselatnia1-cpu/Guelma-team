@@ -1,4 +1,5 @@
 import { Search, ChevronRight } from "lucide-react"
+import Link from "next/link"
 
 export default function HomePage() {
   return (
@@ -8,27 +9,27 @@ export default function HomePage() {
         <div className="max-w-6xl mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             {/* Logo */}
-            <div className="flex items-center gap-2">
+            <Link href="/" className="flex items-center gap-2">
               <div className="w-8 h-8 bg-orange-400 rounded-full flex items-center justify-center">
                 <span className="text-white text-sm">🍑</span>
               </div>
               <span className="text-xl font-semibold text-gray-800">Recipes By Clare</span>
-            </div>
+            </Link>
 
             {/* Navigation */}
             <nav className="hidden md:flex items-center gap-8">
-              <a href="#" className="text-gray-600 hover:text-gray-800 flex items-center gap-1">
+              <Link href="/categories" className="text-gray-600 hover:text-gray-800 flex items-center gap-1">
                 📂 Categories
-              </a>
-              <a href="#" className="text-gray-600 hover:text-gray-800 flex items-center gap-1">
+              </Link>
+              <Link href="/recipes" className="text-gray-600 hover:text-gray-800 flex items-center gap-1">
                 🧭 Explore
-              </a>
-              <a href="#" className="text-gray-600 hover:text-gray-800 flex items-center gap-1">
+              </Link>
+              <Link href="/about" className="text-gray-600 hover:text-gray-800 flex items-center gap-1">
                 ℹ️ About
-              </a>
-              <a href="#" className="text-gray-600 hover:text-gray-800 flex items-center gap-1">
+              </Link>
+              <Link href="/contact" className="text-gray-600 hover:text-gray-800 flex items-center gap-1">
                 📧 Contact
-              </a>
+              </Link>
               <Search className="w-5 h-5 text-gray-600 cursor-pointer" />
             </nav>
           </div>
@@ -67,74 +68,101 @@ export default function HomePage() {
         <div className="max-w-6xl mx-auto px-4">
           <div className="flex items-center justify-between mb-8">
             <h2 className="text-2xl font-bold text-gray-800">BEST CATEGORIES</h2>
-            <div className="w-8 h-8 bg-gray-800 rounded-full flex items-center justify-center">
+            <Link href="/categories" className="w-8 h-8 bg-gray-800 rounded-full flex items-center justify-center">
               <ChevronRight className="w-4 h-4 text-white" />
-            </div>
+            </Link>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="relative rounded-lg overflow-hidden h-48 group cursor-pointer">
+            <Link
+              href="/categories/breakfast-side"
+              className="relative rounded-lg overflow-hidden h-48 group cursor-pointer"
+            >
               <img src="/placeholder-3amen.png" alt="Breakfast Side" className="w-full h-full object-cover" />
               <div className="absolute inset-0 bg-black bg-opacity-40 flex items-end">
                 <h3 className="text-white font-semibold text-lg p-4">Breakfast Side</h3>
               </div>
-            </div>
+            </Link>
 
-            <div className="relative rounded-lg overflow-hidden h-48 group cursor-pointer">
+            <Link
+              href="/categories/sauces-marinades"
+              className="relative rounded-lg overflow-hidden h-48 group cursor-pointer"
+            >
               <img src="/sauces-and-marinades.png" alt="Sauces & Marinades" className="w-full h-full object-cover" />
               <div className="absolute inset-0 bg-black bg-opacity-40 flex items-end">
                 <h3 className="text-white font-semibold text-lg p-4">Sauces & Marinades</h3>
               </div>
-            </div>
+            </Link>
 
-            <div className="relative rounded-lg overflow-hidden h-48 group cursor-pointer">
+            <Link
+              href="/categories/refreshing-drinks"
+              className="relative rounded-lg overflow-hidden h-48 group cursor-pointer"
+            >
               <img src="/placeholder-e6l68.png" alt="Refreshing Drinks" className="w-full h-full object-cover" />
               <div className="absolute inset-0 bg-black bg-opacity-40 flex items-end">
                 <h3 className="text-white font-semibold text-lg p-4">Refreshing Drinks</h3>
               </div>
-            </div>
+            </Link>
 
-            <div className="relative rounded-lg overflow-hidden h-48 group cursor-pointer">
+            <Link
+              href="/categories/pasta-dishes"
+              className="relative rounded-lg overflow-hidden h-48 group cursor-pointer"
+            >
               <img src="/assorted-pasta.png" alt="Pasta Dishes" className="w-full h-full object-cover" />
               <div className="absolute inset-0 bg-black bg-opacity-40 flex items-end">
                 <h3 className="text-white font-semibold text-lg p-4">Pasta Dishes</h3>
               </div>
-            </div>
+            </Link>
 
-            <div className="relative rounded-lg overflow-hidden h-48 group cursor-pointer">
+            <Link
+              href="/categories/hearty-mains"
+              className="relative rounded-lg overflow-hidden h-48 group cursor-pointer"
+            >
               <img src="/hearty-mains.png" alt="Hearty Mains" className="w-full h-full object-cover" />
               <div className="absolute inset-0 bg-black bg-opacity-40 flex items-end">
                 <h3 className="text-white font-semibold text-lg p-4">Hearty Mains</h3>
               </div>
-            </div>
+            </Link>
 
-            <div className="relative rounded-lg overflow-hidden h-48 group cursor-pointer">
+            <Link
+              href="/categories/fresh-salads"
+              className="relative rounded-lg overflow-hidden h-48 group cursor-pointer"
+            >
               <img src="/fresh-salads.png" alt="Fresh Salads" className="w-full h-full object-cover" />
               <div className="absolute inset-0 bg-black bg-opacity-40 flex items-end">
                 <h3 className="text-white font-semibold text-lg p-4">Fresh Salads</h3>
               </div>
-            </div>
+            </Link>
 
-            <div className="relative rounded-lg overflow-hidden h-48 group cursor-pointer">
+            <Link
+              href="/categories/sweet-treats"
+              className="relative rounded-lg overflow-hidden h-48 group cursor-pointer"
+            >
               <img src="/sweet-treats.png" alt="Sweet Treats" className="w-full h-full object-cover" />
               <div className="absolute inset-0 bg-black bg-opacity-40 flex items-end">
                 <h3 className="text-white font-semibold text-lg p-4">Sweet Treats</h3>
               </div>
-            </div>
+            </Link>
 
-            <div className="relative rounded-lg overflow-hidden h-48 group cursor-pointer">
+            <Link
+              href="/categories/evening-meals"
+              className="relative rounded-lg overflow-hidden h-48 group cursor-pointer"
+            >
               <img src="/diverse-evening-meals.png" alt="Evening Meals" className="w-full h-full object-cover" />
               <div className="absolute inset-0 bg-black bg-opacity-40 flex items-end">
                 <h3 className="text-white font-semibold text-lg p-4">Evening Meals</h3>
               </div>
-            </div>
+            </Link>
 
-            <div className="relative rounded-lg overflow-hidden h-48 group cursor-pointer">
+            <Link
+              href="/categories/morning-favorites"
+              className="relative rounded-lg overflow-hidden h-48 group cursor-pointer"
+            >
               <img src="/morning-favorites.png" alt="Morning Favorites" className="w-full h-full object-cover" />
               <div className="absolute inset-0 bg-black bg-opacity-40 flex items-end">
                 <h3 className="text-white font-semibold text-lg p-4">Morning Favorites</h3>
               </div>
-            </div>
+            </Link>
           </div>
         </div>
       </section>
@@ -144,14 +172,16 @@ export default function HomePage() {
         <div className="max-w-6xl mx-auto px-4">
           <div className="flex items-center justify-between mb-8">
             <h2 className="text-2xl font-bold text-gray-800">LATEST RECIPES</h2>
-            <div className="w-8 h-8 bg-gray-800 rounded-full flex items-center justify-center">
+            <Link href="/recipes" className="w-8 h-8 bg-gray-800 rounded-full flex items-center justify-center">
               <ChevronRight className="w-4 h-4 text-white" />
-            </div>
+            </Link>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {/* Recipe Card 1 */}
-            <div className="bg-white rounded-lg overflow-hidden shadow-sm border">
+            <Link
+              href="/recipes/1"
+              className="bg-white rounded-lg overflow-hidden shadow-sm border hover:shadow-md transition-shadow"
+            >
               <img
                 src="/honey-sesame-chicken-broccoli.png"
                 alt="Honey Sesame Chicken and Broccoli"
@@ -164,10 +194,12 @@ export default function HomePage() {
                   minutes.
                 </p>
               </div>
-            </div>
+            </Link>
 
-            {/* Recipe Card 2 */}
-            <div className="bg-white rounded-lg overflow-hidden shadow-sm border">
+            <Link
+              href="/recipes/2"
+              className="bg-white rounded-lg overflow-hidden shadow-sm border hover:shadow-md transition-shadow"
+            >
               <img
                 src="/cheesy-stuffed-potato-skins.png"
                 alt="Cheesy Stuffed Potato Skins"
@@ -180,10 +212,12 @@ export default function HomePage() {
                   minutes.
                 </p>
               </div>
-            </div>
+            </Link>
 
-            {/* Recipe Card 3 */}
-            <div className="bg-white rounded-lg overflow-hidden shadow-sm border">
+            <Link
+              href="/recipes/3"
+              className="bg-white rounded-lg overflow-hidden shadow-sm border hover:shadow-md transition-shadow"
+            >
               <img
                 src="/placeholder.svg?height=200&width=300"
                 alt="Biscuit and Gravy Casserole"
@@ -196,10 +230,12 @@ export default function HomePage() {
                   perfect breakfast casserole.
                 </p>
               </div>
-            </div>
+            </Link>
 
-            {/* Recipe Card 4 */}
-            <div className="bg-white rounded-lg overflow-hidden shadow-sm border">
+            <Link
+              href="/recipes/4"
+              className="bg-white rounded-lg overflow-hidden shadow-sm border hover:shadow-md transition-shadow"
+            >
               <img
                 src="/placeholder.svg?height=200&width=300"
                 alt="Loaded Baked Potatoes Bacon Cheddar"
@@ -212,10 +248,12 @@ export default function HomePage() {
                   chives.
                 </p>
               </div>
-            </div>
+            </Link>
 
-            {/* Second Row */}
-            <div className="bg-white rounded-lg overflow-hidden shadow-sm border">
+            <Link
+              href="/recipes/5"
+              className="bg-white rounded-lg overflow-hidden shadow-sm border hover:shadow-md transition-shadow"
+            >
               <img
                 src="/placeholder.svg?height=200&width=300"
                 alt="Grilled Seafood Boil Skewers"
@@ -228,9 +266,12 @@ export default function HomePage() {
                   garlic butter.
                 </p>
               </div>
-            </div>
+            </Link>
 
-            <div className="bg-white rounded-lg overflow-hidden shadow-sm border">
+            <Link
+              href="/recipes/6"
+              className="bg-white rounded-lg overflow-hidden shadow-sm border hover:shadow-md transition-shadow"
+            >
               <img
                 src="/placeholder.svg?height=200&width=300"
                 alt="Philly Cheesesteak Grilled Cheese Casserole"
@@ -243,9 +284,12 @@ export default function HomePage() {
                   bread and melted cheese.
                 </p>
               </div>
-            </div>
+            </Link>
 
-            <div className="bg-white rounded-lg overflow-hidden shadow-sm border">
+            <Link
+              href="/recipes/7"
+              className="bg-white rounded-lg overflow-hidden shadow-sm border hover:shadow-md transition-shadow"
+            >
               <img
                 src="/placeholder.svg?height=200&width=300"
                 alt="Mozzarella in Carrozza"
@@ -258,9 +302,12 @@ export default function HomePage() {
                   cheese center.
                 </p>
               </div>
-            </div>
+            </Link>
 
-            <div className="bg-white rounded-lg overflow-hidden shadow-sm border">
+            <Link
+              href="/recipes/8"
+              className="bg-white rounded-lg overflow-hidden shadow-sm border hover:shadow-md transition-shadow"
+            >
               <img
                 src="/placeholder.svg?height=200&width=300"
                 alt="Bacon Cheeseburger Grilled Cheese Casserole"
@@ -272,7 +319,7 @@ export default function HomePage() {
                   The ultimate comfort food combining cheeseburger filling and melted cheese baked to golden perfection.
                 </p>
               </div>
-            </div>
+            </Link>
           </div>
         </div>
       </section>
@@ -402,47 +449,47 @@ export default function HomePage() {
       <footer className="bg-gray-100 py-8 border-t">
         <div className="max-w-6xl mx-auto px-4">
           <div className="flex flex-wrap justify-center gap-6 text-sm text-gray-600 mb-4">
-            <a href="#" className="hover:text-gray-800">
+            <Link href="/" className="hover:text-gray-800">
               🏠 Home
-            </a>
-            <a href="#" className="hover:text-gray-800">
+            </Link>
+            <Link href="/authors" className="hover:text-gray-800">
               👤 Authors
-            </a>
-            <a href="#" className="hover:text-gray-800">
+            </Link>
+            <Link href="/categories" className="hover:text-gray-800">
               📂 Categories
-            </a>
-            <a href="#" className="hover:text-gray-800">
+            </Link>
+            <Link href="/recipes" className="hover:text-gray-800">
               🧭 Explore
-            </a>
-            <a href="#" className="hover:text-gray-800">
+            </Link>
+            <Link href="/articles" className="hover:text-gray-800">
               📄 Articles
-            </a>
-            <a href="#" className="hover:text-gray-800">
+            </Link>
+            <Link href="/recipes" className="hover:text-gray-800">
               🍳 Recipes
-            </a>
-            <a href="#" className="hover:text-gray-800">
+            </Link>
+            <Link href="/about" className="hover:text-gray-800">
               ℹ️ About
-            </a>
-            <a href="#" className="hover:text-gray-800">
+            </Link>
+            <Link href="/privacy" className="hover:text-gray-800">
               🔒 Privacy Policy
-            </a>
-            <a href="#" className="hover:text-gray-800">
+            </Link>
+            <Link href="/faqs" className="hover:text-gray-800">
               ❓ FAQs
-            </a>
+            </Link>
           </div>
           <div className="flex flex-wrap justify-center gap-6 text-sm text-gray-600">
-            <a href="#" className="hover:text-gray-800">
+            <Link href="/contact" className="hover:text-gray-800">
               📧 Contact
-            </a>
-            <a href="#" className="hover:text-gray-800">
+            </Link>
+            <Link href="/search" className="hover:text-gray-800">
               🔍 Search
-            </a>
-            <a href="#" className="hover:text-gray-800">
+            </Link>
+            <Link href="/sitemap" className="hover:text-gray-800">
               🗺️ Sitemap
-            </a>
-            <a href="#" className="hover:text-gray-800">
+            </Link>
+            <Link href="/feed" className="hover:text-gray-800">
               📰 Feed
-            </a>
+            </Link>
           </div>
         </div>
       </footer>
