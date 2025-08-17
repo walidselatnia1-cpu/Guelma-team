@@ -1,7 +1,7 @@
 import Link from "next/link"
 import Image from "next/image"
 import { notFound } from "next/navigation"
-import { Heart, Share2, Printer, Pin, Send } from "lucide-react"
+import { Heart, Share2, Printer, Pin, Send, ArrowDown, Clock, ChefHat, Users, Star } from "lucide-react"
 
 interface Recipe {
   id: string
@@ -163,207 +163,335 @@ export default function RecipePage({ params }: { params: { id: string } }) {
         </div>
       </header>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Breadcrumb */}
-        <nav className="flex items-center space-x-2 text-sm text-gray-500 mb-6">
-          <Link href="/" className="hover:text-gray-700">
-            Home
-          </Link>
-          <span>›</span>
-          <Link href="/recipes" className="hover:text-gray-700">
-            Recipes
-          </Link>
-          <span>›</span>
-          <span className="text-gray-900">{recipe.title}</span>
-        </nav>
-
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Main Content */}
-          <div className="lg:col-span-2">
-            {/* Recipe Header */}
-            <div className="mb-8">
-              <h1 className="text-4xl font-bold text-gray-900 mb-4">{recipe.title}</h1>
-
-              <div className="mb-4">
-                <span className="inline-block bg-orange-100 text-orange-800 px-3 py-1 rounded-full text-sm font-medium">
-                  Featured in {recipe.category}
-                </span>
-              </div>
-
-              <p className="text-gray-600 text-lg leading-relaxed mb-6">{recipe.description}</p>
-
-              {/* Action Buttons */}
-              <div className="flex flex-wrap gap-3 mb-6">
-                <button className="flex items-center space-x-2 bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors">
-                  <Pin className="w-4 h-4" />
-                  <span>Pin It</span>
-                </button>
-                <button className="flex items-center space-x-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors">
-                  <Share2 className="w-4 h-4" />
-                  <span>Share It</span>
-                </button>
-                <button className="flex items-center space-x-2 bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors">
-                  <Send className="w-4 h-4" />
-                  <span>Send It</span>
-                </button>
-                <button className="flex items-center space-x-2 bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-700 transition-colors">
-                  <Printer className="w-4 h-4" />
-                  <span>Print It</span>
-                </button>
-                <button className="bg-orange-500 text-white px-4 py-2 rounded-lg hover:bg-orange-600 transition-colors">
-                  Jump To Recipe
-                </button>
-              </div>
-
-              {/* Author Info */}
-              <div className="flex items-center space-x-3 mb-8">
-                <Image
-                  src="/chef-profile.png"
-                  alt={recipe.author}
-                  width={40}
-                  height={40}
-                  className="rounded-full"
-                />
-                <div>
-                  <p className="font-medium text-gray-900">By {recipe.author}</p>
-                  <p className="text-sm text-gray-500">Updated on {recipe.publishDate}</p>
-                </div>
-              </div>
-            </div>
-
-            {/* Recipe Image */}
-            <div className="relative mb-8">
-              <div className="absolute top-4 left-4 bg-red-600 text-white px-3 py-1 rounded-lg text-sm font-medium z-10">
-                Pin It
-              </div>
-              <Image
-                src="/honey-sesame-chicken-broccoli.png"
-                alt={recipe.title}
-                width={800}
-                height={500}
-                className="w-full rounded-lg object-cover"
-              />
-              <p className="text-center text-sm text-gray-500 mt-2">{recipe.title} | recipesbyclare.com</p>
-            </div>
-
-            {/* Recipe Story */}
-            <div className="prose prose-lg max-w-none mb-8">
-              <p className="text-gray-700 leading-relaxed">
-                This honey sesame chicken and broccoli became my go-to weeknight dinner when I got tired of ordering
-                takeout and still craved those sweet, savory Chinese flavors but made fresh in my own kitchen. The
-                lightly breaded chicken holds onto the glossy honey sesame sauce beautifully, while the tender-crisp
-                broccoli adds that fresh contrast you need. What I love most is how the whole thing comes together in
-                about 30 minutes, making it faster than delivery but so much better tasting. My kids actually ask for
-                the broccoli without complaining when it's coated in this incredible sauce.
-              </p>
-            </div>
-
-            {/* Why You'll Love This */}
-            <div className="bg-green-50 border border-green-200 rounded-lg p-6 mb-8">
-              <h3 className="text-xl font-bold text-gray-900 mb-4 flex items-center">
-                <Heart className="w-5 h-5 text-green-600 mr-2" />
-                Why You'll Love This
-              </h3>
-              <ul className="space-y-3">
-                {recipe.whyYoullLoveThis.map((point, index) => (
-                  <li key={index} className="flex items-start">
-                    <span className="text-green-600 mr-2">•</span>
-                    <span className="text-gray-700" dangerouslySetInnerHTML={{ __html: point }} />
+      <main className="main">
+        {/* Landing Section */}
+        <section className="landing bg-gradient-to-b from-orange-50 to-white">
+          <div className="container max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+            <div className="landing__wrapper max-w-4xl">
+              <div className="landing__content">
+                {/* Breadcrumb */}
+                <ol className="breadcrumb flex items-center space-x-2 text-sm text-gray-500 mb-6">
+                  <li className="breadcrumb__item">
+                    <Link href="/" className="hover:text-gray-700">
+                      Home
+                    </Link>
                   </li>
-                ))}
-              </ul>
-            </div>
+                  <li className="breadcrumb__item">
+                    <Link href="/recipes" className="hover:text-gray-700">
+                      Recipes
+                    </Link>
+                  </li>
+                  <li className="breadcrumb__item">
+                    <span className="text-gray-900">{recipe.title}</span>
+                  </li>
+                </ol>
 
-            {/* Personal Story */}
-            <div className="prose prose-lg max-w-none mb-8">
-              <p className="text-gray-700 leading-relaxed">
-                The first time I made this, my husband took one bite and asked if I secretly ordered Chinese food
-                because it tasted so authentic. When he realized I'd made it myself, he was impressed. Now it's become a
-                weekly staple. My 8-year-old daughter, who normally picks out every piece of broccoli from any dish,
-                actually asks for extra vegetables because she loved how they tasted with the sauce.
-              </p>
-            </div>
+                <h1 className="landing__title text-4xl md:text-5xl font-bold text-gray-900 mb-4">{recipe.title}</h1>
 
-            {/* Essential Ingredient Guide */}
-            <div className="mb-8">
-              <h3 className="text-2xl font-bold text-gray-900 mb-6">Essential Ingredient Guide</h3>
-              <div className="space-y-4">
-                {recipe.ingredientGuide.map((item, index) => (
-                  <div key={index} className="border-l-4 border-orange-400 pl-4">
-                    <h4 className="font-semibold text-gray-900 mb-1">**{item.ingredient}**</h4>
-                    <p className="text-gray-700">{item.description}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Complete Cooking Process */}
-            <div className="mb-8">
-              <h3 className="text-2xl font-bold text-gray-900 mb-6">Complete Cooking Process</h3>
-              <div className="space-y-6">
-                {recipe.cookingProcess.map((step, index) => (
-                  <div key={index} className="bg-gray-50 rounded-lg p-4">
-                    <h4 className="font-semibold text-gray-900 mb-2">{step.step}:</h4>
-                    <p className="text-gray-700">{step.description}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-
-          {/* Sidebar */}
-          <div className="lg:col-span-1">
-            {/* Author Profile */}
-            <div className="bg-white border border-gray-200 rounded-lg p-6 mb-6">
-              <div className="text-center">
-                <Image
-                  src="/chef-profile.png"
-                  alt="Emily Smith"
-                  width={80}
-                  height={80}
-                  className="rounded-full mx-auto mb-4"
-                />
-                <h3 className="text-xl font-bold text-gray-900 mb-2">Emily Smith</h3>
-                <p className="text-gray-600 text-sm mb-4">
-                  Food enthusiast sharing approachable recipes for home cooks of all skill levels.
+                <p className="text-lg text-gray-700 mb-4">
+                  Featured in{" "}
+                  <Link href="/categories/evening-meals" className="text-orange-600 hover:text-orange-700 font-medium">
+                    {recipe.category}
+                  </Link>
+                  .
                 </p>
-                <p className="text-sm font-medium text-gray-900 mb-4">Follow us on social media</p>
-                <div className="flex justify-center space-x-3">
-                  <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center">
-                    <span className="text-white text-xs">f</span>
-                  </div>
-                  <div className="w-8 h-8 bg-pink-500 rounded-full flex items-center justify-center">
-                    <span className="text-white text-xs">@</span>
-                  </div>
-                </div>
-              </div>
-            </div>
 
-            {/* You Might Also Like */}
-            <div className="bg-white border border-gray-200 rounded-lg p-6">
-              <h3 className="text-lg font-bold text-gray-900 mb-4">You Might Also Like</h3>
-              <div className="space-y-4">
-                {relatedRecipes.map((relatedRecipe) => (
-                  <Link
-                    key={relatedRecipe.id}
-                    href={`/recipes/${relatedRecipe.id}`}
-                    className="flex items-center space-x-3 hover:bg-gray-50 p-2 rounded-lg transition-colors"
-                  >
+                <div className="landing__tldr text-lg text-gray-700 mb-8 p-4 bg-orange-50 rounded-lg border-l-4 border-orange-400">
+                  {recipe.description}
+                </div>
+
+                {/* Action Buttons */}
+                <div className="actions flex flex-wrap gap-3 mb-8">
+                  <button className="icon-wrapper flex items-center space-x-2 bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors">
+                    <Pin className="w-4 h-4" />
+                    <span>Pin it</span>
+                  </button>
+                  <button className="icon-wrapper flex items-center space-x-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors">
+                    <Share2 className="w-4 h-4" />
+                    <span>Share it</span>
+                  </button>
+                  <button className="icon-wrapper flex items-center space-x-2 bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors">
+                    <Send className="w-4 h-4" />
+                    <span>Send it</span>
+                  </button>
+                  <button className="icon-wrapper flex items-center space-x-2 bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-700 transition-colors">
+                    <Printer className="w-4 h-4" />
+                    <span>Print it</span>
+                  </button>
+                  <button className="icon-wrapper flex items-center space-x-2 bg-orange-500 text-white px-4 py-2 rounded-lg hover:bg-orange-600 transition-colors">
+                    <ArrowDown className="w-4 h-4" />
+                    <span>Jump To Recipe</span>
+                  </button>
+                </div>
+
+                {/* Author Meta */}
+                <div className="meta flex items-center space-x-4">
+                  <Link href="/authors/emily-smith">
                     <Image
-                      src="/delicious-recipe-dish.png"
-                      alt={relatedRecipe.title}
+                      src="/chef-profile.png"
+                      alt={recipe.author}
                       width={60}
                       height={60}
-                      className="rounded-lg object-cover"
+                      className="meta__img rounded-full"
                     />
-                    <span className="text-sm font-medium text-gray-900 flex-1">{relatedRecipe.title}</span>
                   </Link>
-                ))}
+                  <div className="meta__content text-sm text-gray-600">
+                    <div className="mb-1">
+                      <span>By </span>
+                      <Link href="/authors/emily-smith" className="font-semibold text-gray-900 hover:text-orange-600">
+                        {recipe.author}
+                      </Link>
+                    </div>
+                    <div>
+                      <span>Updated on {recipe.publishDate}</span>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
-        </div>
-      </div>
+        </section>
+
+        {/* Main Content Section with Sidebar Layout */}
+        <section className="container max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <div className="template-main-sidebar grid grid-cols-1 lg:grid-cols-3 gap-8">
+            {/* Main Content */}
+            <div className="template-main-sidebar__main lg:col-span-2">
+              <article className="article">
+                {/* Main Figure */}
+                <figure className="pin-wrapper relative mb-8">
+                  <Image
+                    src="/honey-sesame-chicken-broccoli.png"
+                    alt={recipe.title}
+                    width={1024}
+                    height={1024}
+                    className="w-full rounded-lg object-cover"
+                  />
+                  <button className="pin absolute top-4 right-4 flex items-center space-x-2 bg-red-600 text-white px-3 py-2 rounded-lg hover:bg-red-700 transition-colors">
+                    <Pin className="w-4 h-4" />
+                    <span className="text-sm">Pin it</span>
+                  </button>
+                  <figcaption className="text-center text-sm text-gray-500 mt-2">
+                    {recipe.title} | recipesbyclare.com
+                  </figcaption>
+                </figure>
+
+                {/* Article Content */}
+                <div className="article__wrapper prose prose-lg max-w-none">
+                  <p className="text-gray-700 leading-relaxed mb-8">
+                    This honey sesame chicken and broccoli became my go-to weeknight dinner when I got tired of ordering
+                    takeout but still craved those sweet, savory Chinese flavors. The light coating on the chicken
+                    creates this perfect crispy exterior that holds onto the glossy honey sesame sauce beautifully,
+                    while the tender-crisp broccoli adds that fresh contrast you need. What I love most is how the whole
+                    thing comes together in about 30 minutes, making it faster than delivery but so much better tasting.
+                    My kids actually eat the broccoli without complaining when it's coated in this incredible sauce.
+                  </p>
+
+                  {/* Why You'll Love This */}
+                  <aside className="note bg-green-50 border border-green-200 rounded-lg p-6 mb-8">
+                    <h2 className="icon-wrapper flex items-center text-xl font-bold text-gray-900 mb-4">
+                      <Heart className="w-5 h-5 text-green-600 mr-2" />
+                      <span>Why You'll Love This</span>
+                    </h2>
+                    <ul className="space-y-3">
+                      {recipe.whyYoullLoveThis.map((point, index) => (
+                        <li key={index} className="flex items-start">
+                          <span className="text-green-600 mr-2">•</span>
+                          <span className="text-gray-700" dangerouslySetInnerHTML={{ __html: point }} />
+                        </li>
+                      ))}
+                    </ul>
+                  </aside>
+
+                  <p className="text-gray-700 leading-relaxed mb-8">
+                    The first time I made this, my husband took one bite and asked if I'd secretly ordered Chinese food
+                    because it tasted so authentic. When he realized I'd made it myself, he immediately requested it for
+                    the following week's meal plan. My daughter, who normally picks out every piece of broccoli from any
+                    dish, actually asked for extra vegetables because she loved how they tasted with the sauce.
+                  </p>
+
+                  {/* Essential Ingredient Guide */}
+                  <h2 className="text-2xl font-bold text-gray-900 mb-6">Essential Ingredient Guide</h2>
+                  <ul className="space-y-4 mb-8">
+                    {recipe.ingredientGuide.map((item, index) => (
+                      <li key={index} className="border-l-4 border-orange-400 pl-4">
+                        <strong className="text-gray-900">{item.ingredient}:</strong> {item.description}
+                      </li>
+                    ))}
+                  </ul>
+
+                  {/* Complete Cooking Process */}
+                  <h2 className="text-2xl font-bold text-gray-900 mb-6">Complete Cooking Process</h2>
+                  <dl className="space-y-6 mb-8">
+                    {recipe.cookingProcess.map((step, index) => (
+                      <div key={index}>
+                        <dt className="font-semibold text-gray-900 mb-2">{step.step}:</dt>
+                        <dd className="text-gray-700 bg-gray-50 p-4 rounded-lg">{step.description}</dd>
+                      </div>
+                    ))}
+                  </dl>
+                </div>
+              </article>
+
+              {/* Interactive Recipe Card Section */}
+              <section id="recipe" className="recipe bg-white border border-gray-200 rounded-lg p-8 mt-12">
+                <div className="recipe__wrapper">
+                  <h2 className="recipe__title text-3xl font-bold text-gray-900 mb-4">{recipe.title}</h2>
+                  <p className="text-gray-600 mb-6">{recipe.description}</p>
+
+                  {/* Recipe Times */}
+                  <div className="recipe__times grid grid-cols-3 gap-4 mb-8">
+                    <div className="recipe__times-item text-center">
+                      <div className="icon-wrapper flex flex-col items-center">
+                        <Clock className="w-6 h-6 text-orange-500 mb-2" />
+                        <strong className="text-sm text-gray-900">Prep Time</strong>
+                      </div>
+                      <span className="recipe__highlight text-orange-600 font-semibold">{recipe.prepTime}</span>
+                    </div>
+                    <div className="recipe__times-item text-center">
+                      <div className="icon-wrapper flex flex-col items-center">
+                        <ChefHat className="w-6 h-6 text-orange-500 mb-2" />
+                        <strong className="text-sm text-gray-900">Cook Time</strong>
+                      </div>
+                      <span className="recipe__highlight text-orange-600 font-semibold">{recipe.cookTime}</span>
+                    </div>
+                    <div className="recipe__times-item text-center">
+                      <div className="icon-wrapper flex flex-col items-center">
+                        <Users className="w-6 h-6 text-orange-500 mb-2" />
+                        <strong className="text-sm text-gray-900">Servings</strong>
+                      </div>
+                      <span className="recipe__highlight text-orange-600 font-semibold">{recipe.servings}</span>
+                    </div>
+                  </div>
+
+                  {/* Recipe Info */}
+                  <div id="recipe-info" className="space-y-3 mb-8 text-sm">
+                    <div className="icon-wrapper flex items-center">
+                      <ChefHat className="w-4 h-4 text-gray-500 mr-2" />
+                      <div>
+                        <strong>By:</strong>
+                        <Link href="/authors/emily-smith" className="text-orange-600 hover:text-orange-700 ml-1">
+                          {recipe.author}
+                        </Link>
+                      </div>
+                    </div>
+                    <div className="icon-wrapper flex items-center">
+                      <Star className="w-4 h-4 text-gray-500 mr-2" />
+                      <div>
+                        <strong>Difficulty:</strong>
+                        <span className="recipe__highlight text-orange-600 ml-1">{recipe.difficulty}</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Ingredients */}
+                  <h3 className="recipe__separator text-2xl font-bold text-gray-900 mb-6">Ingredients</h3>
+                  <div id="recipe-ingredients" className="recipe__interact-list space-y-3 mb-8">
+                    {recipe.ingredients.map((ingredient, index) => (
+                      <div key={index} className="flex items-start">
+                        <span className="recipe__interact-list-number bg-orange-100 text-orange-800 rounded-full w-8 h-8 flex items-center justify-center text-sm font-semibold mr-3 mt-0.5 cursor-pointer hover:bg-orange-200 transition-colors">
+                          {String(index + 1).padStart(2, "0")}
+                        </span>
+                        <span className="recipe__interact-list-content text-gray-700 flex-1">{ingredient}</span>
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* Instructions */}
+                  <h3 className="recipe__separator text-2xl font-bold text-gray-900 mb-6">Instructions</h3>
+                  <div id="recipe-instructions" className="recipe__interact-list space-y-6">
+                    {recipe.instructions.map((instruction, index) => (
+                      <div key={index} className="flex items-start">
+                        <span className="recipe__interact-list-number bg-orange-100 text-orange-800 rounded-full px-3 py-1 text-sm font-semibold mr-4 cursor-pointer hover:bg-orange-200 transition-colors whitespace-nowrap">
+                          Step {String(index + 1).padStart(2, "0")}
+                        </span>
+                        <p className="recipe__interact-list-content text-gray-700 flex-1 leading-relaxed">
+                          {instruction}
+                        </p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </section>
+            </div>
+
+            {/* Sidebar */}
+            <aside className="template-main-sidebar__sidebar lg:col-span-1">
+              {/* Author Profile */}
+              <div className="author bg-white border border-gray-200 rounded-lg p-6 mb-6">
+                <div className="author__img mb-4">
+                  <Link href="/authors/emily-smith">
+                    <Image
+                      src="/chef-profile.png"
+                      alt={recipe.author}
+                      width={120}
+                      height={120}
+                      className="rounded-full mx-auto"
+                    />
+                  </Link>
+                </div>
+                <div className="author__body text-center">
+                  <Link
+                    href="/authors/emily-smith"
+                    className="author__title text-xl font-bold text-gray-900 hover:text-orange-600 block mb-2"
+                  >
+                    {recipe.author}
+                  </Link>
+                  <p className="text-gray-600 text-sm mb-4">
+                    Food enthusiast sharing approachable recipes for home cooks of all skill levels.
+                  </p>
+
+                  <div className="social">
+                    <div className="social__title text-sm font-medium text-gray-900 mb-3">
+                      Follow us on social media
+                    </div>
+                    <div className="social__items flex justify-center space-x-3">
+                      <a
+                        href="https://pinterest.com/recipesbyclare"
+                        className="social__item w-8 h-8 bg-red-600 rounded-full flex items-center justify-center text-white hover:bg-red-700 transition-colors"
+                      >
+                        <Pin className="w-4 h-4" />
+                      </a>
+                      <a
+                        href="mailto:emily@recipesbyclare.com"
+                        className="social__item w-8 h-8 bg-gray-600 rounded-full flex items-center justify-center text-white hover:bg-gray-700 transition-colors"
+                      >
+                        <Send className="w-4 h-4" />
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Related Recipes */}
+              <div className="related_entries bg-white border border-gray-200 rounded-lg p-6">
+                <h2 className="related_entries__title text-lg font-bold text-gray-900 mb-4">You Might Also Like</h2>
+                <div className="space-y-4">
+                  {relatedRecipes.map((relatedRecipe) => (
+                    <div key={relatedRecipe.id} className="related_entries__item">
+                      <Link
+                        href={`/recipes/${relatedRecipe.id}`}
+                        className="flex items-center space-x-3 hover:bg-gray-50 p-2 rounded-lg transition-colors"
+                      >
+                        <Image
+                          src="/delicious-recipe-dish.png"
+                          alt={relatedRecipe.title}
+                          width={60}
+                          height={60}
+                          className="related_entries__item-img rounded-lg object-cover"
+                        />
+                        <div className="related_entries__item-content flex-1">
+                          <span className="text-sm font-medium text-gray-900">{relatedRecipe.title}</span>
+                        </div>
+                      </Link>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </aside>
+          </div>
+        </section>
+      </main>
     </div>
   )
 }
