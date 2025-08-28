@@ -1,0 +1,189 @@
+// ---------- Prisma Schema ----------
+
+datasource db {
+  provider = "postgresql" // or "mysql" / "sqlite" depending on your DB
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+// ---------- Core Models ----------
+
+model Author {
+  id     String  @id @default(cuid())
+  name   String
+  link   String
+  avatar String
+  bio    String
+
+  recipes Recipe[]
+}
+
+model Timing {
+  id        String @id @default(cuid())
+  prepTime  String
+  cookTime  String
+  totalTime String
+
+  recipe Recipe? @relation(fields: [recipeId], references: [id])
+  recipeId String?
+}
+
+model RecipeInfo {
+  id         String @id @default(cuid())
+  difficulty String
+  cuisine    String
+  servings   String
+  dietary    String?
+
+  recipe Recipe? @relation(fields: [recipeId], references: [id])
+  recipeId String?
+}
+
+model WhyYouLove {
+  id    String   @id @default(cuid())
+  type  String
+  title String
+  items String[] // array of strings
+
+  recipe Recipe? @relation(fields: [recipeId], references: [id])
+  recipeId String?
+}
+
+model IngredientGuideItem {
+  id          String @id @default(cuid())
+  ingredient  String
+  description String
+
+  recipe Recipe? @relation(fields: [recipeId], references: [id])
+  recipeId String?
+}
+
+model EssentialIngredientGuideItem {
+  id         String @id @default(cuid())
+  ingredient String
+  note       String
+
+  recipe Recipe? @relation(fields: [recipeId], references: [id])
+  recipeId String?
+}
+
+model Instruction {
+  id          String @id @default(cuid())
+  step        String
+  instruction String
+
+  recipe Recipe? @relation(fields: [recipeId], references: [id])
+  recipeId String?
+}
+
+model CompleteProcessItem {
+  id          String   @id @default(cuid())
+  title       String?
+  section     String?
+  type        String?
+  description String?
+  items       String[]
+  after       String?
+
+  recipe Recipe? @relation(fields: [recipeId], references: [id])
+  recipeId String?
+}
+
+model Section {
+  id          String   @id @default(cuid())
+  title       String?
+  content     String?
+  img         String?
+  description String?
+  placeholder String?
+  type        String?
+  items       String[]
+  after       String?
+
+  recipe Recipe? @relation(fields: [recipeId], references: [id])
+  recipeId String?
+}
+
+model FAQItem {
+  id       String @id @default(cuid())
+  question String
+  answer   String
+
+  recipe   Recipe? @relation(fields: [recipeId], references: [id])
+  recipeId String?
+}
+
+model RelatedRecipe {
+  id    String @id @default(cuid())
+  title String
+  image String
+  link  String
+
+  recipe Recipe? @relation(fields: [recipeId], references: [id])
+  recipeId String?
+}
+
+model IngredientsGroup {
+  id      String   @id @default(cuid())
+  section String
+  items   String[]
+
+  recipe Recipe? @relation(fields: [recipeId], references: [id])
+  recipeId String?
+}
+
+// ---------- Main Recipe Model ----------
+
+model Recipe {
+  id               String   @id @default(cuid())
+  slug             String   @unique
+  href             String?
+  imageAlt         String
+  categoryHref     String?
+  img              String
+  title            String
+  intro            String
+  description      String
+  shortDescription String
+  story            String
+  testimonial      String
+
+  category     String
+  categoryLink String
+  featuredText String
+  updatedDate  String
+
+  // Relations
+  authorId   String
+  author     Author   @relation(fields: [authorId], references: [id])
+
+  whyYouLove              WhyYouLove?
+  essIngredientGuide       EssentialIngredientGuideItem[]
+  ingredientGuide          IngredientGuideItem[]
+  ingredients              IngredientsGroup[]
+  instructions             Instruction[]
+  completeProcess          CompleteProcessItem[]
+  sections                 Section[]
+  faq                      FAQItem[]
+  relatedRecipes           RelatedRecipe[]
+  timing                   Timing?
+  recipeInfo               RecipeInfo?
+
+  // Extras
+  mustKnowTips       String[]
+  professionalSecrets String[]
+  faqExtraTitle      String?
+  faqExtraItems      FAQItem[]
+
+  serving             String
+  storage             String
+  heroImage           String
+  images              String[]
+  notes               String[]
+  tools               String[]
+  allergyInfo         String
+  nutritionDisclaimer String
+}
