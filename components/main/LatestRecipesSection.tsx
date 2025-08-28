@@ -33,18 +33,18 @@ export default function LatestRecipesSection({
             {latestRecipes.map((recipe) => (
               <div
                 key={recipe.id}
-                className="items-center box-border gap-x-2 flex flex-col col-start-[span_1] gap-y-2 text-center overflow-hidden"
+                className="items-center box-border gap-x-2 flex flex-col col-start-[span_1] gap-y-2 text-center overflow-hidden group"
               >
                 <a
                   href={recipe.href}
                   title={recipe.title}
-                  className="text-blue-700 bg-stone-100 box-border block h-[300px] w-full overflow-hidden rounded-[14px]"
+                  className="text-blue-700 bg-stone-100 box-border block h-[300px] w-full overflow-hidden transform transition-transform duration-300 rounded-[14px] group-hover:scale-105"
                 >
                   <img
                     alt={recipe.alt}
                     src={recipe.imageSrc}
                     sizes={recipe.sizes}
-                    className="aspect-[auto_1024_/_1024] bg-stone-100 box-border h-full max-w-full object-cover w-full"
+                    className="aspect-[auto_1024_/_1024] bg-stone-100 box-border  transition-transform duration-300 h-full max-w-full object-cover w-full group-hover:scale-110"
                   />
                 </a>
 
@@ -53,7 +53,13 @@ export default function LatestRecipesSection({
                   title={recipe.title}
                   className="text-blue-700 box-border block"
                 >
-                  <strong className="text-black text-[15.36px] font-bold box-border block leading-[21.504px] md:text-[19.2px] md:leading-[26.88px]">
+                  <strong
+                    style={{
+                      textShadow:
+                        "-1px -1px 0 #f6f5f3, 1px -1px 0 #f6f5f3, -1px 1px 0 #f6f5f3, 1px 1px 0 #f6f5f3",
+                    }}
+                    className="text-black text-[15.36px] font-bold box-border block leading-[21.504px] md:text-[19.2px] md:leading-[26.88px]"
+                  >
                     {recipe.name}
                   </strong>
                 </a>

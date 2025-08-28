@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { getRecipes } from "@/data/data";
 import { RecipeHero } from "@/components/RecipeHero";
 import Search from "@/components/Search";
+import Categories from "@/components/main/Categories";
 
 const Pagination = ({ currentPage = 1, totalPages = 311 }) => {
   const isFirstPage = currentPage === 1;
@@ -172,7 +173,7 @@ export default async function Page({ params }: { params: { id: string } }) {
         {/* Explore Content - Middle */}
         <div className="lg:col-span-4">
           <div className="sticky top-8">
-            <Search />
+            <Categories />
           </div>
         </div>
 

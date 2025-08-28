@@ -77,6 +77,36 @@ interface IngredientsGroup {
   items: string[];
 }
 
+// ---------- Categories Interfaces ----------
+
+interface Category {
+  id: string;
+  name: string;
+  slug: string;
+  href: string;
+  description?: string;
+  image?: string;
+  isMain?: boolean;
+}
+
+interface CategoryHierarchy {
+  main: Category;
+  sub?: Category;
+  tags?: Category[];
+}
+
+interface CategoriesSection {
+  primary: Category;
+  secondary: Category[];
+  tags: Category[];
+  cuisine?: Category;
+  dietary?: Category[];
+  mealType?: Category;
+  season?: Category;
+  difficulty?: Category;
+  cookingMethod?: Category;
+}
+
 // ---------- Main Recipe Interface ----------
 
 export interface Recipe {
@@ -99,6 +129,11 @@ export interface Recipe {
   featuredText: string;
   author: Author;
   updatedDate: string;
+
+  // Categories Section - NEW
+  categories: CategoriesSection;
+  categoryHierarchy: CategoryHierarchy;
+  allCategories: Category[]; // Flat array of all categories for easy access
 
   // Content
   whyYouLove: WhyYouLove;

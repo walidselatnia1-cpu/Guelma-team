@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import { usePathname } from "next/navigation";
 import { navigationItems } from "@/data/navigation";
 
 interface HeaderProps {
@@ -8,6 +9,16 @@ interface HeaderProps {
 }
 
 export default function Header({ className }: HeaderProps) {
+  const pathname = usePathname();
+
+  // Function to check if a navigation item is active
+  const isActive = (href: string) => {
+    if (href === "/") {
+      return pathname === "/";
+    }
+    return pathname.startsWith(href);
+  };
+
   return (
     <header
       className={`relative bg-white shadow-[rgba(0,0,0,0.16)_0px_1px_1px_0px] box-border w-full ${
@@ -36,7 +47,11 @@ export default function Header({ className }: HeaderProps) {
                 <a
                   href={item.href}
                   title={item.title}
-                  className="relative  text-neutral-900 font-bold inline-flex items-center gap-x-1.5 p-2 rounded-[32px] md:px-4 hover:bg-gray-100 transition"
+                  className={`relative text-neutral-900 font-bold inline-flex items-center gap-x-1.5 p-2 rounded-[32px] md:px-4 transition ${
+                    isActive(item.href)
+                      ? "bg-gray-300" // Persistent active state
+                      : "hover:bg-gray-300" // Only hover when not active
+                  }`}
                 >
                   <svg className="h-4 w-4 text-black" aria-hidden="true">
                     <use href={item.iconSrc} />
@@ -51,7 +66,7 @@ export default function Header({ className }: HeaderProps) {
           <details className="md:hidden relative">
             <summary
               aria-label="Toggle Mobile Menu"
-              className="list-none cursor-pointer inline-flex items-center justify-center p-2 rounded-full hover:bg-gray-100"
+              className="list-none cursor-pointer inline-flex items-center justify-center p-2 rounded-full hover:bg-gray-300"
             >
               <svg className="h-8 w-8 text-black" aria-hidden="true">
                 <use href="/symbols-v4.svg#menu" />
@@ -68,7 +83,7 @@ export default function Header({ className }: HeaderProps) {
                     const details = e.currentTarget.closest("details");
                     if (details) details.removeAttribute("open");
                   }}
-                  className="inline-flex items-center justify-center p-2 rounded-full hover:bg-gray-100"
+                  className="inline-flex items-center justify-center p-2 rounded-full hover:bg-gray-300"
                   aria-label="Close Menu"
                 >
                   <svg className="h-6 w-6 text-black" aria-hidden="true">
@@ -85,7 +100,11 @@ export default function Header({ className }: HeaderProps) {
                       <a
                         href={item.href}
                         title={item.title}
-                        className="flex items-center gap-x-3 p-4 rounded-lg hover:bg-gray-100 transition text-lg"
+                        className={`flex items-center gap-x-3 p-4 rounded-lg transition text-lg ${
+                          isActive(item.href)
+                            ? "bg-gray-300" // Persistent active state for mobile
+                            : "hover:bg-gray-300" // Only hover when not active
+                        }`}
                         onClick={() => {
                           // Close the menu when a link is clicked
                           const details =

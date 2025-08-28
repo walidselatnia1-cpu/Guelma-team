@@ -41,19 +41,28 @@ export default function CategoriesSection({
 
           <div className="box-border gap-x-[25.6px] grid grid-cols-[1fr] gap-y-[25.6px] md:grid-cols-[repeat(3,1fr)]">
             {categories.map((category) => (
-              <div key={category.id} className="box-border">
+              <div key={category.id} className="box-border group">
                 <a
                   href={category.href}
                   title={category.title}
-                  className="relative text-blue-700 box-border block h-40 overflow-hidden rounded-xl"
+                  className="relative text-blue-700 box-border hover:scale-105  transform transition-transform duration-300 block h-40 overflow-hidden rounded-xl"
                 >
                   <img
                     alt={category.alt}
                     src={category.imageSrc}
                     sizes={category.sizes}
-                    className={category.imageClassName}
+                    className={
+                      category.imageClassName +
+                      "  transition-transform duration-300 hover:scale-110 "
+                    }
                   />
-                  <span className="absolute text-black text-[21.12px] font-black box-border block leading-[33.792px] left-4 bottom-0 md:text-[26.88px] md:leading-[43.008px]">
+                  <span
+                    className="absolute bottom-0 left-4 text-xl font-black text-black"
+                    style={{
+                      textShadow:
+                        "-1px -1px 0 #f6f5f3, 1px -1px 0 #f6f5f3, -1px 1px 0 #f6f5f3, 1px 1px 0 #f6f5f3",
+                    }}
+                  >
                     {category.name}
                   </span>
                 </a>

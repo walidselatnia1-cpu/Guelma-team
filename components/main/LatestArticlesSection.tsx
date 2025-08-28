@@ -33,18 +33,21 @@ export default function LatestArticlesSection({
             {latestArticles.map((article) => (
               <div
                 key={article.id}
-                className="items-center box-border gap-x-2 flex flex-col col-start-[span_1] gap-y-2 text-center overflow-hidden"
+                className="items-center box-border gap-x-2 flex flex-col col-start-[span_1] gap-y-2 text-center overflow-hidden group"
               >
                 <a
                   href={article.href}
                   title={article.title}
-                  className="text-blue-700 bg-stone-100 box-border block h-[300px] w-full overflow-hidden rounded-[14px]"
+                  className="text-blue-700 bg-stone-100 box-border block h-[300px] w-full transform transition-transform duration-300 overflow-hidden rounded-[14px] group-hover:scale-105"
                 >
                   <img
                     alt={article.alt}
                     src={article.imageSrc}
                     sizes={article.sizes}
-                    className={article.imageClassName}
+                    className={
+                      article.imageClassName +
+                      " group-hover:scale-110  transition-transform duration-300"
+                    }
                   />
                 </a>
 
@@ -53,7 +56,13 @@ export default function LatestArticlesSection({
                   title={article.title}
                   className="text-blue-700 box-border block"
                 >
-                  <strong className="text-black text-[15.36px] font-bold box-border block leading-[21.504px] md:text-[19.2px] md:leading-[26.88px]">
+                  <strong
+                    className="text-black text-[15.36px] font-bold box-border block leading-[21.504px] md:text-[19.2px] md:leading-[26.88px]"
+                    style={{
+                      textShadow:
+                        "-1px -1px 0 #f6f5f3, 1px -1px 0 #f6f5f3, -1px 1px 0 #f6f5f3, 1px 1px 0 #f6f5f3",
+                    }}
+                  >
                     {article.name}
                   </strong>
                 </a>

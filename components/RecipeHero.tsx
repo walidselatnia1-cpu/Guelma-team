@@ -52,7 +52,7 @@ export default function Breadcrumbs() {
 }
 
 /* -------------------- Recipe Hero -------------------- */
-export function RecipeHero({ recipe }: { recipe: Recipe }) {
+export function RecipeHero({ recipe }: { recipe?: Recipe }) {
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString("en-US", {
       year: "numeric",
@@ -66,6 +66,12 @@ export function RecipeHero({ recipe }: { recipe: Recipe }) {
 
   const isExplore = segments[segments.length - 1] === "explore";
   const isSearch = segments[segments.length - 1] === "search";
+  const isAbout = segments[segments.length - 1] === "about";
+  const isContact = segments[segments.length - 1] === "contact";
+  const isCategories = segments[segments.length - 1] === "categories";
+  const isCategory = segments[segments.length - 2] === "categories";
+  const isFaq = segments[segments.length - 1] === "faq";
+
   if (isExplore)
     return (
       <>
@@ -113,7 +119,150 @@ export function RecipeHero({ recipe }: { recipe: Recipe }) {
         </div>
       </>
     );
+  if (isCategory)
+    return (
+      <>
+        <div className=" bg-stone-100 space-y-6">
+          {/* Title Section */}
+          <nav>
+            <Breadcrumbs />
+          </nav>
+          <h1 className="text-4xl md:text-5xl font-bold text-gray-900 leading-tight">
+            {"Tasty Evening Meals"}
+          </h1>
+          <div className="space-y-4">
+            <div className="text-[calc(var(--mo-font-size)*.8)] ">
+              Make every dinner special with our Evening Meals collection.
+              Whether you’re looking for a quick weeknight meal or a dish to
+              impress, we’ve got recipes that will satisfy every craving.
+              Perfect for family dinners or a cozy night in.
+            </div>
+            <p className="text-xs">
+              110 results in this collection. (Page 1 Of 10) Updated on Mon, 20
+              Jan 2025 17:25:36 GMT
+            </p>
+          </div>
+        </div>
+      </>
+    );
+  if (isAbout)
+    return (
+      <div className="flex between">
+        <div className=" bg-stone-100 space-y-6">
+          <>
+            <nav>
+              <Breadcrumbs />
+            </nav>
+            <h1 className="text-4xl md:text-5xl font-bold text-gray-900 leading-tight">
+              {"About"}
+            </h1>
 
+            <div className="space-y-4">
+              <div className="text-[calc(var(--mo-font-size)*.8)] ">
+                Recipes by Clare offers a treasure trove of balanced, simple
+                recipes designed to bring families together in the kitchen and
+                create meaningful mealtime experiences.
+              </div>
+            </div>
+          </>
+        </div>
+
+        <div className="landing__media">
+          <svg width="160" height="160" className="">
+            <use href="/symbols-v4.svg?#about"></use>
+          </svg>
+        </div>
+      </div>
+    );
+
+  if (isContact)
+    return (
+      <div className="flex between">
+        <div className=" bg-stone-100 space-y-6">
+          <>
+            <nav>
+              <Breadcrumbs />
+            </nav>
+            <h1 className="text-4xl md:text-5xl font-bold text-gray-900 leading-tight">
+              {"Let's connect"}
+            </h1>
+
+            <div className="space-y-4">
+              <div className="text-[calc(var(--mo-font-size)*.8)] ">
+                Whether you need cooking advice, want to share feedback, or
+                simply want to say hello, feel free to drop me a line! I'm
+                always excited to discuss delicious recipes with you.
+              </div>
+            </div>
+          </>
+        </div>
+
+        <div className="landing__media">
+          <svg width="160" height="160" className="">
+            <use href="/symbols-v4.svg?#contact"></use>
+          </svg>
+        </div>
+      </div>
+    );
+  if (isCategories)
+    return (
+      <div className="flex between">
+        <div className=" bg-stone-100 space-y-6">
+          <>
+            <nav>
+              <Breadcrumbs />
+            </nav>
+            <h1 className="text-4xl md:text-5xl font-bold text-gray-900 leading-tight">
+              {"All Categories"}
+            </h1>
+
+            <div className="space-y-4">
+              <div className="text-[calc(var(--mo-font-size)*.8)] ">
+                Looking for culinary inspiration? Browse through our diverse
+                recipe categories to find the perfect dish for any occasion.
+                We've got everything from quick weeknight dinners to impressive
+                weekend feasts!
+              </div>
+            </div>
+          </>
+        </div>
+
+        <div className="landing__media">
+          <svg width="160" height="160" className="">
+            <use href="/symbols-v4.svg?#categories"></use>
+          </svg>
+        </div>
+      </div>
+    );
+  if (isFaq)
+    return (
+      <div className="flex between">
+        <div className=" bg-stone-100 space-y-6">
+          <>
+            <nav>
+              <Breadcrumbs />
+            </nav>
+            <h1 className="text-4xl md:text-5xl font-bold text-gray-900 leading-tight">
+              {"Frequently Asked Questions"}
+            </h1>
+
+            <div className="space-y-4">
+              <div className="text-[calc(var(--mo-font-size)*.8)] ">
+                Need help with something? We've got you covered! Browse our FAQ
+                section for answers to common questions about our recipes,
+                cooking methods, and kitchen hacks.
+              </div>
+            </div>
+          </>
+        </div>
+
+        <div className="landing__media">
+          <svg width="160" height="160" className="">
+            <use href="/symbols-v4.svg?#faq"></use>
+          </svg>
+        </div>
+      </div>
+    );
   return (
     <div className=" bg-stone-100 space-y-6">
       {/* Breadcrumbs */}
@@ -124,7 +273,7 @@ export function RecipeHero({ recipe }: { recipe: Recipe }) {
       {/* Title Section */}
       <div className="space-y-4">
         <h1 className="text-4xl md:text-5xl font-bold text-gray-900 leading-tight">
-          {recipe.title}
+          {recipe?.title}
         </h1>
 
         <p className="text-sm text-gray-600">

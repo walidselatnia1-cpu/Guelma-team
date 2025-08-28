@@ -159,55 +159,30 @@ export default async function Page({ params }: { params: { id: string } }) {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <main className="max-w-7xl mx-auto ">
-        <div className="bg-stone-100 grid grid-cols-1 lg:grid-cols-6 gap-8 w-full  px-4 py-8 ">
-          {/* Left Sidebar */}
-          <div className="lg:col-span-1">
-            <div className="sticky top-8">
-              {/* Left sidebar content can go here */}
-            </div>
-          </div>
-
-          {/* Hero Content - Middle */}
-          <div className="lg:col-span-4">
-            <div className="sticky top-8">
-              <RecipeHero recipe={recipes[0]} />
-            </div>
-          </div>
-
-          {/* Right Sidebar */}
-          <div className="lg:col-span-1">
-            <div className="sticky top-8">
-              {/* Right sidebar content can go here */}
-            </div>
+    <>
+      {/* Explore Section */}
+      <div className="grid grid-cols-1 lg:grid-cols-6 gap-8">
+        {/* Left Sidebar */}
+        <div className="lg:col-span-1">
+          <div className="sticky top-8">
+            {/* Left sidebar content can go here */}
           </div>
         </div>
 
-        {/* Explore Section */}
-        <div className="grid grid-cols-1 lg:grid-cols-6 gap-8">
-          {/* Left Sidebar */}
-          <div className="lg:col-span-1">
-            <div className="sticky top-8">
-              {/* Left sidebar content can go here */}
-            </div>
-          </div>
-
-          {/* Explore Content - Middle */}
-          <div className="lg:col-span-4">
-            <div className="sticky top-8">
-              <Explore recipes={recipes} />
-            </div>
-          </div>
-
-          {/* Right Sidebar */}
-          <div className="lg:col-span-1">
-            <div className="sticky top-8">
-              {/* Right sidebar content can go here */}
-            </div>
+        {/* Explore Content - Middle */}
+        <div className="lg:col-span-4">
+          <div className="sticky top-8">
+            <Explore recipes={recipes} />
           </div>
         </div>
-      </main>
-    </div>
+
+        {/* Right Sidebar */}
+        <div className="lg:col-span-1">
+          <div className="sticky top-8">
+            {/* Right sidebar content can go here */}
+          </div>
+        </div>
+      </div>
+    </>
   );
 }
