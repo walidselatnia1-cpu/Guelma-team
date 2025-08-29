@@ -1,11 +1,4 @@
-export interface NavigationItem {
-  readonly id: string;
-  readonly href: string;
-  readonly title: string;
-  readonly iconSrc: string;
-  readonly iconClassName: string;
-  readonly label?: string;
-}
+import { NavigationItem } from "@/outils/types";
 
 export const navigationItems: NavigationItem[] = [
   {

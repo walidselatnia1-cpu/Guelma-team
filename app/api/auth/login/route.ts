@@ -1,3 +1,7 @@
+// Disable this API route when exporting
+export const dynamic = "force-static";
+export const revalidate = 60; // or any number
+
 import { NextResponse } from "next/server";
 import { signToken } from "@/lib/jwt";
 

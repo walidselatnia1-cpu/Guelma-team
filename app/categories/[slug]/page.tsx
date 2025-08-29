@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { getRecipes } from "@/data/data";
 import { RecipeHero } from "@/components/RecipeHero";
 import Search from "@/components/Search";
+import { categories } from "@/data/categories";
 
 const Pagination = ({ currentPage = 1, totalPages = 311 }) => {
   const isFirstPage = currentPage === 1;
@@ -185,4 +186,10 @@ export default async function Page({ params }: { params: { id: string } }) {
       </div>
     </>
   );
+}
+
+export async function generateStaticParams() {
+  return categories.map((c) => ({
+    slug: c.slug,
+  }));
 }

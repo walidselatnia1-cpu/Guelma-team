@@ -1,13 +1,40 @@
 import React from "react";
 import { latestRecipes } from "../../data/recipes";
+import Recipe from "@/outils/types";
+import { getLatest } from "@/data/data";
 
 interface LatestRecipesSectionProps {
   className?: string;
+  limit?: number;
 }
 
-export default function LatestRecipesSection({
+export default async function LatestRecipesSection({
   className,
+  limit = 6,
 }: LatestRecipesSectionProps) {
+  let latestRecipes: Recipe[] = [];
+  let hasError = false;
+
+  try {
+    latestRecipes = await getLatest(limit);
+  } catch (err) {
+    console.error("Failed to fetch trending recipes:", err);
+    hasError = true;
+    // In production, you might want to show a fallback or empty state
+    // For now, we'll show an empty array
+    latestRecipes = [];
+  }
+
+  // Don't render the section if there are no recipes and there's an error
+  if (hasError && latestRecipes.length === 0) {
+    return null; // or return a fallback UI
+  }
+
+  // Don't render if no recipes available
+  if (latestRecipes.length === 0) {
+    return null;
+  }
+
   return (
     <section className={`box-border my-[51.2px] ${className || ""}`}>
       <div className="relative box-border max-w-full w-full mx-auto px-4">
@@ -21,11 +48,9 @@ export default function LatestRecipesSection({
               title="All Recipes"
               className="text-white font-bold items-center bg-neutral-900 box-border flex ml-4 my-4 p-2 rounded-[50%]"
             >
-              <img
-                src="https://c.animaapp.com/mer35j4wJPAxku/assets/icon-22.svg"
-                alt="Icon"
-                className="box-border shrink-0 h-[19.2px] w-[19.2px]"
-              />
+              <svg className="w-3 h-3 text-white">
+                <use href="/symbols-v4.svg?#arrow-right"></use>
+              </svg>
             </a>
           </div>
 
@@ -33,7 +58,7 @@ export default function LatestRecipesSection({
             {latestRecipes.map((recipe) => (
               <div
                 key={recipe.id}
-                className="items-center box-border gap-x-2 flex flex-col col-start-[span_1] gap-y-2 text-center overflow-hidden group"
+                className=" text-gray-700  hover:text-red-700 items-center box-border gap-x-2 flex flex-col col-start-[span_1] gap-y-2 text-center overflow-hidden group"
               >
                 <a
                   href={recipe.href}
@@ -41,9 +66,8 @@ export default function LatestRecipesSection({
                   className="text-blue-700 bg-stone-100 box-border block h-[300px] w-full overflow-hidden transform transition-transform duration-300 rounded-[14px] group-hover:scale-105"
                 >
                   <img
-                    alt={recipe.alt}
-                    src={recipe.imageSrc}
-                    sizes={recipe.sizes}
+                    alt={recipe.title}
+                    src={recipe.images[0]}
                     className="aspect-[auto_1024_/_1024] bg-stone-100 box-border  transition-transform duration-300 h-full max-w-full object-cover w-full group-hover:scale-110"
                   />
                 </a>
@@ -51,20 +75,20 @@ export default function LatestRecipesSection({
                 <a
                   href={recipe.href}
                   title={recipe.title}
-                  className="text-blue-700 box-border block"
+                  className="box-border block"
                 >
                   <strong
                     style={{
                       textShadow:
                         "-1px -1px 0 #f6f5f3, 1px -1px 0 #f6f5f3, -1px 1px 0 #f6f5f3, 1px 1px 0 #f6f5f3",
                     }}
-                    className="text-black text-[15.36px] font-bold box-border block leading-[21.504px] md:text-[19.2px] md:leading-[26.88px]"
+                    className="  text-md font-bold box-border block leading-[21.504px]  md:leading-[26.88px]"
                   >
-                    {recipe.name}
+                    {recipe.title}
                   </strong>
                 </a>
 
-                <p className="text-[13.44px] box-border leading-[21.504px] md:text-[17.28px] md:leading-[27.648px]">
+                <p className="text-[13.44px] text-gray-900 box-border leading-[21.504px] md:text-[17.28px] md:leading-[27.648px]  w-48 line-clamp-2">
                   {recipe.description}
                 </p>
               </div>

@@ -1,11 +1,39 @@
 import React from "react";
-import { trendingRecipes } from "../../data/trending";
+import { Recipe } from "../../outils/types"; // Adjust path as needed
+import { getTrending } from "@/data/data";
 
 interface TrendingSectionProps {
   className?: string;
+  limit?: number;
 }
 
-export default function TrendingSection({ className }: TrendingSectionProps) {
+export default async function TrendingSection({
+  className,
+  limit = 6,
+}: TrendingSectionProps) {
+  let trendingRecipes: Recipe[] = [];
+  let hasError = false;
+
+  try {
+    trendingRecipes = await getTrending(limit);
+  } catch (err) {
+    console.error("Failed to fetch trending recipes:", err);
+    hasError = true;
+    // In production, you might want to show a fallback or empty state
+    // For now, we'll show an empty array
+    trendingRecipes = [];
+  }
+
+  // Don't render the section if there are no recipes and there's an error
+  if (hasError && trendingRecipes.length === 0) {
+    return null; // or return a fallback UI
+  }
+
+  // Don't render if no recipes available
+  if (trendingRecipes.length === 0) {
+    return null;
+  }
+
   return (
     <section className={`box-border my-[51.2px] ${className || ""}`}>
       <div className="relative box-border max-w-full w-full mx-auto px-4">
@@ -23,20 +51,21 @@ export default function TrendingSection({ className }: TrendingSectionProps) {
                 className="items-center box-border gap-x-2 flex flex-col col-start-[span_1] gap-y-2 text-center overflow-hidden group"
               >
                 <a
-                  href={recipe.href}
+                  href={recipe.href || `/recipe/${recipe.slug || recipe.id}`}
                   title={recipe.title}
                   className="text-blue-700 bg-stone-100 box-border block h-[300px] transform transition-transform duration-300 w-full overflow-hidden rounded-[14px] group-hover:scale-105"
                 >
                   <img
-                    alt={recipe.alt}
-                    src={recipe.imageSrc}
-                    sizes={recipe.sizes}
-                    className="aspect-[auto_1024_/_1024] bg-stone-100 box-border   transition-transform duration-300 h-full max-w-full object-cover w-full group-hover:scale-110"
+                    alt={recipe.imageAlt || recipe.title}
+                    src={recipe.img || recipe.heroImage}
+                    sizes="(max-width: 768px) 50vw, 16.67vw"
+                    className="aspect-[auto_1024_/_1024] bg-stone-100 box-border transition-transform duration-300 h-full max-w-full object-cover w-full group-hover:scale-110"
+                    loading="lazy"
                   />
                 </a>
 
                 <a
-                  href={recipe.href}
+                  href={recipe.href || `/recipe/${recipe.slug || recipe.id}`}
                   title={recipe.title}
                   className="text-blue-700 box-border block"
                 >
@@ -47,7 +76,7 @@ export default function TrendingSection({ className }: TrendingSectionProps) {
                     }}
                     className="text-black text-[15.36px] font-bold box-border block leading-[21.504px] md:text-[19.2px] md:leading-[26.88px]"
                   >
-                    {recipe.name}
+                    {recipe.title}
                   </strong>
                 </a>
               </div>

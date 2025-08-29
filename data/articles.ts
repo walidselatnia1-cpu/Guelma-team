@@ -1,19 +1,9 @@
-export interface Article {
-  readonly id: string;
-  readonly href: string;
-  readonly title: string;
-  readonly name: string;
-  readonly alt: string;
-  readonly imageSrc: string;
-  readonly sizes: string;
-  readonly imageClassName: string;
-  readonly description: string;
-}
+import { Article } from "@/outils/types";
 
 const ARTICLE_SIZES =
   "(min-width: 1380px) 317px, (min-width: 780px) calc(2.24vw + 283px), (min-width: 380px) calc(100vw - 32px), calc(46.67vw + 160px)";
 
-export const latestArticles: Article[] = [
+const latestArticles: Article[] = [
   {
     id: "pecan-pie-cheesecake",
     href: "/articles/pecan-pie-cheesecake",
@@ -57,3 +47,5 @@ export const latestArticles: Article[] = [
       "Lasagna Soup combines the flavors of classic lasagna in a warm, hearty soup. It's topped with a blend of ricotta, mozzarella, and Parmesan for a rich, comforting meal.",
   },
 ] as const;
+
+export default latestArticles;

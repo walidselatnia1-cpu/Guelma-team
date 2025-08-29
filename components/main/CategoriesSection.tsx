@@ -1,13 +1,40 @@
 import React from "react";
-import { categories } from "../../data/categories";
+import { Recipe } from "@prisma/client";
+import { getCategories } from "@/data/data";
+import { Category } from "@/outils/types";
+import { categories } from "@/data/categories";
 
 interface CategoriesSectionProps {
   className?: string;
 }
 
-export default function CategoriesSection({
+export default async function CategoriesSection({
   className,
 }: CategoriesSectionProps) {
+  let _categories: Category[] = {};
+
+  let hasError = false;
+
+  try {
+    _categories = categories;
+    //categories = await getCategories();
+  } catch (err) {
+    console.error("Failed to fetch trending recipes:", err);
+    hasError = true;
+    // In production, you might want to show a fallback or empty state
+    // For now, we'll show an empty array
+    _categories = [];
+  }
+
+  // Don't render the section if there are no recipes and there's an error
+  if (hasError && _categories.length === 0) {
+    return null; // or return a fallback UI
+  }
+
+  // Don't render if no recipes available
+  if (_categories.length === 0) {
+    return null;
+  }
   return (
     <section className={`box-border my-[51.2px] ${className || ""}`}>
       <div className="relative box-border max-w-full w-full mx-auto px-4">
@@ -21,11 +48,9 @@ export default function CategoriesSection({
               title="All categories"
               className="text-white text-[13.44px] font-bold items-center bg-neutral-900 box-border flex leading-[21.504px] ml-4 my-4 p-2 rounded-[50%] md:text-[17.28px] md:leading-[27.648px]"
             >
-              <img
-                src="https://c.animaapp.com/mer35j4wJPAxku/assets/icon-22.svg"
-                alt="Icon"
-                className="box-border shrink-0 h-[19.2px] w-[19.2px]"
-              />
+              <svg className="w-3 h-3 text-white">
+                <use href="/symbols-v4.svg?#arrow-right"></use>
+              </svg>
             </a>
           </div>
 
@@ -40,8 +65,8 @@ export default function CategoriesSection({
           </div>
 
           <div className="box-border gap-x-[25.6px] grid grid-cols-[1fr] gap-y-[25.6px] md:grid-cols-[repeat(3,1fr)]">
-            {categories.map((category) => (
-              <div key={category.id} className="box-border group">
+            {_categories.map((category) => (
+              <div key={category.slug} className="box-border group">
                 <a
                   href={category.href}
                   title={category.title}
@@ -49,10 +74,9 @@ export default function CategoriesSection({
                 >
                   <img
                     alt={category.alt}
-                    src={category.imageSrc}
+                    src={category.image}
                     sizes={category.sizes}
                     className={
-                      category.imageClassName +
                       "  transition-transform duration-300 hover:scale-110 "
                     }
                   />
@@ -63,7 +87,7 @@ export default function CategoriesSection({
                         "-1px -1px 0 #f6f5f3, 1px -1px 0 #f6f5f3, -1px 1px 0 #f6f5f3, 1px 1px 0 #f6f5f3",
                     }}
                   >
-                    {category.name}
+                    {category.title}
                   </span>
                 </a>
               </div>

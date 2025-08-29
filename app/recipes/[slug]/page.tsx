@@ -1,25 +1,21 @@
-import { RecipeHero } from "@/components/RecipeHero";
 import { RecipeContent } from "@/components/RecipeContent";
 import { RelatedRecipes } from "@/components/RelatedRecipes";
-import { Footer } from "@/components/Footer";
 import { notFound } from "next/navigation";
-import { getRecipe } from "@/data/data";
+import { getRecipe, getRecipes } from "@/data/data";
 import Side from "@/components/Side";
 
 export default async function RecipePage({
   params,
 }: {
-  params: { id: string };
+  params: { slug: string };
 }) {
-  const { id }: any = params; // ✅ await params in App Router
+  const recipe = await getRecipe(params.slug);
 
-  const recipe = (await getRecipe(id)) as any;
-  console.log(recipe);
-
+  if (!recipe) return notFound();
   //[TODO: make ids of json relevent] SEO, also make route for you want to see [only image and title]
 
   if (!recipe) {
-    notFound();
+    //notFound();
   }
 
   return (
@@ -40,4 +36,11 @@ export default async function RecipePage({
       <RelatedRecipes recipes={recipe.relatedRecipes} />
     </>
   );
+}
+
+export async function generateStaticParams() {
+  const recipes = await getRecipes();
+  return recipes?.map((recipe) => ({
+    slug: recipe.slug,
+  }));
 }

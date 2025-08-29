@@ -52,7 +52,7 @@ export default function Breadcrumbs() {
 }
 
 /* -------------------- Recipe Hero -------------------- */
-export function RecipeHero({ recipe }: { recipe?: Recipe }) {
+export function RecipeHero({ recipe = {} }: { recipe?: Recipe | {} }) {
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString("en-US", {
       year: "numeric",

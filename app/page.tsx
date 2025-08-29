@@ -7,11 +7,54 @@ import TrendingSection from "@/components/main/TrendingSection";
 export default function HomePage() {
   return (
     <>
-      <HeroSection />
-      <CategoriesSection />
-      <LatestRecipesSection />
-      <LatestArticlesSection />
-      <TrendingSection />
+      <div className="grid grid-cols-1 lg:grid-cols-6 gap-8 w-full bg-stone-100">
+        {/* Left Sidebar */}
+        <div className="lg:col-span-1 ">
+          <div className="sticky top-8">
+            {/* Left sidebar content can go here */}
+          </div>
+        </div>
+
+        {/* Explore Content - Middle */}
+        <div className="lg:col-span-4">
+          <div className="sticky top-8">
+            <HeroSection />
+          </div>
+        </div>
+
+        {/* Right Sidebar */}
+        <div className="lg:col-span-1">
+          <div className="sticky top-8">
+            {/* Right sidebar content can go here */}
+          </div>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-6 gap-8">
+        {/* Left Sidebar */}
+        <div className="lg:col-span-1 ">
+          <div className="sticky top-8">
+            {/* Left sidebar content can go here */}
+          </div>
+        </div>
+
+        {/* Explore Content - Middle */}
+        <div className="lg:col-span-4">
+          <div className="sticky top-8">
+            <CategoriesSection />
+            <LatestRecipesSection />
+            <LatestArticlesSection />
+            <TrendingSection />
+          </div>
+        </div>
+
+        {/* Right Sidebar */}
+        <div className="lg:col-span-1">
+          <div className="sticky top-8">
+            {/* Right sidebar content can go here */}
+          </div>
+        </div>
+      </div>
     </>
   );
 }

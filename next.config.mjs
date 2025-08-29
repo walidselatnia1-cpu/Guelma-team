@@ -9,6 +9,7 @@ const nextConfig = {
   images: {
     unoptimized: true,
   },
-}
+  output: "export", // tells Next.js to generate static HTML
+};
 
-export default nextConfig
+export default nextConfig;

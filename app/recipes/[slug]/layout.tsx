@@ -10,13 +10,12 @@ export default async function Layout({
   params,
   children,
 }: {
-  params: { id: string };
+  params: { slug: string };
   children: any;
 }) {
-  const { id }: any = params; // ✅ await params in App Router
+  const { slug }: any = await params; // ✅ await params in App Router
 
-  const recipe = (await getRecipe(id)) as any;
-  console.log(recipe);
+  const recipe = (await getRecipe(slug)) as any;
 
   //[TODO: make ids of json relevent] SEO, also make route for you want to see [only image and title]
 

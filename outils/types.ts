@@ -77,16 +77,26 @@ interface IngredientsGroup {
   items: string[];
 }
 
-// ---------- Categories Interfaces ----------
+export interface NavigationItem {
+  readonly id: string;
+  readonly href: string;
+  readonly title: string;
+  readonly iconSrc: string;
+  readonly iconClassName: string;
+  readonly label?: string;
+}
 
-interface Category {
-  id: string;
-  name: string;
-  slug: string;
-  href: string;
-  description?: string;
-  image?: string;
-  isMain?: boolean;
+export interface Article {
+  readonly id: string;
+  readonly href: string;
+  readonly title: string;
+  readonly name: string;
+  readonly alt: string;
+  readonly imageSrc: string;
+  readonly sizes: string;
+  readonly imageClassName: string;
+  readonly description: string;
+  readonly updatedDate: Date;
 }
 
 interface CategoryHierarchy {
@@ -108,6 +118,16 @@ interface CategoriesSection {
 }
 
 // ---------- Main Recipe Interface ----------
+export interface Category {
+  readonly id: string;
+  readonly slug: string;
+  readonly title: string; // easier for /categories/[slug] routing
+  readonly href: string;
+  readonly description: string;
+  readonly image: string;
+  readonly alt: string;
+  readonly sizes?: string; // optional (used in <img sizes>)
+}
 
 export interface Recipe {
   href: string | undefined;

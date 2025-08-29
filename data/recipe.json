@@ -1,8 +1,9 @@
 {
   "id": "1",
-  "img": "/honey-sesame-chicken-broccoli.png",
-  "title": "Honey Sesame Chicken and Broccoli",
   "slug": "honey-sesame-chicken-broccoli",
+  "img": "/honey-sesame-chicken-broccoli.png",
+  "href": "/recipes/honey-sesame-chicken-broccoli",
+  "title": "Honey Sesame Chicken and Broccoli",
   "intro": "This honey sesame chicken and broccoli became my go-to weeknight dinner when I got tired of ordering takeout but still craved those sweet, savory Chinese flavors...",
   "whyYouLove": {
     "type": "Card",
@@ -131,7 +132,7 @@
   "serving": "Best served hot over steamed rice or noodles.",
   "storage": "Keeps well in the fridge for 3 days, reheat gently.",
   "description": "This healthier takeout-style dish features lightly breaded chicken and steamed broccoli tossed in a homemade honey sesame sauce with ginger and garlic.",
-  "category": "Tasty Evening Meals",
+  "category": "family_dinner",
   "categoryLink": "/categories/evening-meals",
   "featuredText": "Featured in",
   "author": {

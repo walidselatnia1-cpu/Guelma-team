@@ -1,5 +1,6 @@
 //[TODO: make hero seperate in layout] 2h  --- DONE
 //[TODO: make About, Contact and Categories, with AI] 2h ---DONE
+//[TODO: polish]
 //[TODO: mock data for categors and recipes] 2h
 //[TODO: seed the database]
 //[TODO: dashboadr layout same style using AI]
