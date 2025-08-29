@@ -10,7 +10,6 @@ export default async function RecipePage({
   const { id }: any = params; // ✅ await params in App Router
 
   const recipe = (await getRecipe(id)) as any;
-  console.log(recipe);
 
   //[TODO: make ids of json relevent] SEO, also make route for you want to see [only image and title]
 

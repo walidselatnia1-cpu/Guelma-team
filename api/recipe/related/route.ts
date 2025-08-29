@@ -1,9 +1,8 @@
+export const dynamic = "force-static";
+export const revalidate = 60;
 // app/api/recipe/[id]/related/route.ts
 import { NextResponse, NextRequest } from "next/server";
 import prisma from "@/lib/prisma";
-
-export const dynamic = "force-static";
-export const revalidate = 60;
 
 /**
  * GET /api/recipe/[id]/related

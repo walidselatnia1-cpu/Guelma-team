@@ -156,8 +156,6 @@ export function RecipeContent({ recipe }: RecipeContentProps) {
         </div>
       </div>
       <Card recipe={recipe} />
-      {/* hello*/}
-      {" hello"}
     </div>
   );
 }

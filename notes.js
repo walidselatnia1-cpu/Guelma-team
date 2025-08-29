@@ -12,3 +12,5 @@
 //[TODO: CDN and caching]
 //[TODO: Optimize]
 // estimated time: 8*2h == 16h
+
+//[TODO: GET RECIPES BY CATEGORIES]

@@ -1,11 +1,10 @@
+export const dynamic = "force-static";
+export const revalidate = 60;
 // Updated main recipe route with better error handling
 // app/api/recipe/route.ts (Enhanced version)
 import { NextResponse, NextRequest } from "next/server";
 import { auth } from "@/lib/auth";
 import prisma from "@/lib/prisma";
-
-export const dynamic = "force-static";
-export const revalidate = 60;
 
 /**
  * GET /api/recipe

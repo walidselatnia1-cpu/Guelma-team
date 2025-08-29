@@ -1,7 +1,7 @@
-import { categories } from "@/data/categories";
+import { Category } from "@/outils/types";
 import React from "react";
 
-export default function Categories() {
+export default function Categories({ categories }: any) {
   return (
     <div className="bg-white text-black mt-4 ">
       <div className="flex flex-col gap-12">
@@ -18,7 +18,7 @@ export default function Categories() {
 
         {/* Categories Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {categories.map((category, index) => (
+          {categories.map((category: any, index: any) => (
             <div key={index} className="group">
               <a
                 href={category.href}

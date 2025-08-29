@@ -1,9 +1,8 @@
+export const dynamic = "force-static";
+export const revalidate = 60;
 // app/api/recipe/category/[category]/route.ts
 import { NextResponse, NextRequest } from "next/server";
 import prisma from "@/lib/prisma";
-
-export const dynamic = "force-static";
-export const revalidate = 60;
 
 /**
  * GET /api/recipe/trending

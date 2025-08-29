@@ -50,13 +50,11 @@ export default function Footer({ className }: FooterProps) {
                 key={link.id}
                 href={link.href}
                 title={link.title}
-                className="text-blue-700 items-center bg-black box-border flex h-9 justify-center w-9 rounded-[50%]"
+                className="text-white items-center bg-black box-border flex h-8 justify-center w-8 rounded-[50%] transition-transform duration-300 hover:scale-110"
               >
-                <img
-                  src={link.iconSrc}
-                  alt="Icon"
-                  className="text-white box-border h-5 w-5"
-                />
+                <svg className="w-6 h-6">
+                  <use href={"/symbols-v4.svg?#" + link.id}></use>
+                </svg>
               </a>
             ))}
           </div>

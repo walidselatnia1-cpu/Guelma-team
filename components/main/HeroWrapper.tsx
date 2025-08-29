@@ -1,20 +1,18 @@
-import { RecipeContent } from "@/components/RecipeContent";
-import { RecipeHero } from "@/components/RecipeHero";
-import { RelatedRecipes } from "@/components/RelatedRecipes";
-import Side from "@/components/Side";
+// HeroWrapper.tsx
+"use client";
+import { usePathname } from "next/navigation";
+import RecipeHero from "../RecipeHero";
 
-import { getRecipe } from "@/data/data";
-import { notFound, usePathname } from "next/navigation";
+export default async function HeroWrapper({ children }: any) {
+  const pathname = usePathname();
+  const segments = pathname.split("/").filter(Boolean);
 
-export default async function Layout({
-  params,
-  children,
-}: {
-  params: { slug: string };
-  children: any;
-}) {
-  const { slug } = await params;
-  const recipe = (await getRecipe(slug)) as any;
+  const isSlug = segments[segments.length - 2] === "recipes";
+  const isSlugPage = pathname?.includes("/recipes/");
+  console.log(isSlug, isSlugPage);
+  if (isSlug && isSlugPage) {
+    return <>{children}</>;
+  }
   return (
     <div className="min-h-screen bg-gray-50">
       <main>
@@ -25,7 +23,7 @@ export default async function Layout({
           {/* Sidebar */}
           <div className="lg:col-span-4">
             <div className="sticky top-8">
-              <RecipeHero recipe={recipe} />
+              <RecipeHero />
             </div>
           </div>
 

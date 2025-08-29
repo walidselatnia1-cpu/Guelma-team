@@ -52,7 +52,7 @@ export default function Breadcrumbs() {
 }
 
 /* -------------------- Recipe Hero -------------------- */
-export function RecipeHero({ recipe = {} }: { recipe?: Recipe | {} }) {
+export function RecipeHero({ recipe }: { recipe?: Recipe }) {
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString("en-US", {
       year: "numeric",
@@ -71,7 +71,35 @@ export function RecipeHero({ recipe = {} }: { recipe?: Recipe | {} }) {
   const isCategories = segments[segments.length - 1] === "categories";
   const isCategory = segments[segments.length - 2] === "categories";
   const isFaq = segments[segments.length - 1] === "faq";
+  const isAllRecipes = segments[segments.length - 1] === "recipes";
 
+  if (isAllRecipes)
+    return (
+      <>
+        <div className=" bg-stone-100 space-y-6">
+          {/* Title Section */}
+          <nav>
+            <Breadcrumbs />
+          </nav>
+
+          <div className="space-y-4">
+            <h1 className="leading-tight text-5xl text-black">All Recipes</h1>
+
+            <div className="text-[calc(var(--mo-font-size)*.8)] ">
+              Your one-stop recipe destination! Recipes by Clare offers
+              everything from elaborate family feasts to simple personal treats,
+              with plenty of delicious options waiting to inspire your next
+              meal.
+            </div>
+          </div>
+          <div className="landing__media">
+            <svg width="160" height="160" className="">
+              <use href="/symbols-v4.svg?#recipes"></use>
+            </svg>
+          </div>
+        </div>
+      </>
+    );
   if (isExplore)
     return (
       <>
@@ -263,6 +291,7 @@ export function RecipeHero({ recipe = {} }: { recipe?: Recipe | {} }) {
         </div>
       </div>
     );
+
   return (
     <div className=" bg-stone-100 space-y-6">
       {/* Breadcrumbs */}

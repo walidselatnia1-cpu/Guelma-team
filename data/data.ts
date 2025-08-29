@@ -1,5 +1,7 @@
 import { Article, Recipe } from "@/outils/types";
 import latestArticles from "./articles";
+import { Category } from "@/outils/types";
+
 export async function getData(): Promise<Recipe[]> {
   if (process.env.MOCK === "true") {
     return getDummyData(10);
@@ -98,12 +100,62 @@ export async function getRelated(
   return (await response.json()) as Recipe[];
 }
 
-export async function getCategories(): Promise<string[]> {
+// Helper function to create category object from category name and recipes
+async function createCategoryFromName(
+  categoryName: string,
+  allRecipes?: Recipe[]
+): Promise<Category> {
+  // Create slug from category name - use the raw category name as slug
+  const slug = categoryName;
+
+  // Find first recipe in this category to get its image
+  let categoryImage = `/images/categories/default.jpg`; // Default fallback
+
+  if (allRecipes) {
+    const firstRecipeInCategory = allRecipes.find(
+      (recipe) => recipe.category === categoryName
+    );
+
+    if (
+      firstRecipeInCategory &&
+      firstRecipeInCategory.images &&
+      firstRecipeInCategory.images.length > 0
+    ) {
+      categoryImage = firstRecipeInCategory.images[0];
+    }
+  }
+
+  return {
+    id: slug,
+    slug: slug,
+    title: categoryName, // Fixed: title should be the category name
+    href: `/category/${slug}`, // Fixed: href should be the URL path
+    description: `Discover delicious ${categoryName.toLowerCase()} recipes`,
+    image: categoryImage, // Use first recipe's image from this category
+    alt: `${categoryName} recipes`,
+    sizes: "(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw",
+  };
+}
+
+export async function getCategories(): Promise<Category[]> {
   if (process.env.MOCK === "true") {
     const recipes = await getDummyData(10);
-    // Extract unique categories
-    const categories = [...new Set(recipes.map((recipe) => recipe.category))];
-    return categories.filter(Boolean); // Remove any null/undefined categories
+
+    // Extract unique category names
+    const uniqueCategoryNames = [
+      ...new Set(
+        recipes.map((recipe) => recipe.category).filter(Boolean) // Remove null/undefined categories
+      ),
+    ];
+
+    // Convert to Category objects, passing recipes for image lookup
+    const categories = await Promise.all(
+      uniqueCategoryNames.map((categoryName) =>
+        createCategoryFromName(categoryName, recipes)
+      )
+    );
+
+    return categories;
   }
 
   const response = await fetch("/api/recipe/categories");
@@ -112,7 +164,16 @@ export async function getCategories(): Promise<string[]> {
     throw new Error("Failed to fetch categories");
   }
 
-  return (await response.json()) as string[];
+  // Get all recipes to find images for categories
+  const allRecipes = await getData();
+
+  // If your API returns strings, convert them to Category objects
+  const categoryNames = (await response.json()) as string[];
+  return Promise.all(
+    categoryNames.map((categoryName) =>
+      createCategoryFromName(categoryName, allRecipes)
+    )
+  );
 }
 
 export async function getRecipesByCategory(

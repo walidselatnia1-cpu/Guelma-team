@@ -1,8 +1,8 @@
 import React from "react";
 import { Recipe } from "@/outils/types";
 import { notFound } from "next/navigation";
-import { getCategories, getRecipes } from "@/data/data";
-import Categories from "@/components/main/Categories";
+import { getRecipes } from "@/data/data";
+import { RecipeHero } from "@/components/RecipeHero";
 
 const Pagination = ({ currentPage = 1, totalPages = 311 }) => {
   const isFirstPage = currentPage === 1;
@@ -151,15 +151,16 @@ function Explore({ recipes }: any) {
   );
 }
 
-export default async function Page({}) {
-  const categories = (await getCategories()) as any;
+export default async function Page() {
+  const recipes = (await getRecipes()) as any;
 
-  if (!categories || categories.length === 0) {
+  if (!recipes) {
     notFound();
   }
 
   return (
     <>
+      {/* Explore Section */}
       <div className="grid grid-cols-1 lg:grid-cols-6 gap-8">
         {/* Left Sidebar */}
         <div className="lg:col-span-1">
@@ -171,7 +172,7 @@ export default async function Page({}) {
         {/* Explore Content - Middle */}
         <div className="lg:col-span-4">
           <div className="sticky top-8">
-            <Categories categories={categories} />
+            <Explore recipes={recipes} />
           </div>
         </div>
 

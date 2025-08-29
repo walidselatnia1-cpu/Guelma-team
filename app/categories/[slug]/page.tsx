@@ -1,10 +1,7 @@
 import React from "react";
 import { Recipe } from "@/outils/types";
 import { notFound } from "next/navigation";
-import { getRecipes } from "@/data/data";
-import { RecipeHero } from "@/components/RecipeHero";
-import Search from "@/components/Search";
-import { categories } from "@/data/categories";
+import { getCategories, getRecipesByCategory } from "@/data/data";
 
 const Pagination = ({ currentPage = 1, totalPages = 311 }) => {
   const isFirstPage = currentPage === 1;
@@ -153,10 +150,11 @@ function Explore({ recipes }: any) {
   );
 }
 
-export default async function Page({ params }: { params: { id: string } }) {
-  const recipes = (await getRecipes()) as any;
+export default async function Page({ params }: { params: { slug: string } }) {
+  const { slug } = await params;
+  const recipes = (await getRecipesByCategory(slug)) as any;
 
-  if (!recipes) {
+  if (!recipes || recipes.length === 0) {
     notFound();
   }
 
@@ -173,7 +171,7 @@ export default async function Page({ params }: { params: { id: string } }) {
         {/* Explore Content - Middle */}
         <div className="lg:col-span-4">
           <div className="sticky top-8">
-            <Search />
+            <Explore recipes={recipes} />
           </div>
         </div>
 
@@ -189,7 +187,24 @@ export default async function Page({ params }: { params: { id: string } }) {
 }
 
 export async function generateStaticParams() {
-  return categories.map((c) => ({
-    slug: c.slug,
-  }));
+  try {
+    const categories = await getCategories();
+
+    const params = categories
+      .map((category) => {
+        if (!category || !category.slug || typeof category.slug !== "string") {
+          console.error("Invalid category for static params:", category);
+          return null;
+        }
+
+        return {
+          slug: category.slug,
+        };
+      })
+      .filter(Boolean); // Remove null entries
+
+    return params;
+  } catch (error) {
+    return []; // Return empty array on error
+  }
 }

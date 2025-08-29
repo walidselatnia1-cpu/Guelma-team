@@ -1,9 +1,9 @@
 // app/api/recipe/categories/route.ts
-import { NextResponse, NextRequest } from "next/server";
-import prisma from "@/lib/prisma";
-
 export const dynamic = "force-static";
 export const revalidate = 300; // Cache categories longer since they change less frequently
+
+import { NextResponse, NextRequest } from "next/server";
+import prisma from "@/lib/prisma";
 
 /**
  * GET /api/recipe/categories
