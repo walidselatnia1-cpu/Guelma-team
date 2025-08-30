@@ -76,7 +76,7 @@ export function RecipeHero({ recipe }: { recipe?: Recipe }) {
   if (isAllRecipes)
     return (
       <>
-        <div className=" bg-stone-100 space-y-6">
+        <div className="bg-stone-100 space-y-6 px-4 md:px-6">
           {/* Title Section */}
           <nav>
             <Breadcrumbs />
@@ -92,7 +92,7 @@ export function RecipeHero({ recipe }: { recipe?: Recipe }) {
               meal.
             </div>
           </div>
-          <div className="landing__media">
+          <div className="landing__media hidden md:block">
             <svg width="160" height="160" className="">
               <use href="/symbols-v4.svg?#recipes"></use>
             </svg>
@@ -103,7 +103,7 @@ export function RecipeHero({ recipe }: { recipe?: Recipe }) {
   if (isExplore)
     return (
       <>
-        <div className=" bg-stone-100 space-y-6">
+        <div className="bg-stone-100 space-y-6 px-4 md:px-6">
           {/* Title Section */}
           <nav>
             <Breadcrumbs />
@@ -129,7 +129,7 @@ export function RecipeHero({ recipe }: { recipe?: Recipe }) {
   if (isSearch)
     return (
       <>
-        <div className=" bg-stone-100 space-y-6">
+        <div className="bg-stone-100 space-y-6 px-4 md:px-6">
           {/* Title Section */}
           <nav>
             <Breadcrumbs />
@@ -150,7 +150,7 @@ export function RecipeHero({ recipe }: { recipe?: Recipe }) {
   if (isCategory)
     return (
       <>
-        <div className=" bg-stone-100 space-y-6">
+        <div className="bg-stone-100 space-y-6 px-4 md:px-6">
           {/* Title Section */}
           <nav>
             <Breadcrumbs />
@@ -175,7 +175,7 @@ export function RecipeHero({ recipe }: { recipe?: Recipe }) {
     );
   if (isAbout)
     return (
-      <div className="flex flex-col md:flex-row md:justify-between">
+      <div className="flex flex-col md:flex-row md:justify-between px-4 md:px-6">
         <div className="bg-stone-100 space-y-6 flex-1">
           <>
             <nav>
@@ -205,8 +205,8 @@ export function RecipeHero({ recipe }: { recipe?: Recipe }) {
 
   if (isContact)
     return (
-      <div className="flex between">
-        <div className=" bg-stone-100 space-y-6">
+      <div className="flex flex-col md:flex-row md:justify-between px-4 md:px-6">
+        <div className="bg-stone-100 space-y-6 flex-1">
           <>
             <nav>
               <Breadcrumbs />
@@ -225,7 +225,7 @@ export function RecipeHero({ recipe }: { recipe?: Recipe }) {
           </>
         </div>
 
-        <div className="landing__media">
+        <div className="landing__media hidden md:block md:flex-shrink-0">
           <svg width="160" height="160" className="">
             <use href="/symbols-v4.svg?#contact"></use>
           </svg>
@@ -234,8 +234,8 @@ export function RecipeHero({ recipe }: { recipe?: Recipe }) {
     );
   if (isCategories)
     return (
-      <div className="flex between">
-        <div className=" bg-stone-100 space-y-6">
+      <div className="flex flex-col md:flex-row md:justify-between px-4 md:px-6">
+        <div className="bg-stone-100 space-y-6 flex-1">
           <>
             <nav>
               <Breadcrumbs />
@@ -255,7 +255,7 @@ export function RecipeHero({ recipe }: { recipe?: Recipe }) {
           </>
         </div>
 
-        <div className="landing__media">
+        <div className="landing__media hidden md:block md:flex-shrink-0">
           <svg width="160" height="160" className="">
             <use href="/symbols-v4.svg?#categories"></use>
           </svg>
@@ -264,8 +264,8 @@ export function RecipeHero({ recipe }: { recipe?: Recipe }) {
     );
   if (isFaq)
     return (
-      <div className="flex between">
-        <div className=" bg-stone-100 space-y-6">
+      <div className="flex flex-col md:flex-row md:justify-between px-4 md:px-6">
+        <div className="bg-stone-100 space-y-6 flex-1">
           <>
             <nav>
               <Breadcrumbs />
@@ -284,7 +284,7 @@ export function RecipeHero({ recipe }: { recipe?: Recipe }) {
           </>
         </div>
 
-        <div className="landing__media">
+        <div className="landing__media hidden md:block md:flex-shrink-0">
           <svg width="160" height="160" className="">
             <use href="/symbols-v4.svg?#faq"></use>
           </svg>
@@ -293,7 +293,7 @@ export function RecipeHero({ recipe }: { recipe?: Recipe }) {
     );
 
   return (
-    <div className=" bg-stone-100 space-y-2">
+    <div className="bg-stone-100 space-y-2 px-4 md:px-6">
       {/* Breadcrumbs */}
       <nav>
         <Breadcrumbs />
@@ -306,18 +306,18 @@ export function RecipeHero({ recipe }: { recipe?: Recipe }) {
         </h1>
 
         <p className="text-sm text-gray-600">
-          {recipe.featuredText}{" "}
+          {recipe?.featuredText}{" "}
           <Link
-            href={recipe.categoryLink}
+            href={recipe?.categoryLink || "#"}
             className="text-orange-600 hover:underline"
           >
-            {recipe.category}
+            {recipe?.category}
           </Link>
           .
         </p>
 
         <p className="text-[calc(var(--mo-font-size))] text-gray-700 leading-relaxed">
-          {recipe.description}
+          {recipe?.description}
         </p>
       </div>
 
@@ -327,8 +327,8 @@ export function RecipeHero({ recipe }: { recipe?: Recipe }) {
       {/* Author Info */}
       <div className="flex items-center space-x-3 py-4">
         <Image
-          src={recipe.author.avatar}
-          alt={recipe.author.name}
+          src={recipe?.author?.avatar || "/placeholder-user.jpg"}
+          alt={recipe?.author?.name || "Author"}
           width={60}
           height={60}
           className="rounded-[50%] w-12 h-12 object-cover"
@@ -338,15 +338,15 @@ export function RecipeHero({ recipe }: { recipe?: Recipe }) {
             <User className="h-4 w-4" />
             <span>By</span>
             <Link
-              href={recipe.author.link}
+              href={recipe?.author?.link || "#"}
               className="text-green-600 font-medium hover:underline"
             >
-              {recipe.author.name}
+              {recipe?.author?.name || "Unknown Author"}
             </Link>
           </div>
           <div className="flex items-center space-x-2 text-sm text-gray-500 mt-1">
             <Calendar className="h-4 w-4" />
-            <span>Updated on {formatDate(recipe.updatedDate)}</span>
+            <span>Updated on {recipe?.updatedDate ? formatDate(recipe.updatedDate) : "Unknown date"}</span>
           </div>
         </div>
       </div>

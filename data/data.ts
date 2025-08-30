@@ -28,6 +28,7 @@ export async function getDummyData(length: number): Promise<Recipe[]> {
       title: `${data.title}-mock-${i}`,
       shortDescription: `${data.shortDescription} - dummy`,
       slug: `dummy-recipe-${i}`,
+      href: `/recipes/dummy-recipe-${i}`,
     });
   }
 
