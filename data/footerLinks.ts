@@ -81,6 +81,33 @@ export const footerLinks: FooterLink[] = [
       "text-neutral-900 text-[15.36px] font-bold items-center box-border gap-x-1.5 flex leading-[24.576px] gap-y-1.5 md:text-[19.2px] md:leading-[30.72px]",
   },
   {
+    id: "terms",
+    href: "/terms",
+    title: "Terms & Conditions",
+    label: "Terms & Conditions",
+    iconSrc: "https://c.animaapp.com/mer35j4wJPAxku/assets/icon-27.svg",
+    className:
+      "text-neutral-900 text-[15.36px] font-bold items-center box-border gap-x-1.5 flex leading-[24.576px] gap-y-1.5 md:text-[19.2px] md:leading-[30.72px]",
+  },
+  {
+    id: "cookies",
+    href: "/cookies",
+    title: "Cookie Policy",
+    label: "Cookies",
+    iconSrc: "https://c.animaapp.com/mer35j4wJPAxku/assets/icon-27.svg",
+    className:
+      "text-neutral-900 text-[15.36px] font-bold items-center box-border gap-x-1.5 flex leading-[24.576px] gap-y-1.5 md:text-[19.2px] md:leading-[30.72px]",
+  },
+  {
+    id: "disclaimer",
+    href: "/disclaimer",
+    title: "Disclaimer",
+    label: "Disclaimer",
+    iconSrc: "https://c.animaapp.com/mer35j4wJPAxku/assets/icon-27.svg",
+    className:
+      "text-neutral-900 text-[15.36px] font-bold items-center box-border gap-x-1.5 flex leading-[24.576px] gap-y-1.5 md:text-[19.2px] md:leading-[30.72px]",
+  },
+  {
     id: "faq",
     href: "/faq",
     title: "Frequently Asked Questions",

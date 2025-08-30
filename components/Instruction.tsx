@@ -14,7 +14,7 @@ const Instruction = ({
     <div key={index} className="block items-start">
       <span
         onClick={() => setClicked(!clicked)}
-        className={`bg-orange-100 text-orange-800 relative rounded-md px-3 py-1 text-sm font-semibold mr-4 cursor-pointer whitespace-nowrap select-none transition-all duration-500 ${
+        className={`bg-black text-white relative rounded-md px-3 py-1 text-sm font-semibold mr-4 cursor-pointer whitespace-nowrap select-none transition-all duration-500 ${
           clicked
             ? " shadow-[0px_0_0_rgba(0,0,0,0.25)]  left-0 line-through"
             : " left-3  shadow-[-13px_0_0_rgba(0,0,0,0.25)]"

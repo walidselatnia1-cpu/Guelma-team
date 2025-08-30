@@ -106,7 +106,7 @@ export const Card: React.FC<{
           <Info className="h-6 w-6 mr-2 text-gray-700" />
           Notes & Tips
         </h3>
-        <div className="recipe__wrapper left-[2rem] relative recipe-notes  mb-8">
+        <div className="recipe__wrapper ml-8 mr-4 relative recipe-notes mb-8">
           {/* Notes List */}
           <ul className="space-y-4 text-gray-800">
             {recipe.notes.map((note: string, index: number) => (
@@ -117,17 +117,15 @@ export const Card: React.FC<{
                           before:absolute 
                           before:-left-[30px] 
                           before:top-0
-                          before:bg-[var(--mo-recipe-number)]
-                          before:text-[var(--mo-on-recipe-number)]
-                          before:w-6 before:h-6
+                          before:w-8 before:h-8
                           before:text-center
-                          before:leading-[24px]
-                          before:text-[14px]
+                          before:leading-[32px]
+                          before:text-[16px]
                           before:font-bold
                           before:rounded-[24px_24px_10px_24px]
                           before:shadow-[0_3px_6px_rgba(0,0,0,0.4)]
-                          before:text-orange-800
-                          before:bg-orange-100"
+                          before:text-white
+                          before:bg-black"
               >
                 {note}
               </li>
@@ -137,10 +135,10 @@ export const Card: React.FC<{
 
         {/* Title */}
         <h3 className="items-center flex recipe__separator text-2xl font-bold mb-6 text-[var(--mo-on-recipe-title)] after:content-[''] after:block after:w-full after:h-1 after:bg-[var(--mo-recipe-separator)] after:flex-1 after:rounded after:ml-[var(--mo-gap)] after:min-w-[var(--mo-gap)] mb-8">
-          Tools You'll Need
+          Tools You Will Need
         </h3>
 
-        <div className="recipe__wrapper left-[2rem] relative recipe-notes ">
+        <div className="recipe__wrapper ml-8 mr-4 relative recipe-notes">
           {/* Notes List */}
           <ul className="space-y-4 text-gray-800 marker">
             {recipe.mustKnowTips.map((note: string, index: number) => (

@@ -113,6 +113,27 @@ export function Footer() {
             <span>Privacy Policy</span>
           </Link>
           <Link
+            href="/terms"
+            className="hover:text-green-600 transition-colors flex items-center space-x-1"
+          >
+            <span>📄</span>
+            <span>Terms & Conditions</span>
+          </Link>
+          <Link
+            href="/cookies"
+            className="hover:text-green-600 transition-colors flex items-center space-x-1"
+          >
+            <span>🍪</span>
+            <span>Cookie Policy</span>
+          </Link>
+          <Link
+            href="/disclaimer"
+            className="hover:text-green-600 transition-colors flex items-center space-x-1"
+          >
+            <span>⚠️</span>
+            <span>Disclaimer</span>
+          </Link>
+          <Link
             href="/contact"
             className="hover:text-green-600 transition-colors flex items-center space-x-1"
           >
