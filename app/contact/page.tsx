@@ -5,7 +5,7 @@ import Contact from "@/components/main/Contact";
 export default async function ContactPage({}: {}) {
   return (
     <>
-      <div className="grid grid-cols-1 lg:grid-cols-6 gap-8 px-4 py-8 ">
+      <div className="grid grid-cols-1 lg:grid-cols-6 gap-8 pl-2 pr-4 py-8 ">
         {/* Main Content */}
         <div className="lg:col-span-1">
           <div className="sticky top-8"></div>
@@ -13,7 +13,7 @@ export default async function ContactPage({}: {}) {
 
         <div className="lg:col-span-4">
           {/* Contact Form */}
-          <div className="bg-stone-100 box-border border border-dashed border-black rounded-[40px] overflow-hidden p-8 shadow-lg mb-12">
+          <div className="bg-stone-100 box-border border border-dashed border-black rounded-[40px] overflow-hidden py-8 pr-8 pl-4 shadow-lg mb-12">
             <div className="text-center mb-8">
               <h2 className="text-[2.28rem] font-bold text-black mb-4">Get In Touch</h2>
               <p className="text-lg text-black">

@@ -175,8 +175,8 @@ export function RecipeHero({ recipe }: { recipe?: Recipe }) {
     );
   if (isAbout)
     return (
-      <div className="flex between">
-        <div className=" bg-stone-100 space-y-6">
+      <div className="flex flex-col md:flex-row md:justify-between">
+        <div className="bg-stone-100 space-y-6 flex-1">
           <>
             <nav>
               <Breadcrumbs />
@@ -195,7 +195,7 @@ export function RecipeHero({ recipe }: { recipe?: Recipe }) {
           </>
         </div>
 
-        <div className="landing__media">
+        <div className="landing__media hidden md:block md:flex-shrink-0">
           <svg width="160" height="160" className="">
             <use href="/symbols-v4.svg?#about"></use>
           </svg>

@@ -7,7 +7,7 @@ const FlameIcon = () => (
     width="32"
     viewBox="0 0 24 24"
     xmlns="http://www.w3.org/2000/svg"
-    className="box-border m-0 overflow-hidden max-w-full h-auto w-full text-black fill-black"
+    className="box-border m-0 overflow-hidden text-black fill-black h-8 w-8 md:h-10 md:w-10"
   >
     <g
       color="currentColor"
@@ -30,7 +30,7 @@ const ChefIcon = () => (
     width="32"
     viewBox="0 0 24 24"
     xmlns="http://www.w3.org/2000/svg"
-    className="box-border m-0 overflow-hidden max-w-full h-auto w-full text-black fill-black"
+    className="box-border m-0 overflow-hidden text-black fill-black h-8 w-8 md:h-10 md:w-10"
   >
     <path
       color="currentColor"
@@ -50,7 +50,7 @@ const HandIcon = () => (
     width="32"
     viewBox="0 0 24 24"
     xmlns="http://www.w3.org/2000/svg"
-    className="box-border m-0 overflow-hidden max-w-full h-auto w-full text-black fill-black"
+    className="box-border m-0 overflow-hidden text-black fill-black h-8 w-8 md:h-10 md:w-10"
   >
     <path
       color="currentColor"
@@ -66,26 +66,23 @@ const HandIcon = () => (
 
 // ---------- Styled List ----------
 const StyledList = ({ children }: any) => (
-  <ol className="list-[circle] pl-6 text-lg text-left marker:text-black marker:font-normal marker:tabular-nums">
+  <ol className="list-[circle] pl-4 md:pl-6 text-base md:text-lg text-left marker:text-black marker:font-normal marker:tabular-nums space-y-2">
     {children}
   </ol>
 );
 
 // ---------- Card ----------
-const AboutCard = ({ icon, title, children, position = "left" }: any) => {
-  const colStart = position === "left" ? "col-start-1" : "col-start-3";
-
+const AboutCard = ({ icon, title, children }: any) => {
   return (
-    <li
-      className={`col-span-10 ${colStart} w-max bg-stone-100 rounded-3xl overflow-hidden transition-all duration-300 outline outline-1 outline-dashed outline-black text-black grid grid-cols-[1fr_3fr] w-full shadow-lg`}
-      style={{ outlineOffset: "calc(-0.5rem)" }}
-    >
-      <div className="p-6 bg-stone-200 flex items-center justify-center">
-        {icon}
-      </div>
-      <div className="p-6 gap-4 flex flex-col">
-        <h2 className="text-xl">{title}</h2>
-        {children}
+    <li className="w-full bg-stone-100 rounded-3xl overflow-hidden transition-all duration-300 outline-1 outline-dashed outline-black text-black shadow-lg">
+      <div className="grid grid-cols-1 md:grid-cols-[auto_1fr] w-full">
+        <div className="p-4 md:p-6 bg-stone-200 flex items-center justify-center min-h-[60px] md:min-h-[120px]">
+          {icon}
+        </div>
+        <div className="p-6 gap-4 flex flex-col">
+          <h2 className="text-xl md:text-2xl font-bold">{title}</h2>
+          {children}
+        </div>
       </div>
     </li>
   );
@@ -94,12 +91,11 @@ const AboutCard = ({ icon, title, children, position = "left" }: any) => {
 // ---------- Main ----------
 export default function About() {
   return (
-    <div className="flex flex-col gap-12">
-      <ul className="grid grid-cols-12 auto-rows-auto gap-12 p-0">
+    <div className="flex flex-col gap-8 md:gap-12 pl-2 pr-4">
+      <ul className="flex flex-col gap-8 md:gap-12 p-0 list-none">
         <AboutCard
           icon={<FlameIcon />}
           title="What Will You Find on Recipes by Clare?"
-          position="left"
         >
           <StyledList>
             <li>Time-tested family recipes that work every time</li>
@@ -109,7 +105,7 @@ export default function About() {
           </StyledList>
         </AboutCard>
 
-        <AboutCard icon={<ChefIcon />} title="Meet Clare" position="right">
+        <AboutCard icon={<ChefIcon />} title="Meet Clare">
           <StyledList>
             <li>A passionate home cook sharing tried-and-true recipes</li>
             <li>Creator of RecipesByClare.com</li>
@@ -118,7 +114,7 @@ export default function About() {
           </StyledList>
         </AboutCard>
 
-        <AboutCard icon={<HandIcon />} title="My Mission" position="left">
+        <AboutCard icon={<HandIcon />} title="My Mission">
           <StyledList>
             <li>Help you feel confident in your kitchen</li>
             <li>Share reliable, delicious recipes for every occasion</li>
