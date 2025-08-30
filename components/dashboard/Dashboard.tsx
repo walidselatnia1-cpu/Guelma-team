@@ -1,0 +1,165 @@
+import React from "react";
+import { Recipe } from "@/outils/types";
+import { FileText, Users, Tags, TrendingUp, Clock, Star } from "lucide-react";
+
+interface DashboardProps {
+  recipes: Recipe[];
+  onEditRecipe: (recipe: Recipe) => void;
+}
+
+export const Dashboard: React.FC<DashboardProps> = ({
+  recipes,
+  onEditRecipe,
+}: any) => {
+  const stats = [
+    {
+      label: "Total Recipes",
+      value: recipes.length,
+      icon: FileText,
+      color: "bg-blue-500",
+    },
+    {
+      label: "Categories",
+      value: new Set(recipes.map((r) => r.category)).size,
+      icon: Tags,
+      color: "bg-green-500",
+    },
+    {
+      label: "Authors",
+      value: new Set(recipes.map((r) => r.author.name)).size,
+      icon: Users,
+      color: "bg-purple-500",
+    },
+    {
+      label: "Avg. Cook Time",
+      value: "25 mins",
+      icon: Clock,
+      color: "bg-orange-500",
+    },
+  ];
+
+  const recentRecipes = recipes.slice(0, 5);
+
+  return (
+    <div className="space-y-8">
+      {/* Header */}
+      <div>
+        <h1 className="text-3xl font-bold text-gray-900 mb-2">Dashboard</h1>
+        <p className="text-gray-600">Overview of your recipe collection</p>
+      </div>
+
+      {/* Stats Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        {stats.map((stat, index) => {
+          const Icon = stat.icon;
+          return (
+            <div
+              key={index}
+              className="bg-white rounded-xl p-6 border border-gray-200 shadow-sm"
+            >
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-gray-600">
+                    {stat.label}
+                  </p>
+                  <p className="text-2xl font-bold text-gray-900 mt-1">
+                    {stat.value}
+                  </p>
+                </div>
+                <div
+                  className={`w-12 h-12 ${stat.color} rounded-lg flex items-center justify-center`}
+                >
+                  <Icon className="w-6 h-6 text-white" />
+                </div>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+
+      {/* Recent Activity */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        {/* Recent Recipes */}
+        <div className="bg-white rounded-xl border border-gray-200 shadow-sm">
+          <div className="p-6 border-b border-gray-200">
+            <div className="flex items-center justify-between">
+              <h3 className="text-lg font-semibold text-gray-900">
+                Recent Recipes
+              </h3>
+              <TrendingUp className="w-5 h-5 text-gray-400" />
+            </div>
+          </div>
+          <div className="p-6">
+            <div className="space-y-4">
+              {recentRecipes.map((recipe) => (
+                <div
+                  key={recipe.id}
+                  className="flex items-center gap-4 p-3 hover:bg-gray-50 rounded-lg transition-colors cursor-pointer"
+                  onClick={() => onEditRecipe(recipe)}
+                >
+                  <img
+                    src={recipe.img}
+                    alt={recipe.imageAlt}
+                    className="w-12 h-12 rounded-lg object-cover"
+                  />
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-medium text-gray-900 truncate">
+                      {recipe.title}
+                    </p>
+                    <p className="text-xs text-gray-500">
+                      {recipe.category} • {recipe.timing.total}
+                    </p>
+                  </div>
+                  <div className="flex items-center gap-1 text-yellow-400">
+                    <Star className="w-4 h-4 fill-current" />
+                    <span className="text-xs text-gray-600">4.8</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* Quick Stats */}
+        <div className="bg-white rounded-xl border border-gray-200 shadow-sm">
+          <div className="p-6 border-b border-gray-200">
+            <h3 className="text-lg font-semibold text-gray-900">
+              Popular Categories
+            </h3>
+          </div>
+          <div className="p-6">
+            <div className="space-y-4">
+              {Array.from(new Set(recipes.map((r) => r.category)))
+                .slice(0, 5)
+                .map((category, index) => {
+                  const count = recipes.filter(
+                    (r) => r.category === category
+                  ).length;
+                  const percentage = (count / recipes.length) * 100;
+
+                  return (
+                    <div key={category} className="space-y-2">
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm font-medium text-gray-700">
+                          {category}
+                        </span>
+                        <span className="text-sm text-gray-500">
+                          {count} recipes
+                        </span>
+                      </div>
+                      <div className="w-full bg-gray-200 rounded-full h-2">
+                        <div
+                          className="bg-blue-500 h-2 rounded-full transition-all duration-300"
+                          style={{ width: `${percentage}%` }}
+                        />
+                      </div>
+                    </div>
+                  );
+                })}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
