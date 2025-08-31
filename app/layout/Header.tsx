@@ -3,6 +3,7 @@
 import React from "react";
 import { usePathname } from "next/navigation";
 import { navigationItems } from "@/data/navigation";
+import { siteConfig } from "@/config/site";
 import Icon from "@/components/Icon";
 
 interface HeaderProps {
@@ -37,12 +38,12 @@ export default function Header({ className }: HeaderProps) {
           {/* Logo */}
           <a
             href="/"
-            title="Family-Friendly Recipes That Everyone Will Love"
+            title={siteConfig.description}
             className="flex items-center py-2 min-w-[90px]"
           >
             <img
               src="https://c.animaapp.com/mer35j4wJPAxku/assets/logo.svg"
-              alt="Recipes by Clare"
+              alt={siteConfig.name}
               className="h-[50px] md:h-[70px] max-w-full"
             />
           </a>

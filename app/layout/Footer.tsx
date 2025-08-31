@@ -4,6 +4,7 @@ import { footerLinks } from "@/data/footerLinks";
 import { socialLinks } from "@/data/socialLinks";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
+import { siteConfig, getCopyrightText } from "@/config/site";
 import { 
   Home, 
   Users, 
@@ -82,23 +83,33 @@ export default function Footer({ className }: FooterProps) {
       <div className="relative bg-stone-100 box-border max-w-full outline-neutral-900 -outline-offset-8 outline-dashed outline-1 w-full p-8">
         <div className="relative box-border max-w-full w-full mx-auto px-4">
           <ul className="text-[15.36px] box-border gap-x-4 flex flex-wrap justify-center leading-[24.576px] gap-y-2 pl-0 md:text-[19.2px] md:leading-[30.72px]">
-            {footerLinks.map((link) => (
-              <li
-                key={link.id}
-                className="text-[15.36px] box-border flex leading-[24.576px] list-none text-left md:text-[19.2px] md:leading-[30.72px]"
-              >
-                <Link
-                  href={link.href}
-                  title={link.title}
-                  className={link.className}
+            {footerLinks.map((link) => {
+              // Check if current link is active based on pathname
+              const isActive = pathname === link.href || 
+                             (link.href !== "/" && pathname.startsWith(link.href));
+              
+              // Create dynamic className with active state
+              const dynamicClassName = link.className
+                .replace(/text-orange-700|text-neutral-900/, isActive ? 'text-orange-700' : 'text-neutral-900');
+
+              return (
+                <li
+                  key={link.id}
+                  className="text-[15.36px] box-border flex leading-[24.576px] list-none text-left md:text-[19.2px] md:leading-[30.72px]"
                 >
-                  {getIcon(link.id)}
-                  <span className="text-[15.36px] box-border block leading-[24.576px] md:text-[19.2px] md:leading-[30.72px]">
-                    {link.label}
-                  </span>
-                </Link>
-              </li>
-            ))}
+                  <Link
+                    href={link.href}
+                    title={link.title}
+                    className={`${dynamicClassName} hover:text-blue-600 transition-colors duration-200`}
+                  >
+                    {getIcon(link.id)}
+                    <span className="text-[15.36px] box-border block leading-[24.576px] md:text-[19.2px] md:leading-[30.72px]">
+                      {link.label}
+                    </span>
+                  </Link>
+                </li>
+              );
+            })}
           </ul>
         </div>
       </div>
@@ -121,11 +132,11 @@ export default function Footer({ className }: FooterProps) {
 
         <div className="text-neutral-900 text-[11.52px] font-bold box-border leading-[18.432px] text-center mt-[12.8px] md:text-[13.44px] md:leading-[21.504px]">
           <span className="text-[11.52px] box-border leading-[18.432px] md:text-[13.44px] md:leading-[21.504px]">
-            2025 Recipes by Clare. All rights reserved.
+            {getCopyrightText()}
           </span>
           <br className="text-[11.52px] box-border leading-[18.432px] md:text-[13.44px] md:leading-[21.504px]" />
           <span className="text-[11.52px] box-border leading-[18.432px] md:text-[13.44px] md:leading-[21.504px]">
-            V3.01
+            {siteConfig.version}
           </span>
         </div>
       </div>
