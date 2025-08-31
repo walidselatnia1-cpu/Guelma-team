@@ -1,3 +1,5 @@
+import { siteConfig } from "@/config/site";
+
 export interface FooterLink {
   readonly id: string;
   readonly href: string;
