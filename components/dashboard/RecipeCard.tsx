@@ -28,7 +28,7 @@ export const RecipeCard: React.FC<RecipeCardProps> = ({ recipe, onEdit }) => {
           {recipe.title}
         </h3>
 
-        <p className="text-gray-600 text-sm mb-4 line-clamp-2">
+        <p className="text-gray-600 text-sm mb-4 line-clamp-3">
           {recipe.shortDescription}
         </p>
 

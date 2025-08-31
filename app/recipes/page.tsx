@@ -105,7 +105,7 @@ const RecipeCard = ({ recipe }: { recipe: Recipe }) => {
         </a>
 
         {/* Limit description length */}
-        <p className="text-gray-600 text-sm leading-snug line-clamp-2">
+        <p className="text-gray-600 text-sm leading-snug line-clamp-3">
           {recipe.description}
         </p>
       </div>

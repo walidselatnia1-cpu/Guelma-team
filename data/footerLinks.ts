@@ -93,7 +93,7 @@ export const footerLinks: FooterLink[] = [
     id: "cookies",
     href: "/cookies",
     title: "Cookie Policy",
-    label: "Cookies",
+    label: "Cookie Policy",
     iconSrc: "https://c.animaapp.com/mer35j4wJPAxku/assets/icon-27.svg",
     className:
       "text-neutral-900 text-[15.36px] font-bold items-center box-border gap-x-1.5 flex leading-[24.576px] gap-y-1.5 md:text-[19.2px] md:leading-[30.72px]",
@@ -120,7 +120,7 @@ export const footerLinks: FooterLink[] = [
     id: "contact",
     href: "/contact",
     title: "Contact Us",
-    label: "Contact",
+    label: "Contact Us",
     iconSrc: "https://c.animaapp.com/mer35j4wJPAxku/assets/icon-4.svg",
     className:
       "text-neutral-900 text-[15.36px] font-bold items-center box-border gap-x-1.5 flex leading-[24.576px] gap-y-1.5 md:text-[19.2px] md:leading-[30.72px]",
