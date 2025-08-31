@@ -34,42 +34,61 @@ export default function Header({ className }: HeaderProps) {
       }`}
     >
       <div className="relative max-w-full w-full mx-auto px-4">
-        <nav className="flex items-center justify-between">
+        <nav className="flex items-center justify-between py-5">
           {/* Logo */}
           <a
             href="/"
             title={siteConfig.description}
-            className="flex items-center py-2 min-w-[90px]"
+            className="flex items-center flex-shrink-0"
           >
             <img
               src="https://c.animaapp.com/mer35j4wJPAxku/assets/logo.svg"
               alt={siteConfig.name}
-              className="h-[50px] md:h-[70px] max-w-full"
+              className="h-[40px] sm:h-[50px] lg:h-[60px] xl:h-[70px] w-auto max-w-full"
             />
           </a>
 
-          {/* Desktop Nav */}
-          <ul className="items-center hidden md:flex gap-x-4">
+          {/* Desktop Nav - Full labels on XL screens */}
+          <ul className="items-center hidden xl:flex gap-x-3 flex-shrink-0">
             {navigationItems.map((item) => (
               <li key={item.id}>
                 <a
                   href={item.href}
                   title={item.title}
-                  className={`relative text-neutral-900 font-bold inline-flex items-center gap-x-1.5 p-2 rounded-[32px] md:px-4 transition ${
+                  className={`relative text-neutral-900 font-bold inline-flex items-center gap-x-1.5 p-2 rounded-[32px] xl:px-3 2xl:px-4 transition whitespace-nowrap ${
                     isActive(item.href)
                       ? "bg-gray-300" // Persistent active state
                       : "hover:bg-gray-300" // Only hover when not active
                   }`}
                 >
                   <Icon name={item.iconSrc} size={19} className="text-black" />
-                  {item.label && <span>{item.label}</span>}
+                  {item.label && <span className="text-sm xl:text-base">{item.label}</span>}
+                </a>
+              </li>
+            ))}
+          </ul>
+
+          {/* Tablet Nav - Icons only on large screens */}
+          <ul className="items-center hidden lg:flex xl:hidden gap-x-2 flex-shrink-0">
+            {navigationItems.map((item) => (
+              <li key={item.id}>
+                <a
+                  href={item.href}
+                  title={item.title}
+                  className={`relative inline-flex items-center justify-center p-3 rounded-full transition ${
+                    isActive(item.href)
+                      ? "bg-gray-300" // Persistent active state
+                      : "hover:bg-gray-300" // Only hover when not active
+                  }`}
+                >
+                  <Icon name={item.iconSrc} size={20} className="text-black" />
                 </a>
               </li>
             ))}
           </ul>
 
           {/* Mobile Full-Screen Menu */}
-          <details className="md:hidden relative">
+          <details className="lg:hidden relative flex-shrink-0">
             <summary
               aria-label="Toggle Mobile Menu"
               className="list-none cursor-pointer inline-flex items-center justify-center p-2 rounded-full hover:bg-gray-300"

@@ -34,6 +34,14 @@ export const navigationItems: NavigationItem[] = [
     label: "About",
   },
   {
+    id: "authors",
+    href: "/authors",
+    title: "Our Authors",
+    iconSrc: "about",
+    iconClassName: "box-border shrink-0 h-[19.2px] w-[19.2px]",
+    label: "Authors",
+  },
+  {
     id: "contact",
     href: "/contact",
     title: "Contact Us",
