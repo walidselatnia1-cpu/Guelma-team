@@ -2,7 +2,6 @@ import React from "react";
 import { Recipe } from "@/outils/types";
 import { notFound } from "next/navigation";
 import { getRecipes } from "@/data/data";
-import { RecipeHero } from "@/components/RecipeHero";
 
 const Pagination = ({ currentPage = 1, totalPages = 311 }) => {
   const isFirstPage = currentPage === 1;
@@ -159,7 +158,7 @@ export default async function Page() {
   }
 
   return (
-    <>
+    <div className="page-content">
       {/* Explore Section */}
       <div className="grid grid-cols-1 lg:grid-cols-6 gap-8">
         {/* Left Sidebar */}
@@ -183,6 +182,6 @@ export default async function Page() {
           </div>
         </div>
       </div>
-    </>
+    </div>
   );
 }

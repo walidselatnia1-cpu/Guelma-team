@@ -1,47 +1,63 @@
-// ---------- Core Interfaces ----------
+// ============================================================================
+// CORE INTERFACES - Matching recipe.json structure
+// ============================================================================
 
-interface Author {
+// Author as embedded object (matches JSON structure)
+export interface Author {
   name: string;
   link: string;
   avatar: string;
   bio: string;
 }
 
-interface Timing {
+// Timing as embedded object (matches JSON structure)
+export interface Timing {
   prepTime: string;
   cookTime: string;
   totalTime: string;
 }
 
-interface RecipeInfo {
+// Recipe info as embedded object (matches JSON structure)
+export interface RecipeInfo {
   difficulty: string;
   cuisine: string;
   servings: string;
   dietary?: string;
 }
 
-interface WhyYouLove {
+// WhyYouLove as embedded object (matches JSON structure)
+export interface WhyYouLove {
   type: string;
   title: string;
   items: string[];
 }
 
-interface IngredientGuideItem {
+// Questions section (matches JSON structure)
+export interface Questions {
+  title: string;
+  items: FAQItem[];
+}
+
+// Individual ingredient guide item
+export interface IngredientGuideItem {
   ingredient: string;
   description: string;
 }
 
-interface EssentialIngredientGuideItem {
+// Essential ingredient guide item
+export interface EssentialIngredientGuideItem {
   ingredient: string;
   note: string;
 }
 
-interface Instruction {
+// Instruction item
+export interface Instruction {
   step: string;
   instruction: string;
 }
 
-interface CompleteProcessItem {
+// Complete process item (matches JSON structure)
+export interface CompleteProcessItem {
   title?: string;
   section?: string;
   type?: string;
@@ -50,7 +66,8 @@ interface CompleteProcessItem {
   after?: string;
 }
 
-interface Section {
+// Section item (matches JSON structure)
+export interface Section {
   title?: string;
   content?: string;
   img?: string;
@@ -61,21 +78,28 @@ interface Section {
   after?: string;
 }
 
-interface FAQItem {
+// FAQ item
+export interface FAQItem {
   question: string;
   answer: string;
 }
 
-interface RelatedRecipe {
+// Related recipe item
+export interface RelatedRecipe {
   title: string;
   image: string;
   link: string;
 }
 
-interface IngredientsGroup {
+// Ingredients group (matches JSON structure)
+export interface IngredientsGroup {
   section: string;
   items: string[];
 }
+
+// ============================================================================
+// UI/NAVIGATION INTERFACES
+// ============================================================================
 
 export interface NavigationItem {
   readonly id: string;
@@ -99,6 +123,23 @@ export interface Article {
   readonly updatedDate: Date;
 }
 
+export interface Category {
+  id: string;
+  slug: string;
+  title: string;
+  href: string;
+  description: string;
+  image: string;
+  alt: string;
+  sizes?: string;
+  categoryImage?: string;
+  recipeCount?: number; // Number of recipes in this category
+}
+
+// ============================================================================
+// COMPLEX CATEGORY STRUCTURES (if needed for advanced categorization)
+// ============================================================================
+
 interface CategoryHierarchy {
   main: Category;
   sub?: Category;
@@ -117,79 +158,77 @@ interface CategoriesSection {
   cookingMethod?: Category;
 }
 
-// ---------- Main Recipe Interface ----------
-export interface Category {
-  readonly id: string;
-  readonly slug: string;
-  readonly title: string; // easier for /categories/[slug] routing
-  readonly href: string;
-  readonly description: string;
-  readonly image: string;
-  readonly alt: string;
-  readonly sizes?: string; // optional (used in <img sizes>)
-}
+// ============================================================================
+// MAIN RECIPE INTERFACE - Consistent with Prisma Schema
+// ============================================================================
 
 export interface Recipe {
-  href: string | undefined;
-  imageAlt: string;
-  categoryHref: string | undefined;
-  id: string;
-  img: string;
-  title: string;
+  // Core fields (exactly as in JSON)
+  id: string; // String to match JSON
   slug: string;
+  img: string;
+  href?: string;
+  title: string;
   intro: string;
   description: string;
   shortDescription: string;
   story: string;
   testimonial: string;
 
-  // Metadata
+  // Category and metadata
   category: string;
   categoryLink: string;
   featuredText: string;
-  author: Author;
   updatedDate: string;
+  createdAt?: string;
+  updatedAt?: string;
 
-  // Categories Section - NEW
-  categories: CategoriesSection;
-  categoryHierarchy: CategoryHierarchy;
-  allCategories: Category[]; // Flat array of all categories for easy access
+  // Author as embedded object (matches JSON)
+  author: Author;
 
-  // Content
-  whyYouLove: WhyYouLove;
-  essIngredientGuide: EssentialIngredientGuideItem[];
-  ingredientGuide: IngredientGuideItem[];
-  ingredients: IngredientsGroup[];
-  instructions: Instruction[];
-  completeProcess: CompleteProcessItem[];
-  sections: Section[];
+  // Embedded objects (matches JSON structure)
+  whyYouLove?: WhyYouLove;
+  timing?: Timing;
+  recipeInfo?: RecipeInfo;
+  questions?: Questions;
 
-  // Extras
-  mustKnowTips: string[];
-  professionalSecrets: string[];
-  faq: FAQItem[];
-  questions: {
-    title: string;
-    items: FAQItem[];
-  };
+  // Array fields (matches JSON structure)
+  essIngredientGuide?: EssentialIngredientGuideItem[];
+  ingredientGuide?: IngredientGuideItem[];
+  ingredients?: IngredientsGroup[];
+  instructions?: Instruction[];
+  completeProcess?: CompleteProcessItem[];
+  sections?: Section[];
+  faq?: FAQItem[];
+  relatedRecipes?: RelatedRecipe[];
 
-  // Meta info
+  // Simple array fields
+  mustKnowTips?: string[];
+  professionalSecrets?: string[];
+
+  // Media and additional info (exactly as in JSON)
   serving: string;
   storage: string;
-  timing: Timing;
-  recipeInfo: RecipeInfo;
-
-  // Media
   heroImage: string;
   images: string[];
-
-  // Add-ons
   notes: string[];
   tools: string[];
   allergyInfo: string;
   nutritionDisclaimer: string;
 
-  relatedRecipes: RelatedRecipe[];
+  // Optional fields for UI compatibility
+  imageAlt?: string;
+  categoryHref?: string;
 }
 
 export default Recipe;
+
+// ============================================================================
+// TYPE ALIASES AND UTILITY TYPES
+// ============================================================================
+
+export type RecipeCreateInput = Omit<Recipe, "id"> & {
+  id?: string;
+};
+
+export type RecipeUpdateInput = Partial<RecipeCreateInput>;

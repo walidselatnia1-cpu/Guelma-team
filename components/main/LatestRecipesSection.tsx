@@ -66,8 +66,8 @@ export default async function LatestRecipesSection({
                   className="text-blue-700 bg-stone-100 box-border block h-[300px] w-full overflow-hidden transform transition-transform duration-300 rounded-[14px] group-hover:scale-105"
                 >
                   <img
-                    alt={recipe.title}
-                    src={recipe.images[0]}
+                    alt={recipe.title || recipe.imageAlt}
+                    src={recipe.img || recipe.heroImage}
                     className="aspect-[auto_1024_/_1024] bg-stone-100 box-border  transition-transform duration-300 h-full max-w-full object-cover w-full group-hover:scale-110"
                   />
                 </a>

@@ -10,6 +10,14 @@ interface HeaderProps {
 
 export default function Header({ className }: HeaderProps) {
   const pathname = usePathname();
+  const segments = pathname.split("/").filter(Boolean);
+
+  const isAdmin = segments[segments.length - 1] === "admin";
+  const isMedia = segments[segments.length - 2] === "media";
+
+  if (isAdmin || isMedia) {
+    return <></>;
+  }
 
   // Function to check if a navigation item is active
   const isActive = (href: string) => {

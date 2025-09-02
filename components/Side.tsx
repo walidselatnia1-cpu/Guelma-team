@@ -1,4 +1,7 @@
-export default function Side({ recipe }: any) {
+export default function Side({ recipe, relatedRecipes = [] }: any) {
+  recipe = Array.isArray(recipe) ? recipe[0] : recipe;
+
+  if (!recipe?.author?.avatar) return null;
   return (
     <div className="relative text-black">
       {/* Dashed border container for the content */}
@@ -23,7 +26,7 @@ export default function Side({ recipe }: any) {
                 height={144}
                 width={144}
                 alt="emily for recipes by clare"
-                src={recipe.author.avatar}
+                src={recipe.heroImage || recipe.author.avatar}
                 className="block w-full h-full aspect-square object-cover transition-transform duration-300 ease-[cubic-bezier(0.5,1.25,0.75,1.25)] hover:scale-105 rounded-full"
               />
             </a>
@@ -86,107 +89,37 @@ export default function Side({ recipe }: any) {
           You Might Also Like
         </h2>
 
-        <div className="flex rounded-2xl overflow-hidden border border-dashed border-black bg-stone-100 shadow-md">
-          <img
-            className="w-32 h-28 object-cover flex-shrink-0"
-            alt="Mongolian Ground Beef Noodles"
-            src="https://recipesbyclare.com/cdn-cgi/image/fit=contain,width=480,format=auto/assets/images/1737383298828-rtr6ha63.webp"
-          />
-          <div className="flex flex-col justify-around p-6">
-            <a
-              href="https://recipesbyclare.com/recipes/mongolian-ground-beef-noodles"
-              title="Mongolian Ground Beef Noodles - Quick & Flavorful Weeknight Dinner"
-              className="text-black no-underline font-bold text-xl leading-snug hover:underline"
+        {relatedRecipes.length > 0 ? (
+          relatedRecipes.map((relatedRecipe: any, index: number) => (
+            <div
+              key={relatedRecipe.id || index}
+              className="flex rounded-2xl overflow-hidden border border-dashed border-black bg-stone-100 shadow-md"
             >
-              Mongolian Beef Noodles
-            </a>
+              <img
+                className="w-32 h-28 object-cover flex-shrink-0"
+                alt={relatedRecipe.title}
+                src={
+                  relatedRecipe.img ||
+                  relatedRecipe.heroImage ||
+                  "/placeholder.jpg"
+                }
+              />
+              <div className="flex flex-col justify-around p-6">
+                <a
+                  href={relatedRecipe.href || `/recipes/${relatedRecipe.slug}`}
+                  title={relatedRecipe.title}
+                  className="text-black no-underline font-bold text-xl leading-snug hover:underline"
+                >
+                  {relatedRecipe.title}
+                </a>
+              </div>
+            </div>
+          ))
+        ) : (
+          <div className="text-center p-6 text-gray-500">
+            No related recipes found
           </div>
-        </div>
-
-        <div className="flex rounded-2xl overflow-hidden border border-dashed border-black bg-stone-100 shadow-md">
-          <img
-            className="w-32 h-28 object-cover flex-shrink-0"
-            alt="Italian Drunken Noodles"
-            src="https://recipesbyclare.com/cdn-cgi/image/fit=contain,width=480,format=auto/assets/images/1737383326056-s1z0mv5j.webp"
-          />
-          <div className="flex flex-col justify-around p-6">
-            <a
-              href="https://recipesbyclare.com/recipes/italian-drunken-noodles"
-              title="Italian Drunken Noodles - Savory & Flavorful Pasta Dish"
-              className="text-black no-underline font-bold text-xl leading-snug hover:underline"
-            >
-              Italian Drunken Noodles
-            </a>
-          </div>
-        </div>
-
-        <div className="flex rounded-2xl overflow-hidden border border-dashed border-black bg-stone-100 shadow-md">
-          <img
-            className="w-32 h-28 object-cover flex-shrink-0"
-            alt="Peppercorn Steak with Creamy Sauce"
-            src="https://recipesbyclare.com/cdn-cgi/image/fit=contain,width=480,format=auto/assets/images/1737383114546-eksc0q7w.webp"
-          />
-          <div className="flex flex-col justify-around p-6">
-            <a
-              href="https://recipesbyclare.com/recipes/peppercorn-steak-with-creamy-sauce-recipe"
-              title="Peppercorn Steak with Creamy Sauce Recipe | Gourmet Steak Dinner"
-              className="text-black no-underline font-bold text-xl leading-snug hover:underline"
-            >
-              Peppercorn Steak with Creamy Sauce
-            </a>
-          </div>
-        </div>
-
-        <div className="flex rounded-2xl overflow-hidden border border-dashed border-black bg-stone-100 shadow-md">
-          <img
-            className="w-32 h-28 object-cover flex-shrink-0"
-            alt="A close-up image of crispy, glazed chicken pieces topped with sesame seeds and green onion."
-            src="https://recipesbyclare.com/cdn-cgi/image/fit=contain,width=480,format=auto/assets/images/1737386372107-h4irh94n.webp"
-          />
-          <div className="flex flex-col justify-around p-6">
-            <a
-              href="https://recipesbyclare.com/recipes/sweet-spicy-korean-chicken"
-              title="Sweet & Spicy Korean Fried Chicken Wings Recipe"
-              className="text-black no-underline font-bold text-xl leading-snug hover:underline"
-            >
-              Sweet & Spicy Korean Fried Chicken
-            </a>
-          </div>
-        </div>
-
-        <div className="flex rounded-2xl overflow-hidden border border-dashed border-black bg-stone-100 shadow-md">
-          <img
-            className="w-30 h-28 object-cover"
-            alt="A bowl of hearty soup with ground meat, white beans, vegetables, and fresh herbs, served on a wooden table alongside a slice of bread."
-            src="https://recipesbyclare.com/cdn-cgi/image/fit=contain,width=480,format=auto/assets/images/1737386402177-lnnu1pei.webp"
-          />
-          <div className="flex flex-col justify-around p-6">
-            <a
-              href="https://recipesbyclare.com/recipes/tuscan-white-bean-soup"
-              title="Easy Tuscan White Bean Soup with Sausage - One Pot Recipe"
-              className="text-black no-underline font-bold text-xl leading-snug hover:underline"
-            >
-              Tuscan White Bean Soup
-            </a>
-          </div>
-        </div>
-
-        <div className="flex rounded-2xl overflow-hidden border border-dashed border-black bg-stone-100 shadow-md">
-          <img
-            className="w-30 h-28 object-cover"
-            alt="A plate of breaded chicken topped with marinara sauce and melted cheese, accompanied by spaghetti garnished with parsley."
-            src="https://recipesbyclare.com/cdn-cgi/image/fit=contain,width=480,format=auto/assets/images/1737386406200-l74w6zel.webp"
-          />
-          <div className="flex flex-col justify-around p-6">
-            <a
-              href="https://recipesbyclare.com/recipes/chicken-parmesan"
-              title="Easy Chicken Parmesan Recipe - Classic Italian Dinner"
-              className="text-black no-underline font-bold text-xl leading-snug hover:underline"
-            >
-              Chicken Parmesan
-            </a>
-          </div>
-        </div>
+        )}
       </div>
     </div>
   );

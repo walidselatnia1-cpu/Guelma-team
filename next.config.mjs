@@ -9,7 +9,20 @@ const nextConfig = {
   images: {
     unoptimized: true,
   },
-  output: "export", // tells Next.js to generate static HTML
+  async rewrites() {
+    return [
+      {
+        source: "/uploads/:path*",
+        destination: "/api/uploads/:path*", // proxy to API
+      },
+    ];
+  },
+
+  // Conditionally set output based on environment
+  ...(process.env.NODE_ENV === "production" &&
+  process.env.STATIC_EXPORT === "true"
+    ? { output: "export" }
+    : {}),
 };
 
 export default nextConfig;

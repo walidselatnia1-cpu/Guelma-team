@@ -1,5 +1,6 @@
 "use client";
 import Image from "next/image";
+
 import Link from "next/link";
 import { Calendar, User } from "lucide-react";
 import SocialShareButtons from "./Share";
@@ -63,6 +64,10 @@ export function RecipeHero({ recipe }: { recipe?: Recipe }) {
 
   const pathname = usePathname();
   const segments = pathname.split("/").filter(Boolean);
+
+  console.log("RecipeHero pathname:", pathname);
+  console.log("RecipeHero segments:", segments);
+  console.log("RecipeHero recipe:", recipe?.title || "No recipe");
 
   const isExplore = segments[segments.length - 1] === "explore";
   const isSearch = segments[segments.length - 1] === "search";
@@ -293,7 +298,7 @@ export function RecipeHero({ recipe }: { recipe?: Recipe }) {
     );
 
   return (
-    <div className=" bg-stone-100 space-y-6">
+    <div className=" bg-stone-100 space-y-2">
       {/* Breadcrumbs */}
       <nav>
         <Breadcrumbs />
@@ -306,18 +311,18 @@ export function RecipeHero({ recipe }: { recipe?: Recipe }) {
         </h1>
 
         <p className="text-sm text-gray-600">
-          {recipe.featuredText}{" "}
+          {recipe?.featuredText}{" "}
           <Link
-            href={recipe.categoryLink}
+            href={recipe?.categoryLink || ""}
             className="text-orange-600 hover:underline"
           >
-            {recipe.category}
+            {recipe?.category}
           </Link>
           .
         </p>
 
-        <p className="text-[calc(var(--mo-font-size)*.8)] text-gray-700 leading-relaxed">
-          {recipe.description}
+        <p className="text-[calc(var(--mo-font-size))] text-gray-700 leading-relaxed">
+          {recipe?.description}
         </p>
       </div>
 
@@ -327,8 +332,8 @@ export function RecipeHero({ recipe }: { recipe?: Recipe }) {
       {/* Author Info */}
       <div className="flex items-center space-x-3 py-4">
         <Image
-          src={recipe.author.avatar}
-          alt={recipe.author.name}
+          src={recipe?.heroImage || "/placeholder.jpg"}
+          alt={recipe?.author?.name || "Unknown Author"}
           width={60}
           height={60}
           className="rounded-[50%] w-12 h-12 object-cover"
@@ -338,15 +343,18 @@ export function RecipeHero({ recipe }: { recipe?: Recipe }) {
             <User className="h-4 w-4" />
             <span>By</span>
             <Link
-              href={recipe.author.link}
+              href={recipe?.author?.link || ""}
               className="text-green-600 font-medium hover:underline"
             >
-              {recipe.author.name}
+              {recipe?.author?.name || "Unknown Author"}
             </Link>
           </div>
           <div className="flex items-center space-x-2 text-sm text-gray-500 mt-1">
             <Calendar className="h-4 w-4" />
-            <span>Updated on {formatDate(recipe.updatedDate)}</span>
+            <span>
+              {" "}
+              {formatDate(recipe?.updatedDate ?? new Date().toISOString())}
+            </span>
           </div>
         </div>
       </div>

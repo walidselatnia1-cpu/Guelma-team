@@ -3,13 +3,12 @@
 import { usePathname } from "next/navigation";
 import RecipeHero from "../RecipeHero";
 
-export default async function HeroWrapper({ children }: any) {
+export default function HeroWrapper({ children }: any) {
   const pathname = usePathname();
   const segments = pathname.split("/").filter(Boolean);
 
   const isSlug = segments[segments.length - 2] === "recipes";
   const isSlugPage = pathname?.includes("/recipes/");
-  console.log(isSlug, isSlugPage);
   if (isSlug && isSlugPage) {
     return <>{children}</>;
   }

@@ -8,6 +8,34 @@ body {
   color: var(--mo-on-body);
   font-family: var(--mo-font-family);
   -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+  min-height: 100vh;
+}
+
+/* Prevent layout shifts during navigation */
+main {
+  min-height: calc(100vh - 200px); /* Adjust based on header/footer height */
+}
+
+/* Smooth transitions for content loading */
+.page-content {
+  opacity: 1;
+  transition: opacity 0.2s ease-in-out;
+}
+
+.page-loading {
+  opacity: 0.7;
+}
+
+/* Ensure footer stays at bottom */
+.layout-container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.content-area {
+  flex: 1;
+  min-height: 0;
 }
 
 :root {

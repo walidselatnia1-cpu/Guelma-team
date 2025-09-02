@@ -2,7 +2,6 @@ import React from "react";
 import { Recipe } from "@prisma/client";
 import { getCategories } from "@/data/data";
 import { Category } from "@/outils/types";
-import { categories } from "@/data/categories";
 
 interface CategoriesSectionProps {
   className?: string;
@@ -11,15 +10,18 @@ interface CategoriesSectionProps {
 export default async function CategoriesSection({
   className,
 }: CategoriesSectionProps) {
-  let _categories: Category[] = {};
+  let _categories: Category[] = [];
 
   let hasError = false;
 
   try {
-    _categories = categories;
-    //categories = await getCategories();
+    _categories = await getCategories();
+    console.log(
+      "📂 Loaded categories for CategoriesSection:",
+      _categories.length
+    );
   } catch (err) {
-    console.error("Failed to fetch trending recipes:", err);
+    console.error("Failed to fetch categories:", err);
     hasError = true;
     // In production, you might want to show a fallback or empty state
     // For now, we'll show an empty array
@@ -74,7 +76,7 @@ export default async function CategoriesSection({
                 >
                   <img
                     alt={category.alt}
-                    src={category.image}
+                    src={category.categoryImage || category.image}
                     sizes={category.sizes}
                     className={
                       "  transition-transform duration-300 hover:scale-110 "

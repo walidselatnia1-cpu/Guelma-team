@@ -2,12 +2,23 @@
 import React from "react";
 import { footerLinks } from "@/data/footerLinks";
 import { socialLinks } from "@/data/socialLinks";
+import { usePathname } from "next/navigation";
 
 interface FooterProps {
   className?: string;
 }
 
 export default function Footer({ className }: FooterProps) {
+  const pathname = usePathname();
+  const segments = pathname.split("/").filter(Boolean);
+
+  const isAdmin = segments[segments.length - 1] === "admin";
+  const isMedia = segments[segments.length - 2] === "media";
+
+  if (isAdmin || isMedia) {
+    return <></>;
+  }
+
   return (
     <footer
       className={`items-center box-border gap-x-[25.6px] flex flex-col gap-y-[25.6px] my-[51.2px] ${

@@ -106,30 +106,32 @@ export const Card: React.FC<{
           <Info className="h-6 w-6 mr-2 text-gray-700" />
           Notes & Tips
         </h3>
-        <div className="recipe__wrapper left-[2rem] relative recipe-notes  mb-8">
+        <div className="recipe__wrapper relative recipe-notes mb-8 px-4">
           {/* Notes List */}
-          <ul className="space-y-4 text-gray-800">
+          <ul className="space-y-4 text-gray-800 max-w-full break-words">
             {recipe.notes.map((note: string, index: number) => (
               <li
                 key={index}
-                className="relative pl-2 text-base 
-                          before:content-[counter(list-counter)]
-                          before:absolute 
-                          before:-left-[30px] 
-                          before:top-0
-                          before:bg-[var(--mo-recipe-number)]
-                          before:text-[var(--mo-on-recipe-number)]
-                          before:w-6 before:h-6
-                          before:text-center
-                          before:leading-[24px]
-                          before:text-[14px]
-                          before:font-bold
-                          before:rounded-[24px_24px_10px_24px]
-                          before:shadow-[0_3px_6px_rgba(0,0,0,0.4)]
-                          before:text-orange-800
-                          before:bg-orange-100"
+                className="relative pl-2 text-base overflow-hidden 
+              before:content-[counter(list-counter)]
+              before:absolute 
+              before:-left-[30px] 
+              before:top-0
+              before:bg-[var(--mo-recipe-number)]
+              before:text-[var(--mo-on-recipe-number)]
+              before:w-6 before:h-6
+              before:text-center
+              before:leading-[24px]
+              before:text-[14px]
+              before:font-bold
+              before:rounded-[24px_24px_10px_24px]
+              before:shadow-[0_3px_6px_rgba(0,0,0,0.4)]
+              before:text-orange-800
+              before:bg-orange-100"
               >
-                {note}
+                <span className="block w-full overflow-wrap-break-word hyphens-auto">
+                  {note}
+                </span>
               </li>
             ))}
           </ul>
@@ -140,13 +142,13 @@ export const Card: React.FC<{
           Tools You'll Need
         </h3>
 
-        <div className="recipe__wrapper left-[2rem] relative recipe-notes ">
+        <div className="recipe__wrapper relative recipe-notes px-2">
           {/* Notes List */}
-          <ul className="space-y-4 text-gray-800 marker">
-            {recipe.mustKnowTips.map((note: string, index: number) => (
+          <ul className="space-y-4 text-gray-800 max-w-full overflow-hidden">
+            {recipe?.mustKnowTips?.map((note: string, index: number) => (
               <li
                 key={index}
-                className="list-disc relative pl-2 text-base marker:text-xl marker:text-gray-600 leading-relaxed "
+                className="list-disc relative pl-2 text-base marker:text-xl marker:text-gray-600 leading-relaxed break-words"
               >
                 {note}
               </li>

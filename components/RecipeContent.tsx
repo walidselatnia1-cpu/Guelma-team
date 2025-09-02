@@ -10,24 +10,29 @@ interface RecipeContentProps {
 }
 
 export function RecipeContent({ recipe }: RecipeContentProps) {
+  recipe = Array.isArray(recipe) ? recipe[0] : recipe;
+
+  if (!recipe.whyYouLove) return <></>;
   return (
-    <div className="space-y-8 mt-8">
+    <div className="space-y-8 mt-2 text-md ">
       {/* Hero Image */}
       <div className="relative w-full h-96 md:h-[500px] rounded-lg overflow-hidden">
         <Image
-          src={recipe.images[0]}
+          src={recipe?.images ? recipe.images[0] : ""}
           alt={recipe.title}
           fill
           className="object-cover"
           priority
         />
-        <div className="absolute bottom-4 left-4 bg-black/70 text-white px-3 py-1 rounded text-sm">
+        <div className="absolute bottom-4 left-4 bg-black/70 text-white px-3 py-1 rounded">
           {recipe.title} | recipesbyclare.com
         </div>
       </div>
       {/* Story */}
       <div className="prose prose-lg max-w-none">
-        <p className="text-gray-700 leading-relaxed">{recipe.story}</p>
+        <p className="text-gray-700 leading-relaxed text-[1.2rem]">
+          {recipe.story}
+        </p>
       </div>
       {/* Why You'll Love This */}
       <TipCard
@@ -35,7 +40,7 @@ export function RecipeContent({ recipe }: RecipeContentProps) {
         items={recipe.whyYouLove.items}
       />
       {/* Testimonial */}
-      <div className="prose prose-lg max-w-none">
+      <div className="prose prose-lg max-w-none text-[1.2rem]">
         <p className="text-gray-700 leading-relaxed italic">
           {recipe.testimonial}
         </p>
@@ -50,7 +55,7 @@ export function RecipeContent({ recipe }: RecipeContentProps) {
           fill
           className="object-cover"
         />
-        <div className="absolute bottom-4 left-4 bg-black/70 text-white px-3 py-1 rounded text-sm">
+        <div className="absolute bottom-4 left-4 bg-black/70 text-white px-3 py-1 rounded">
           Honey Sesame Chicken and Broccoli | recipesbyclare.com
         </div>
       </div>
@@ -64,7 +69,7 @@ export function RecipeContent({ recipe }: RecipeContentProps) {
           fill
           className="object-cover"
         />
-        <div className="absolute bottom-4 left-4 bg-black/70 text-white px-3 py-1 rounded text-sm">
+        <div className="absolute bottom-4 left-4 bg-black/70 text-white px-3 py-1 rounded">
           Honey Sesame Chicken and Broccoli | recipesbyclare.com
         </div>
       </div>
@@ -98,7 +103,7 @@ export function RecipeContent({ recipe }: RecipeContentProps) {
                 >
                   {item.title}
                 </h2>
-                <div className="prose prose-lg max-w-none">
+                <div className="prose prose-lg max-w-none text-[1.2rem]">
                   <p className="text-gray-700 leading-relaxed">
                     {item.content}
                   </p>
@@ -113,7 +118,7 @@ export function RecipeContent({ recipe }: RecipeContentProps) {
                   fill
                   className="object-cover"
                 />
-                <div className="absolute bottom-4 left-4 bg-black/70 text-white px-3 py-1 rounded text-sm">
+                <div className="absolute bottom-4 left-4 bg-black/70 text-white px-3 py-1 rounded">
                   Honey Sesame Chicken and Broccoli | recipesbyclare.com
                 </div>
               </div>
@@ -142,7 +147,7 @@ export function RecipeContent({ recipe }: RecipeContentProps) {
         >
           {recipe.questions.title}
         </h2>
-        <div className="space-y-6">
+        <div className="space-y-6 text-[1.2rem]">
           {recipe.questions.items.map((item: any, index: any) => (
             <div key={index} className="border-b border-gray-200 pb-4">
               <h3 className="flex font-bold items-center space-x-2 font-bold text-gray-900 mb-2">

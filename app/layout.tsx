@@ -4,11 +4,11 @@ import { GeistMono } from "geist/font/mono";
 import "./globals.css";
 import Header from "./layout/Header";
 import Footer from "./layout/Footer";
+import ClientLayout from "@/components/ClientLayout";
 
 export const metadata: Metadata = {
-  title: "v0 App",
-  description: "Created with v0",
-  generator: "v0.app",
+  title: "Recipes",
+  description: "Created with pain!",
 };
 
 export default function RootLayout({
@@ -19,6 +19,8 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
+        <meta name="title" content="Recipes!" />
+
         <style>{`
 html {
   font-family: ${GeistSans.style.fontFamily};
@@ -27,9 +29,11 @@ html {
 }
         `}</style>
       </head>
-      <body>
+      <body className="layout-container">
         <Header />
-        {children}
+        <main className="content-area">
+          <ClientLayout>{children}</ClientLayout>
+        </main>
         <Footer />
       </body>
     </html>

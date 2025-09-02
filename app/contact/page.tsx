@@ -2,21 +2,7 @@ import { notFound } from "next/navigation";
 import { getRecipe } from "@/data/data";
 import Contact from "@/components/main/Contact";
 
-export default async function RecipePage({
-  params,
-}: {
-  params: { id: string };
-}) {
-  const { id }: any = params; // ✅ await params in App Router
-
-  const recipe = (await getRecipe(id)) as any;
-
-  //[TODO: make ids of json relevent] SEO, also make route for you want to see [only image and title]
-
-  if (!recipe) {
-    notFound();
-  }
-
+export default async function RecipePage({}: {}) {
   return (
     <>
       <div className="grid grid-cols-1 lg:grid-cols-6 gap-8  px-4 py-8 ">
