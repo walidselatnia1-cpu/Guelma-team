@@ -12,13 +12,16 @@ import { getRecipeRelations } from "@/lib/prisma-helpers";
  * @param {{ params: { id: string } }} context
  * @returns {NextResponse} JSON response with related recipes
  */
-export async function GET(
-  request: NextRequest,
-  { params }: { params: { id: string } }
-) {
+export async function GET(request: NextRequest) {
   const url = new URL(request.nextUrl);
   const limit = parseInt(url.searchParams.get("limit") || "6");
-  const recipeId = parseInt(params.id);
+  const id = url.searchParams.get("id");
+
+  if (!id) {
+    return NextResponse.json([]);
+  }
+
+  const recipeId = id;
 
   try {
     const recipeRelations = getRecipeRelations();
@@ -48,7 +51,6 @@ export async function GET(
         ],
       },
       take: limit,
-      include: recipeRelations,
       orderBy: { createdAt: "desc" },
     });
 

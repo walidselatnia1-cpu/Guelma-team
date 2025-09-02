@@ -7,7 +7,10 @@ import latestArticles from "./articles";
 
 // Force to use real database, not mock mode
 const MOCK_MODE = false;
-// const MOCK_MODE = process.env.NODE_ENV === "development" || process.env.NEXT_PHASE === "phase-production-build" || process.env.MOCK === "true";
+// const MOCK_MODE =
+//   process.env.NODE_ENV === "development" ||
+//   process.env.NEXT_PHASE === "phase-production-build" ||
+//   process.env.MOCK === "true";
 console.log(
   "🔧 MOCK_MODE is:",
   MOCK_MODE,
@@ -63,17 +66,31 @@ export async function getDummyDataArticles(): Promise<Article[]> {
 // ============================================================================
 
 /**
- * Gets all recipes - either from API or mock data
+ * Gets all recipes - either from API or direct DB call during build
  */
 export async function getData(): Promise<Recipe[]> {
   if (MOCK_MODE) {
     return getDummyData(10);
   }
 
-  const baseUrl =
-    typeof window !== "undefined"
-      ? ""
-      : process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
+  // During build time or server-side, use direct Prisma call
+  if (typeof window === "undefined") {
+    try {
+      const prisma = (await import("@/lib/prisma")).default;
+
+      const recipes = await prisma.recipe.findMany({
+        orderBy: { createdAt: "desc" },
+      });
+
+      return recipes as unknown as Recipe[];
+    } catch (error) {
+      console.error("Direct DB call failed:", error);
+      return getDummyData(10);
+    }
+  }
+
+  // Client-side, use API fetch
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
   const response = await fetch(`${baseUrl}/api/recipe`);
 
   if (!response.ok) {
@@ -277,6 +294,30 @@ export async function getRecipesByCategory(
     return limit ? filteredRecipes.slice(0, limit) : filteredRecipes;
   }
 
+  // During build time or server-side, use direct Prisma call
+  if (typeof window === "undefined") {
+    try {
+      const prisma = (await import("@/lib/prisma")).default;
+
+      const recipes = await prisma.recipe.findMany({
+        where: {
+          category: {
+            equals: category,
+            mode: "insensitive",
+          },
+        },
+        ...(limit && { take: limit }),
+        orderBy: { createdAt: "desc" },
+      });
+
+      return recipes as unknown as Recipe[];
+    } catch (error) {
+      console.error("Direct DB call failed for category:", error);
+      return [];
+    }
+  }
+
+  // Client-side, use API fetch
   const url = `${
     process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000"
   }/api/recipe/category/${encodeURIComponent(category)}${

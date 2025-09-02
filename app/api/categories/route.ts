@@ -12,7 +12,7 @@ export async function GET() {
       select: {
         category: true,
         categoryLink: true,
-        image: true,
+        images: true,
       },
     });
 
@@ -31,7 +31,7 @@ export async function GET() {
             existing?.link ||
             recipe.categoryLink ||
             `/categories/${recipe.category.toLowerCase().replace(/\s+/g, "-")}`,
-          image: existing?.image || recipe.image || "/placeholder.jpg",
+          image: existing?.image || recipe.images?.[0] || "/placeholder.jpg",
         });
       }
     });

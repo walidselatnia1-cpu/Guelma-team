@@ -1,46 +1,35 @@
 export const dynamic = "force-static";
 export const revalidate = 60;
 
-// app/api/recipe/category/[category]/route.ts
+// app/api/recipe/category/route.ts
 import { NextResponse, NextRequest } from "next/server";
 import prisma from "@/lib/prisma";
-import { getRecipeRelations } from "@/lib/prisma-helpers";
 
 /**
- * GET /api/recipe/category/[category]
- * Gets all recipes in a specific category
+ * GET /api/recipe/category
+ * Gets all available recipe categories
  * @param {NextRequest} request
- * @param {{ params: { category: string } }} context
- * @returns {NextResponse} JSON response with recipes in the category
+ * @returns {NextResponse} JSON response with all categories
  */
-export async function GET(
-  request: NextRequest,
-  { params }: { params: { category: string } }
-) {
-  const url = new URL(request.nextUrl);
-  const limit = url.searchParams.get("limit");
-  const category = decodeURIComponent(params.category);
-
+export async function GET(request: NextRequest) {
   try {
-    const recipeRelations = getRecipeRelations();
-
-    const recipes = await prisma.recipe.findMany({
-      where: {
-        category: {
-          equals: category,
-          mode: "insensitive", // Case-insensitive matching
-        },
+    const categories = await prisma.recipe.findMany({
+      select: {
+        category: true,
       },
-      ...(limit && { take: parseInt(limit) }),
-      include: recipeRelations,
-      orderBy: { createdAt: "desc" },
+      distinct: ["category"],
+      orderBy: { category: "asc" },
     });
 
-    return NextResponse.json(recipes);
+    const categoryList = categories
+      .map((recipe) => recipe.category)
+      .filter(Boolean);
+
+    return NextResponse.json(categoryList);
   } catch (error) {
-    console.error(`Error fetching recipes for category ${category}:`, error);
+    console.error("Error fetching categories:", error);
     return NextResponse.json(
-      { error: `Failed to fetch recipes for category: ${category}` },
+      { error: "Failed to fetch categories" },
       { status: 500 }
     );
   }
