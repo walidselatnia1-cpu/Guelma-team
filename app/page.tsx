@@ -4,6 +4,9 @@ import LatestArticlesSection from "@/components/main/LatestArticlesSection";
 import LatestRecipesSection from "@/components/main/LatestRecipesSection";
 import TrendingSection from "@/components/main/TrendingSection";
 
+// Enable ISR for home page - revalidate every 5 minutes
+export const revalidate = 300;
+
 export default function HomePage() {
   return (
     <div className="page-content">

@@ -33,6 +33,121 @@ console.log(
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
 
 // ============================================================================
+// PROGRESSIVE UTILITIES
+// ============================================================================
+
+/**
+ * Trigger on-demand revalidation after data changes
+ * Call this after adding/updating/deleting recipes
+ */
+export async function revalidateRecipeData(
+  options: {
+    type?: "path" | "tag" | "default";
+    target?: string;
+    paths?: string[];
+    tags?: string[];
+  } = {}
+): Promise<boolean> {
+  try {
+    const revalidateSecret =
+      process.env.NEXT_PUBLIC_REVALIDATE_SECRET ||
+      process.env.REVALIDATE_SECRET;
+
+    if (!revalidateSecret) {
+      console.warn(
+        "⚠️ REVALIDATE_SECRET not configured, skipping revalidation"
+      );
+      return false;
+    }
+
+    const { type = "default", target, paths, tags } = options;
+
+    const body: any = {
+      secret: revalidateSecret,
+      type,
+    };
+
+    if (type === "path" && target) {
+      body.path = target;
+    } else if (type === "tag" && target) {
+      body.tag = target;
+    } else if (paths || tags) {
+      // Custom bulk revalidation
+      if (paths) {
+        for (const path of paths) {
+          await fetch(`${BASE_URL}/api/revalidate`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ ...body, type: "path", path }),
+          });
+        }
+      }
+      if (tags) {
+        for (const tag of tags) {
+          await fetch(`${BASE_URL}/api/revalidate`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ ...body, type: "tag", tag }),
+          });
+        }
+      }
+      return true;
+    }
+
+    const response = await fetch(`${BASE_URL}/api/revalidate`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body),
+    });
+
+    if (response.ok) {
+      const result = await response.json();
+      console.log("✅ Revalidation triggered:", result.message);
+      return true;
+    } else {
+      console.error("❌ Revalidation failed:", await response.text());
+      return false;
+    }
+  } catch (error) {
+    console.error("❌ Revalidation error:", error);
+    return false;
+  }
+}
+
+/**
+ * Helper to revalidate after adding a new recipe
+ */
+export async function revalidateAfterNewRecipe(category?: string) {
+  const tags = ["recipes", "all-recipes", "trending", "latest"];
+  if (category) {
+    tags.push(`category-${category.toLowerCase()}`);
+  }
+
+  return await revalidateRecipeData({
+    tags,
+    paths: ["/", "/recipes", "/explore", "/categories"],
+  });
+}
+
+/**
+ * Helper to revalidate after updating a recipe
+ */
+export async function revalidateAfterRecipeUpdate(
+  slug: string,
+  category?: string
+) {
+  const tags = ["recipes", "all-recipes"];
+  const paths = [`/recipes/${slug}`];
+
+  if (category) {
+    tags.push(`category-${category.toLowerCase()}`);
+    paths.push(`/categories/${category.toLowerCase().replace(/\s+/g, "-")}`);
+  }
+
+  return await revalidateRecipeData({ tags, paths });
+}
+
+// ============================================================================
 // MOCK DATA UTILITIES
 // ============================================================================
 
@@ -117,8 +232,14 @@ export async function getData(): Promise<Recipe[]> {
     }
   }
 
-  // Client-side, use API fetch
-  const response = await fetch(`${BASE_URL}/api/recipe`);
+  // Client-side, use API fetch with ISR support
+  const response = await fetch(`${BASE_URL}/api/recipe`, {
+    next: {
+      revalidate: 60, // ISR: revalidate every minute
+      tags: ["recipes", "all-recipes"], // Cache tags for on-demand revalidation
+    },
+  });
+
   if (!response.ok) {
     throw new Error("Failed to fetch data");
   }
@@ -293,12 +414,18 @@ export async function getRecipesByCategory(
     }
   }
 
-  // Client-side, use API fetch
+  // Client-side, use API fetch with ISR support
   const url = `${BASE_URL}/api/recipe/category/${encodeURIComponent(category)}${
     limit ? `?limit=${limit}` : ""
   }`;
 
-  const response = await fetch(url);
+  const response = await fetch(url, {
+    next: {
+      revalidate: 120, // ISR: revalidate every 2 minutes for category data
+      tags: ["recipes", "categories", `category-${category.toLowerCase()}`], // Cache tags
+    },
+  });
+
   if (!response.ok) {
     throw new Error(`Failed to fetch recipes for category: ${category}`);
   }

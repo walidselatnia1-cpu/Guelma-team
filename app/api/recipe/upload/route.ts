@@ -10,9 +10,20 @@ import { auth } from "@/lib/auth";
  */
 export async function POST(request: NextRequest) {
   try {
-    const token = await auth.getToken(request);
-    if (!token) {
-      return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+    // Check environment and auth
+    const isDevelopment = process.env.NODE_ENV === "development";
+    const skipAuth = process.env.SKIP_AUTH === "true" || isDevelopment;
+
+    if (!skipAuth) {
+      const token = await auth.getToken(request);
+      if (!token) {
+        console.log("❌ Authentication failed - no valid token");
+        return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+      }
+    } else {
+      console.log(
+        "🔓 Skipping auth for upload (development mode or SKIP_AUTH=true)"
+      );
     }
 
     const formData = await request.formData();

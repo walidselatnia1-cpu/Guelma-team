@@ -1,11 +1,13 @@
 export const dynamic = "force-static";
-export const revalidate = 60;
-// Updated main recipe route with better error handling
+export const revalidate = 60; // ISR: revalidate every minute
+
+// Updated main recipe route with better error handling and cache tags
 // app/api/recipe/route.ts (Enhanced version)
 import { NextResponse, NextRequest } from "next/server";
 import { auth } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 import { getRecipeRelations } from "@/lib/prisma-helpers";
+import { unstable_cache } from "next/cache";
 
 /**
  * GET /api/recipe
@@ -79,14 +81,18 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
-    // Skip auth in development mode
-    if (process.env.NODE_ENV !== "production") {
-      console.log("🔓 Skipping auth in development mode");
-    } else {
+    // Check environment and auth
+    const isDevelopment = process.env.NODE_ENV === "development";
+    const skipAuth = process.env.SKIP_AUTH === "true" || isDevelopment;
+
+    if (!skipAuth) {
       const token = await auth.getToken(request);
       if (!token) {
+        console.log("❌ Authentication failed - no valid token");
         return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
       }
+    } else {
+      console.log("🔓 Skipping auth (development mode or SKIP_AUTH=true)");
     }
 
     const recipe = await request.json();
@@ -343,14 +349,20 @@ export async function PUT(request: NextRequest) {
   }
 
   try {
-    // Skip auth in development mode
-    if (process.env.NODE_ENV !== "production") {
-      console.log("🔓 Skipping auth in development mode");
-    } else {
+    // Check environment and auth
+    const isDevelopment = process.env.NODE_ENV === "development";
+    const skipAuth = process.env.SKIP_AUTH === "true" || isDevelopment;
+
+    if (!skipAuth) {
       const token = await auth.getToken(request);
       if (!token) {
+        console.log("❌ Authentication failed - no valid token");
         return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
       }
+    } else {
+      console.log(
+        "🔓 Skipping auth for PUT (development mode or SKIP_AUTH=true)"
+      );
     }
 
     // Debug: Log the received recipe data for update
@@ -471,14 +483,20 @@ export async function DELETE(request: NextRequest) {
   }
 
   try {
-    // Skip auth in development mode
-    if (process.env.NODE_ENV !== "production") {
-      console.log("🔓 Skipping auth in development mode");
-    } else {
+    // Check environment and auth
+    const isDevelopment = process.env.NODE_ENV === "development";
+    const skipAuth = process.env.SKIP_AUTH === "true" || isDevelopment;
+
+    if (!skipAuth) {
       const token = await auth.getToken(request);
       if (!token) {
+        console.log("❌ Authentication failed - no valid token");
         return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
       }
+    } else {
+      console.log(
+        "🔓 Skipping auth for DELETE (development mode or SKIP_AUTH=true)"
+      );
     }
 
     const deletedRecipe = await prisma.recipe.delete({
