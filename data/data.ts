@@ -15,10 +15,7 @@ const IS_DEVELOPMENT = process.env.NODE_ENV === "development";
 const IS_PRODUCTION = process.env.NODE_ENV === "production";
 const IS_TEST = process.env.NODE_ENV === "test";
 
-const MOCK_MODE =
-  process.env.NEXT_PUBLIC_MOCK_MODE === "true" ||
-  (process.env.NODE_ENV === "development" &&
-    process.env.NEXT_PUBLIC_FORCE_REAL_DB !== "true");
+const MOCK_MODE = false;
 
 console.log(
   "🔧 MOCK_MODE is:",

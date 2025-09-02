@@ -52,7 +52,206 @@ email section at Contact
 [TODO: deploy schema]
 [TODO: make recipe content agnostic]
 
-
+{
+    "slug": "complete-sample-recipe",
+    "href": "/recipes/complete-sample-recipe",
+    "imageAlt": null,
+    "categoryHref": null,
+    "img": "/uploads/recipes/1756812205948-4fwj1yxuway.jpg",
+    "title": "Complete Sample Recipe",
+    "intro": "This is a complete sample recipe showing all available fields for your recipe system",
+    "description": "Complete recipe description with all details and techniques",
+    "shortDescription": "A comprehensive sample recipe with all possible fields",
+    "story": "The fascinating story behind this recipe and how it came to be a family favorite",
+    "testimonial": "What people are saying about this incredible dish and why they love it",
+    "category": "main-dishes",
+    "categoryLink": "/categories/main-dishes",
+    "featuredText": "Featured Recipe",
+    "updatedDate": "2025-09-01T17:36:16.231Z",
+    "author": {
+        "bio": "Professional chef with 10+ years experience in international cuisine",
+        "link": "/authors/chef-sample",
+        "name": "Chef Sample",
+        "avatar": "/chef-avatar.jpg"
+    },
+    "whyYouLove": {
+        "type": "Card",
+        "items": [
+            "**Quick weeknight solution** - Ready in under an hour with simple techniques",
+            "**Restaurant-quality flavors** - Professional results in your home kitchen",
+            "**Family-friendly** - Kids love the sweet and savory combination",
+            "**Meal prep friendly** - Makes great leftovers for busy weeks"
+        ],
+        "title": "Why You'll Love It"
+    },
+    "timing": {
+        "cookTime": "30 minutes",
+        "prepTime": "15 minutes",
+        "totalTime": "45 minutes"
+    },
+    "recipeInfo": {
+        "cuisine": "Asian Fusion",
+        "dietary": "Dairy-Free, Gluten-Free Option",
+        "servings": "4 Servings (generous portions)",
+        "difficulty": "Intermediate"
+    },
+    "questions": {
+        "items": [
+            {
+                "answer": "Yes! Thaw and drain frozen broccoli well, then add it directly to the pan since it's already cooked.",
+                "question": "Can I use frozen broccoli instead of fresh?"
+            },
+            {
+                "answer": "Use tamari instead of soy sauce and replace any flour with cornstarch or rice flour.",
+                "question": "How can I make this gluten-free?"
+            },
+            {
+                "answer": "Absolutely! Store in the fridge for up to 4 days and reheat gently to avoid overcooking.",
+                "question": "Can I meal prep this dish?"
+            }
+        ],
+        "title": "Frequently Asked Questions"
+    },
+    "essIngredientGuide": [
+        {
+            "note": "Use fresh ginger for the best flavor - ground ginger won't provide the same aromatic impact",
+            "ingredient": "Fresh ginger"
+        },
+        {
+            "note": "This is what gives the sauce its distinctive nutty flavor. Don't substitute with regular oil",
+            "ingredient": "Sesame oil"
+        },
+        {
+            "note": "Natural honey creates the perfect glaze and balances the salty elements beautifully",
+            "ingredient": "Real honey"
+        }
+    ],
+    "ingredientGuide": null,
+    "ingredients": [
+        {
+            "items": [
+                "1/4 cup low sodium soy sauce",
+                "3 tbsp honey",
+                "2 tbsp sesame oil",
+                "1 tbsp rice vinegar",
+                "1 tsp fresh ginger, grated",
+                "2 cloves garlic, minced"
+            ],
+            "section": "For the Sauce"
+        },
+        {
+            "items": [
+                "1.5 lbs chicken breast, cut into pieces",
+                "4 cups broccoli florets",
+                "2 tbsp cornstarch",
+                "2 tbsp vegetable oil",
+                "2 green onions, sliced",
+                "1 tbsp sesame seeds"
+            ],
+            "section": "For the Main Dish"
+        }
+    ],
+    "instructions": [
+        {
+            "step": "Step 01",
+            "instruction": "Prepare all ingredients by washing, chopping, and measuring. Having everything ready makes the cooking process smooth and enjoyable."
+        },
+        {
+            "step": "Step 02",
+            "instruction": "Steam the broccoli until tender-crisp, about 5-6 minutes. Drain and rinse with cold water to stop cooking and preserve the bright color."
+        },
+        {
+            "step": "Step 03",
+            "instruction": "Toss chicken pieces with cornstarch until evenly coated. Heat oil in a large skillet and cook chicken until golden brown and cooked through."
+        },
+        {
+            "step": "Step 04",
+            "instruction": "Whisk together all sauce ingredients until smooth. Pour over cooked chicken and simmer until sauce thickens beautifully."
+        },
+        {
+            "step": "Step 05",
+            "instruction": "Add steamed broccoli to the saucy chicken and toss gently. Garnish with green onions and sesame seeds before serving hot."
+        }
+    ],
+    "completeProcess": [
+        {
+            "title": "Preparation Phase",
+            "description": "Start by gathering all ingredients and preparing your workspace. Cut the chicken into uniform pieces for even cooking, and trim the broccoli into bite-sized florets. Having everything prepped makes the actual cooking much smoother."
+        },
+        {
+            "title": "Cooking Phase",
+            "description": "Begin by steaming the broccoli until just tender-crisp - this preserves both color and nutrition. Meanwhile, coat the chicken with cornstarch and cook in batches to achieve that perfect golden crust."
+        },
+        {
+            "title": "Sauce & Assembly",
+            "description": "Whisk the sauce ingredients until completely smooth, then pour over the golden chicken. The sauce will thicken quickly, creating a glossy coating that clings perfectly to both chicken and vegetables."
+        },
+        {
+            "title": "Final Presentation",
+            "description": "Gently fold in the steamed broccoli and garnish with fresh green onions and sesame seeds. Serve immediately while hot for the best texture and flavor experience."
+        }
+    ],
+    "sections": [
+        {
+            "type": "card",
+            "after": "These professional techniques ensure restaurant-quality results every time you make this dish.",
+            "items": [
+                "Don't overcrowd the pan when cooking chicken - work in batches for proper browning",
+                "Let the chicken cook undisturbed for 2-3 minutes to develop a golden crust",
+                "Rinse steamed vegetables with cold water to stop cooking and preserve color"
+            ],
+            "title": "Professional Tips"
+        }
+    ],
+    "faq": null,
+    "relatedRecipes": [
+        {
+            "link": "/recipes/similar-asian-dish",
+            "image": "/related-asian.jpg",
+            "title": "Similar Asian Dish"
+        },
+        {
+            "link": "/recipes/quick-dinner",
+            "image": "/related-quick.jpg",
+            "title": "Another Quick Dinner"
+        }
+    ],
+    "mustKnowTips": [
+        "**Fresh ginger is key** - Ground ginger won't provide the same bright, aromatic flavor",
+        "**Don't skip the cornstarch** - It creates the perfect coating and helps thicken the sauce",
+        "**Serve immediately** - This dish is best enjoyed hot and fresh from the pan"
+    ],
+    "professionalSecrets": [
+        "**Room temperature chicken** - Let chicken sit out 15 minutes before cooking for even results",
+        "**High heat searing** - Don't move the chicken too early to achieve perfect browning",
+        "**Sauce consistency** - Adjust thickness with cornstarch slurry if needed"
+    ],
+    "serving": "Best served hot over steamed rice or noodles with fresh herbs",
+    "storage": "Keeps well in refrigerator for 3 days, reheat gently to preserve texture",
+    "heroImage": "/hero-image.jpg",
+    "images": [
+        "/uploads/recipes/1756812240762-17lo9ng5ml1.jpg"
+    ],
+    "notes": [
+        "For Whole30 compliance, use coconut aminos instead of soy sauce",
+        "Dish can be made dairy-free and gluten-free with simple substitutions",
+        "Double the sauce recipe if you like extra saucy dishes"
+    ],
+    "tools": [
+        "Large pot with steamer basket",
+        "12-inch skillet or wok",
+        "Sharp chef's knife",
+        "Cutting board",
+        "Mixing bowls",
+        "Whisk",
+        "Measuring cups and spoons"
+    ],
+    "allergyInfo": "Contains soy and sesame. Check all ingredients for potential allergens",
+    "nutritionDisclaimer": "Nutritional information is approximate and should not be used as definitive health advice",
+    "createdAt": "2025-09-01T17:36:16.243Z",
+    "updatedAt": "2025-09-02T11:23:30.915Z",
+    "id": "cmf1ei839000095ysuv7kirir"
+}
 
 
 */

@@ -15,7 +15,7 @@ const ALLOWED_TYPES = [
   "image/webp",
   "image/gif",
 ];
-const UPLOAD_DIR = path.join(process.cwd(), "data", "uploads");
+const UPLOAD_DIR = path.join(process.cwd(), "uploads");
 
 // Ensure upload directory exists
 async function ensureUploadDir() {

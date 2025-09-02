@@ -35,6 +35,15 @@ const nextConfig = {
     removeConsole: process.env.NODE_ENV === "production",
   },
 
+  async rewrites() {
+    return [
+      {
+        source: "/uploads/:path*",
+        destination: "/api/uploads/:path*", // forward to an API route
+      },
+    ];
+  },
+
   // Headers for security and performance
   async headers() {
     return [
@@ -77,14 +86,6 @@ const nextConfig = {
   },
 
   // URL rewrites
-  async rewrites() {
-    return [
-      {
-        source: "/uploads/:path*",
-        destination: "/api/uploads/:path*", // proxy to API
-      },
-    ];
-  },
 
   // Conditionally set output based on environment
   ...(process.env.NODE_ENV === "production" &&
