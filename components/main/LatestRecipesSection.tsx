@@ -1,5 +1,4 @@
 import React from "react";
-import { latestRecipes } from "../../data/recipes";
 import Recipe from "@/outils/types";
 import { getLatest } from "@/data/data";
 

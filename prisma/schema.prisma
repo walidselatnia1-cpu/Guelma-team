@@ -1,74 +1,55 @@
-// ---------- Prisma Schema ----------
-
-datasource db {
-  provider = "postgresql" // or "mysql" / "sqlite" depending on your DB
-  url      = env("DATABASE_URL")
-}
-
 generator client {
   provider = "prisma-client-js"
 }
 
-// ---------- Recipe Model with Embedded JSON ----------
-// All relations are stored as JSON to match the recipe.json structure
-
-model Recipe {
-  id               String   @id @default(cuid()) // String to match JSON
-  slug             String   @unique
-  href             String?
-  imageAlt         String?  // Optional to match JSON
-  categoryHref     String?
-  img              String
-  title            String
-  intro            String
-  description      String
-  shortDescription String
-  story            String
-  testimonial      String
-  category         String
-  categoryLink     String
-  featuredText     String
-  updatedDate      String
-
-  // Author as embedded JSON (matches JSON structure)
-  author       Json
-
-  // Embedded JSON objects (matches JSON structure)
-  whyYouLove     Json?
-  timing         Json?
-  recipeInfo     Json?
-  questions      Json?
-
-  // Array fields stored as JSON (matches JSON structure)
-  essIngredientGuide       Json?
-  ingredientGuide          Json?
-  ingredients              Json?
-  instructions             Json?
-  completeProcess          Json?
-  sections                 Json?
-  faq                      Json?
-  relatedRecipes           Json?
-
-  // Simple array fields
-  mustKnowTips       String[]
-  professionalSecrets String[]
-
-  // Simple fields from JSON
-  serving             String
-  storage             String
-  heroImage           String
-  images              String[]
-  notes               String[]
-  tools               String[]
-  allergyInfo         String
-  nutritionDisclaimer String
-
-  // Timestamps
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
 
-// ---------- Optional: Separate models for other entities ----------
+model Recipe {
+  id                  String   @id @default(cuid())
+  title               String
+  category            String
+  description         String
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+  allergyInfo         String
+  author              Json
+  categoryHref        String?
+  categoryLink        String
+  completeProcess     Json?
+  essIngredientGuide  Json?
+  faq                 Json?
+  featuredText        String
+  heroImage           String
+  href                String?
+  imageAlt            String?
+  images              String[]
+  img                 String
+  ingredientGuide     Json?
+  intro               String
+  mustKnowTips        String[]
+  notes               String[]
+  nutritionDisclaimer String
+  professionalSecrets String[]
+  questions           Json?
+  recipeInfo          Json?
+  relatedRecipes      Json?
+  sections            Json?
+  serving             String
+  shortDescription    String
+  slug                String   @unique
+  storage             String
+  story               String
+  testimonial         String
+  timing              Json?
+  tools               String[]
+  updatedDate         String
+  whyYouLove          Json?
+  ingredients         Json?
+  instructions        Json?
+}
 
 model Category {
   id          String  @id @default(cuid())
@@ -82,7 +63,7 @@ model Category {
 }
 
 model NavigationItem {
-  id            String @id @default(cuid())
+  id            String  @id @default(cuid())
   href          String
   title         String
   iconSrc       String

@@ -10,16 +10,8 @@ import About from "@/components/main/Aboute";
 export default async function RecipePage({}) {
   return (
     <>
-      <div className="grid grid-cols-1 lg:grid-cols-6 gap-8  px-4 py-8 ">
-        {/* Main Content */}
-        <div className="lg:col-span-1"></div>
-
-        {/* Sidebar */}
-        <div className="lg:col-span-4">
-          <div className="sticky top-8">
-            <About />{" "}
-          </div>
-        </div>
+      <div className="pl-2 pr-4 py-8 max-w-7xl mx-auto">
+        <About />
       </div>
     </>
   );
