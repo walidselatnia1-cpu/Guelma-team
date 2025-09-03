@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { writeFile, mkdir, readdir, unlink, stat } from "fs/promises";
 import { existsSync } from "fs";
 import path from "path";
+import { revalidatePath, revalidateTag } from "next/cache";
 
 // Next.js configuration for API route
 export const dynamic = "force-dynamic";
@@ -89,6 +90,15 @@ export async function POST(request: NextRequest) {
     // Return success response with file info
     const fileUrl = `/uploads/${category}/${fileName}`;
 
+    try {
+      revalidatePath("/recipes");
+      revalidatePath(`/recipes/${updatedRecipe.slug}`);
+      revalidateTag("recipes");
+      revalidateTag("all-recipes");
+      console.log("✅ Cache revalidated for updated recipe");
+    } catch (revalidationError) {
+      console.warn("⚠️ Cache revalidation failed:", revalidationError);
+    }
     return NextResponse.json({
       success: true,
       url: fileUrl,

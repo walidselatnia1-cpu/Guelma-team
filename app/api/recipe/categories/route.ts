@@ -18,11 +18,6 @@ export async function GET(request: NextRequest) {
         category: true,
       },
       distinct: ["category"],
-      where: {
-        category: {
-          not: null,
-        },
-      },
     });
 
     const categoryNames = categories

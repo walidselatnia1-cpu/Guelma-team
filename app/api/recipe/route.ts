@@ -8,6 +8,7 @@ import { auth } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 import { getRecipeRelations } from "@/lib/prisma-helpers";
 import { unstable_cache } from "next/cache";
+import { revalidatePath, revalidateTag } from "next/cache";
 
 /**
  * GET /api/recipe
@@ -289,6 +290,19 @@ export async function POST(request: NextRequest) {
       data: recipeData,
     });
 
+    // Revalidate cache to show new recipe immediately
+    try {
+      // Revalidate the recipes page
+      revalidatePath("/recipes");
+      // Revalidate cache tags
+      revalidateTag("recipes");
+      revalidateTag("all-recipes");
+      console.log("✅ Cache revalidated for new recipe");
+    } catch (revalidationError) {
+      console.warn("⚠️ Cache revalidation failed:", revalidationError);
+      // Don't fail the request if revalidation fails
+    }
+
     return NextResponse.json(createdRecipe);
   } catch (error) {
     console.error("Error creating recipe:", error);
@@ -326,7 +340,15 @@ async function uploadBase64Image(
 
     // TODO: Implement actual file upload to your storage service
     // const uploadResult = await cloudStorage.upload(Buffer.from(imageData, 'base64'), filename);
-
+    try {
+      revalidatePath("/recipes");
+      revalidatePath(`/recipes/${updatedRecipe.slug}`);
+      revalidateTag("recipes");
+      revalidateTag("all-recipes");
+      console.log("✅ Cache revalidated for updated recipe");
+    } catch (revalidationError) {
+      console.warn("⚠️ Cache revalidation failed:", revalidationError);
+    }
     return uploadUrl;
   } catch (error) {
     console.error("Error uploading base64 image:", error);
@@ -472,6 +494,17 @@ export async function PUT(request: NextRequest) {
       },
     });
 
+    // Revalidate cache to show updated recipe immediately
+    try {
+      revalidatePath("/recipes");
+      revalidatePath(`/recipes/${updatedRecipe.slug}`);
+      revalidateTag("recipes");
+      revalidateTag("all-recipes");
+      console.log("✅ Cache revalidated for updated recipe");
+    } catch (revalidationError) {
+      console.warn("⚠️ Cache revalidation failed:", revalidationError);
+    }
+
     return NextResponse.json(updatedRecipe);
   } catch (error) {
     console.error("Error updating recipe:", error);
@@ -515,6 +548,19 @@ export async function DELETE(request: NextRequest) {
         id: id,
       },
     });
+
+    // Revalidate cache to remove deleted recipe immediately
+    try {
+      revalidatePath("/recipes");
+      if (deletedRecipe.slug) {
+        revalidatePath(`/recipes/${deletedRecipe.slug}`);
+      }
+      revalidateTag("recipes");
+      revalidateTag("all-recipes");
+      console.log("✅ Cache revalidated for deleted recipe");
+    } catch (revalidationError) {
+      console.warn("⚠️ Cache revalidation failed:", revalidationError);
+    }
 
     return NextResponse.json({ message: "Recipe deleted successfully" });
   } catch (error) {

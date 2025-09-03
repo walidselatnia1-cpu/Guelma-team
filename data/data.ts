@@ -215,14 +215,28 @@ export async function getData(): Promise<Recipe[]> {
     return getDummyData(10);
   }
 
-  // During build time or server-side, use direct Prisma call
+  // During build time or server-side, use direct Prisma call with cache tags
   if (typeof window === "undefined") {
     try {
+      const { unstable_cache } = await import("next/cache");
       const prisma = (await import("@/lib/prisma")).default;
-      const recipes = await prisma.recipe.findMany({
-        orderBy: { createdAt: "desc" },
-      });
-      return recipes as unknown as Recipe[];
+
+      // Wrap in Next.js cache with tags for revalidation
+      const getCachedRecipes = unstable_cache(
+        async () => {
+          const recipes = await prisma.recipe.findMany({
+            orderBy: { createdAt: "desc" },
+          });
+          return recipes as unknown as Recipe[];
+        },
+        ["all-recipes"], // Cache key
+        {
+          tags: ["recipes", "all-recipes"], // Cache tags for revalidation
+          revalidate: 60, // Cache for 1 minute
+        }
+      );
+
+      return await getCachedRecipes();
     } catch (error) {
       console.error("Direct DB call failed:", error);
       return getDummyData(10);

@@ -3,8 +3,8 @@ import { Recipe } from "@/outils/types";
 import { notFound } from "next/navigation";
 import { getRecipes } from "@/data/data";
 
-// Enable ISR for this page - revalidate every 2 minutes
-export const revalidate = 120;
+// Enable ISR for this page - revalidate every minute
+export const revalidate = 60;
 
 const Pagination = ({ currentPage = 1, totalPages = 311 }) => {
   const isFirstPage = currentPage === 1;
