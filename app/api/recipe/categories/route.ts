@@ -4,6 +4,7 @@ export const revalidate = 300; // Cache categories longer since they change less
 
 import { NextResponse, NextRequest } from "next/server";
 import prisma from "@/lib/prisma";
+import { unstable_cache } from "next/cache";
 
 /**
  * GET /api/recipe/categories
@@ -13,17 +14,31 @@ import prisma from "@/lib/prisma";
  */
 export async function GET(request: NextRequest) {
   try {
-    const categories = await prisma.recipe.findMany({
-      select: {
-        category: true,
-      },
-      distinct: ["category"],
-    });
+    // Use cache with tags for categories
+    const getCachedCategories = unstable_cache(
+      async () => {
+        const categories = await prisma.recipe.findMany({
+          select: {
+            category: true,
+          },
+          distinct: ["category"],
+        });
 
-    const categoryNames = categories
-      .map((recipe) => recipe.category)
-      .filter(Boolean)
-      .sort();
+        const categoryNames = categories
+          .map((recipe) => recipe.category)
+          .filter(Boolean)
+          .sort();
+
+        return categoryNames;
+      },
+      ["recipe-categories"],
+      {
+        tags: ["categories", "recipes"],
+        revalidate: 300,
+      }
+    );
+
+    const categoryNames = await getCachedCategories();
 
     return NextResponse.json(categoryNames);
   } catch (error) {

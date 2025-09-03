@@ -3,8 +3,8 @@ import { Recipe } from "@/outils/types";
 import { notFound } from "next/navigation";
 import { getRecipes } from "@/data/data";
 
-// Enable ISR for this page - revalidate every minute
-export const revalidate = 60;
+// Enable ISR for this page - revalidate every 5 minutes
+export const revalidate = 300;
 
 const Pagination = ({ currentPage = 1, totalPages = 311 }) => {
   const isFirstPage = currentPage === 1;
@@ -92,7 +92,10 @@ const RecipeCard = ({ recipe }: { recipe: Recipe }) => {
   return (
     <div className="bg-white rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-lg flex flex-col shadow-sm">
       {/* Smaller image height */}
-      <a href={recipe.href} className="block w-full h-40 overflow-hidden">
+      <a
+        href={"/recipes/" + recipe.slug}
+        className="block w-full h-40 overflow-hidden"
+      >
         <img
           src={recipe.images[0]}
           alt={recipe.imageAlt || recipe.title}
@@ -101,7 +104,7 @@ const RecipeCard = ({ recipe }: { recipe: Recipe }) => {
       </a>
 
       <div className="flex flex-col flex-1 gap-2 p-3">
-        <a href={recipe.href} className="block">
+        <a href={"/recipes/" + recipe.slug} className="block">
           <h3 className="text-base font-semibold text-black hover:text-gray-700 transition-colors line-clamp-1">
             {recipe.title}
           </h3>
@@ -115,7 +118,7 @@ const RecipeCard = ({ recipe }: { recipe: Recipe }) => {
 
       <div className="px-3 pb-3 flex gap-3 flex-wrap text-xs">
         <a
-          href={recipe.href}
+          href={"/recipes/" + recipe.slug}
           className="text-green-700 font-semibold hover:text-green-500 transition-colors"
         >
           Make 'em

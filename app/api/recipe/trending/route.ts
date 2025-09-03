@@ -4,6 +4,7 @@ export const revalidate = 60;
 import { NextResponse, NextRequest } from "next/server";
 import prisma from "@/lib/prisma";
 import { getRecipeRelations } from "@/lib/prisma-helpers";
+import { unstable_cache } from "next/cache";
 
 /**
  * GET /api/recipe/trending
@@ -20,20 +21,32 @@ export async function GET(request: NextRequest) {
 
     const recipeRelations = getRecipeRelations();
 
-    // For trending, use recently created recipes
-    const trendingRecipes = await prisma.recipe.findMany({
-      take: limit,
-      orderBy: { createdAt: "desc" },
-      include: recipeRelations,
-    });
+    // Use cache with tags for trending recipes
+    const getCachedTrendingRecipes = unstable_cache(
+      async () => {
+        // For trending, use recently created recipes
+        const trendingRecipes = await prisma.recipe.findMany({
+          take: limit,
+          orderBy: { createdAt: "desc" },
+          include: recipeRelations,
+        });
 
-    console.log("✅ Found", trendingRecipes.length, "trending recipes");
+        // Add featuredText for trending recipes
+        return trendingRecipes.map((recipe) => ({
+          ...recipe,
+          featuredText: "Trending Now",
+        }));
+      },
+      [`trending-recipes-${limit}`],
+      {
+        tags: ["recipes", "trending-recipes", "all-recipes"],
+        revalidate: 60,
+      }
+    );
 
-    // Add featuredText for trending recipes
-    const recipesWithFeature = trendingRecipes.map((recipe) => ({
-      ...recipe,
-      featuredText: "Trending Now",
-    }));
+    const recipesWithFeature = await getCachedTrendingRecipes();
+
+    console.log("✅ Found", recipesWithFeature.length, "trending recipes");
 
     return NextResponse.json(recipesWithFeature);
   } catch (error) {

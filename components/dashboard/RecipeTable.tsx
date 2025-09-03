@@ -191,7 +191,14 @@ export const RecipeTable: React.FC<RecipeTableProps> = ({
                         <Edit className="w-4 h-4" />
                       </button>
                       <button
-                        onClick={() => onDelete(recipe.id)}
+                        onClick={() => {
+                          console.log("🗑️ Delete button clicked for recipe:", {
+                            id: recipe.id,
+                            title: recipe.title,
+                            recipe,
+                          });
+                          onDelete(recipe.id);
+                        }}
                         className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
                         title="Delete recipe"
                       >

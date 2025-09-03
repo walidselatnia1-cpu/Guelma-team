@@ -9,7 +9,8 @@ import { Recipe } from "@/outils/types";
 import { AdminProvider, useAdmin } from "@/contexts/AdminContext";
 
 function AdminDashboardContent() {
-  const { state, openCreateModal, openEditModal, closeModal } = useAdmin();
+  const { state, openCreateModal, openEditModal, closeModal, deleteRecipe } =
+    useAdmin();
   const [activeSection, setActiveSection] = useState("dashboard");
 
   const handleAddRecipe = () => {
@@ -20,11 +21,8 @@ function AdminDashboardContent() {
     openEditModal(recipe);
   };
 
-  const handleDeleteRecipe = (id: string) => {
-    if (window.confirm("Are you sure you want to delete this recipe?")) {
-      // Implementation would use the deleteRecipe function from context
-      console.log("Delete recipe:", id);
-    }
+  const handleDeleteRecipe = async (id: string) => {
+    await deleteRecipe(id);
   };
 
   const renderContent = () => {

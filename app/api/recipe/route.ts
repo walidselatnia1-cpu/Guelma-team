@@ -1,5 +1,5 @@
 export const dynamic = "force-static";
-export const revalidate = 60; // ISR: revalidate every minute
+export const revalidate = 300; // ISR: revalidate every 5 minutes
 
 // Updated main recipe route with better error handling and cache tags
 // app/api/recipe/route.ts (Enhanced version)
@@ -292,12 +292,28 @@ export async function POST(request: NextRequest) {
 
     // Revalidate cache to show new recipe immediately
     try {
-      // Revalidate the recipes page
+      // Revalidate all pages that show recipes
       revalidatePath("/recipes");
+      revalidatePath("/");
+      revalidatePath("/explore");
+      revalidatePath("/categories");
+
+      // Revalidate the specific category page if it exists
+      if (recipeData.category) {
+        revalidatePath(
+          `/categories/${recipeData.category
+            .toLowerCase()
+            .replace(/\s+/g, "-")}`
+        );
+      }
+
       // Revalidate cache tags
       revalidateTag("recipes");
       revalidateTag("all-recipes");
-      console.log("✅ Cache revalidated for new recipe");
+      revalidateTag("categories");
+      revalidateTag("latest-recipes");
+
+      console.log("✅ Cache revalidated for new recipe across all pages");
     } catch (revalidationError) {
       console.warn("⚠️ Cache revalidation failed:", revalidationError);
       // Don't fail the request if revalidation fails
@@ -496,11 +512,29 @@ export async function PUT(request: NextRequest) {
 
     // Revalidate cache to show updated recipe immediately
     try {
+      // Revalidate all pages that show recipes
       revalidatePath("/recipes");
+      revalidatePath("/");
+      revalidatePath("/explore");
+      revalidatePath("/categories");
       revalidatePath(`/recipes/${updatedRecipe.slug}`);
+
+      // Revalidate the specific category page if it exists
+      if (updatedRecipe.category) {
+        revalidatePath(
+          `/categories/${updatedRecipe.category
+            .toLowerCase()
+            .replace(/\s+/g, "-")}`
+        );
+      }
+
+      // Revalidate cache tags
       revalidateTag("recipes");
       revalidateTag("all-recipes");
-      console.log("✅ Cache revalidated for updated recipe");
+      revalidateTag("categories");
+      revalidateTag("latest-recipes");
+
+      console.log("✅ Cache revalidated for updated recipe across all pages");
     } catch (revalidationError) {
       console.warn("⚠️ Cache revalidation failed:", revalidationError);
     }
@@ -517,9 +551,26 @@ export async function PUT(request: NextRequest) {
 
 export async function DELETE(request: NextRequest) {
   const url = new URL(request.nextUrl);
-  const id = url.searchParams.get("id");
+  let id = url.searchParams.get("id");
+
+  console.log("DELETE request received:");
+  console.log("- URL:", request.url);
+  console.log("- Query params:", Object.fromEntries(url.searchParams));
+  console.log("- ID from query:", id);
+
+  // If no ID in query params, try to get it from the request body (like PUT does)
+  if (!id) {
+    try {
+      const body = await request.json();
+      id = body.id;
+      console.log("- ID from body:", id);
+    } catch (error) {
+      console.log("- No valid JSON body found");
+    }
+  }
 
   if (!id) {
+    console.log("❌ No ID found in query parameters or body");
     return NextResponse.json(
       { error: "Recipe ID is required" },
       { status: 400 }
@@ -551,13 +602,32 @@ export async function DELETE(request: NextRequest) {
 
     // Revalidate cache to remove deleted recipe immediately
     try {
+      // Revalidate all pages that show recipes
       revalidatePath("/recipes");
+      revalidatePath("/");
+      revalidatePath("/explore");
+      revalidatePath("/categories");
+
       if (deletedRecipe.slug) {
         revalidatePath(`/recipes/${deletedRecipe.slug}`);
       }
+
+      // Revalidate the specific category page if it exists
+      if (deletedRecipe.category) {
+        revalidatePath(
+          `/categories/${deletedRecipe.category
+            .toLowerCase()
+            .replace(/\s+/g, "-")}`
+        );
+      }
+
+      // Revalidate cache tags
       revalidateTag("recipes");
       revalidateTag("all-recipes");
-      console.log("✅ Cache revalidated for deleted recipe");
+      revalidateTag("categories");
+      revalidateTag("latest-recipes");
+
+      console.log("✅ Cache revalidated for deleted recipe across all pages");
     } catch (revalidationError) {
       console.warn("⚠️ Cache revalidation failed:", revalidationError);
     }

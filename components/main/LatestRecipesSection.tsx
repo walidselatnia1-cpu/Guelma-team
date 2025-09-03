@@ -56,11 +56,15 @@ export default async function LatestRecipesSection({
           <div className="box-border gap-x-[25.6px] grid grid-cols-[1fr] gap-y-[25.6px] md:grid-cols-[repeat(4,1fr)]">
             {latestRecipes.map((recipe) => (
               <div
-                key={recipe.id}
+                key={recipe.id || recipe.slug}
                 className=" text-gray-700  hover:text-red-700 items-center box-border gap-x-2 flex flex-col col-start-[span_1] gap-y-2 text-center overflow-hidden group"
               >
                 <a
-                  href={recipe.href}
+                  href={
+                    recipe.slug
+                      ? `/recipes/${recipe.slug}`
+                      : `/recipe/${recipe.id}`
+                  }
                   title={recipe.title}
                   className="text-blue-700 bg-stone-100 box-border block h-[300px] w-full overflow-hidden transform transition-transform duration-300 rounded-[14px] group-hover:scale-105"
                 >

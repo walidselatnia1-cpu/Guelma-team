@@ -232,7 +232,7 @@ export async function getData(): Promise<Recipe[]> {
         ["all-recipes"], // Cache key
         {
           tags: ["recipes", "all-recipes"], // Cache tags for revalidation
-          revalidate: 60, // Cache for 1 minute
+          revalidate: 300, // Cache for 5 minutes
         }
       );
 
@@ -799,6 +799,8 @@ export async function adminUpdateRecipe(
  * Admin function: Delete recipe
  */
 export async function adminDeleteRecipe(id: string): Promise<void> {
+  console.log("🗑️ adminDeleteRecipe called with id:", id, "type:", typeof id);
+
   if (MOCK_MODE) {
     await initializeMockRecipes();
     const index = mockRecipes.findIndex((recipe) => recipe.id === id);
@@ -810,12 +812,22 @@ export async function adminDeleteRecipe(id: string): Promise<void> {
     return;
   }
 
-  const baseUrl = isServer ? "" : BASE_URL;
-  const response = await fetch(`${baseUrl}/api/recipe?id=${id}`, {
+  // Client-side: use relative URL, Server-side: use full BASE_URL
+  const baseUrl = isServer ? BASE_URL : "";
+  const url = `${baseUrl}/api/recipe`;
+  console.log("🌐 DELETE request URL:", url, "isServer:", isServer);
+
+  const response = await fetch(url, {
     method: "DELETE",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ id }),
   });
 
   if (!response.ok) {
+    const errorText = await response.text();
+    console.error("❌ DELETE request failed:", response.status, errorText);
     throw new Error("Failed to delete recipe");
   }
 }

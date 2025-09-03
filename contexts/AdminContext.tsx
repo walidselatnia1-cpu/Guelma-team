@@ -180,6 +180,14 @@ export const AdminProvider: React.FC<AdminProviderProps> = ({ children }) => {
   };
 
   const deleteRecipe = async (id: string) => {
+    console.log("🗑️ deleteRecipe called with id:", id, "type:", typeof id);
+
+    if (!id || id.trim() === "") {
+      console.error("❌ Invalid recipe ID provided:", id);
+      dispatch({ type: "SET_ERROR", payload: "Invalid recipe ID" });
+      return;
+    }
+
     if (!window.confirm("Are you sure you want to delete this recipe?")) {
       return;
     }
@@ -189,6 +197,7 @@ export const AdminProvider: React.FC<AdminProviderProps> = ({ children }) => {
       await AdminRecipeService.deleteRecipe(id);
       dispatch({ type: "DELETE_RECIPE", payload: id });
     } catch (error) {
+      console.error("❌ Delete recipe error:", error);
       dispatch({ type: "SET_ERROR", payload: (error as Error).message });
     } finally {
       dispatch({ type: "SET_LOADING", payload: false });

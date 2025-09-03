@@ -4,6 +4,7 @@ export const revalidate = 60;
 import { NextResponse, NextRequest } from "next/server";
 import prisma from "@/lib/prisma";
 import { getRecipeRelations } from "@/lib/prisma-helpers";
+import { unstable_cache } from "next/cache";
 
 /**
  * GET /api/recipe/latest
@@ -20,19 +21,31 @@ export async function GET(request: NextRequest) {
 
     const recipeRelations = getRecipeRelations();
 
-    const recipes = await prisma.recipe.findMany({
-      include: recipeRelations,
-      orderBy: { updatedAt: "desc" },
-      take: limit,
-    });
+    // Use cache with tags for latest recipes
+    const getCachedLatestRecipes = unstable_cache(
+      async () => {
+        const recipes = await prisma.recipe.findMany({
+          include: recipeRelations,
+          orderBy: { updatedAt: "desc" },
+          take: limit,
+        });
 
-    console.log("✅ Found", recipes.length, "latest recipes");
+        // Add featuredText for latest recipes
+        return recipes.map((recipe) => ({
+          ...recipe,
+          featuredText: "Latest Recipe",
+        }));
+      },
+      [`latest-recipes-${limit}`],
+      {
+        tags: ["recipes", "latest-recipes", "all-recipes"],
+        revalidate: 60,
+      }
+    );
 
-    // Add featuredText for latest recipes
-    const recipesWithFeature = recipes.map((recipe) => ({
-      ...recipe,
-      featuredText: "Latest Recipe",
-    }));
+    const recipesWithFeature = await getCachedLatestRecipes();
+
+    console.log("✅ Found", recipesWithFeature.length, "latest recipes");
 
     return NextResponse.json(recipesWithFeature);
   } catch (error) {

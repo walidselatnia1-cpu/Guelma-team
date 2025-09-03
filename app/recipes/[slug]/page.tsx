@@ -3,6 +3,7 @@ import { RelatedRecipes } from "@/components/RelatedRecipes";
 import { notFound } from "next/navigation";
 import { getRecipe, getRecipes, getRelated } from "@/data/data";
 import Side from "@/components/Side";
+import Recipe from "@/outils/types";
 
 // Force dynamic rendering to avoid build-time fetch issues
 export const dynamic = "force-dynamic";
@@ -18,7 +19,7 @@ export default async function RecipePage({
   if (!recipe) return notFound();
 
   // Fetch related recipes with error handling
-  let relatedRecipes = [];
+  let relatedRecipes: Recipe[] = [];
   try {
     relatedRecipes = await getRelated(recipe.id, 6);
   } catch (error) {

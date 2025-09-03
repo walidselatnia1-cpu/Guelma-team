@@ -2,8 +2,9 @@ import React from "react";
 import { Recipe } from "@/outils/types";
 import { notFound } from "next/navigation";
 import { getCategories, getRecipesByCategory } from "@/data/data";
+import Link from "next/link";
 
-const Pagination = ({ currentPage = 1, totalPages = 311 }) => {
+const Pagination = ({ currentPage = 1, totalPages = 311, basePath = "" }) => {
   const isFirstPage = currentPage === 1;
   const isLastPage = currentPage === totalPages;
 
@@ -17,12 +18,12 @@ const Pagination = ({ currentPage = 1, totalPages = 311 }) => {
               «
             </span>
           ) : (
-            <a
-              href="#"
+            <Link
+              href={`${basePath}?page=1`}
               className="px-3 py-2 rounded-2xl bg-black text-white hover:bg-gray-800 transition-colors block"
             >
               «
-            </a>
+            </Link>
           )}
         </li>
 
@@ -33,12 +34,12 @@ const Pagination = ({ currentPage = 1, totalPages = 311 }) => {
               Previous
             </span>
           ) : (
-            <a
-              href="#"
+            <Link
+              href={`${basePath}?page=${currentPage - 1}`}
               className="px-3 py-2 rounded-2xl bg-black text-white hover:bg-gray-800 transition-colors block"
             >
               Previous
-            </a>
+            </Link>
           )}
         </li>
 
@@ -56,12 +57,12 @@ const Pagination = ({ currentPage = 1, totalPages = 311 }) => {
               Next
             </span>
           ) : (
-            <a
-              href="#"
+            <Link
+              href={`${basePath}?page=${currentPage + 1}`}
               className="px-3 py-2 rounded-2xl bg-black text-white hover:bg-gray-800 transition-colors block"
             >
               Next
-            </a>
+            </Link>
           )}
         </li>
 
@@ -72,12 +73,12 @@ const Pagination = ({ currentPage = 1, totalPages = 311 }) => {
               »
             </span>
           ) : (
-            <a
-              href="#"
+            <Link
+              href={`${basePath}?page=${totalPages}`}
               className="px-3 py-2 rounded-2xl bg-black text-white hover:bg-gray-800 transition-colors block"
             >
               »
-            </a>
+            </Link>
           )}
         </li>
       </ul>
@@ -131,7 +132,17 @@ const RecipeCard = ({ recipe }: { recipe: Recipe }) => {
   );
 };
 
-function Explore({ recipes }: any) {
+function Explore({
+  recipes,
+  currentPage,
+  totalPages,
+  basePath,
+}: {
+  recipes: Recipe[];
+  currentPage: number;
+  totalPages: number;
+  basePath: string;
+}) {
   return (
     <div className="p-6 bg-gray-50 min-h-screen">
       <div className="max-w-7xl mx-auto">
@@ -140,25 +151,49 @@ function Explore({ recipes }: any) {
         </h1>
 
         {/* Recipe Grid */}
-        <div className="grid grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {recipes.map((recipe: Recipe, index: number) => (
             <RecipeCard recipe={recipe} key={index} />
           ))}
         </div>
 
         {/* Pagination */}
-        <Pagination currentPage={1} totalPages={311} />
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          basePath={basePath}
+        />
       </div>
     </div>
   );
 }
 
-export default async function Page({ params }: { params: { slug: string } }) {
-  const { slug } = await params;
-  const recipes = (await getRecipesByCategory(slug)) as any;
-  if (!recipes || recipes.length === 0) {
+export default async function Page({
+  params,
+  searchParams,
+}: {
+  params: { slug: string };
+  searchParams: { page?: string };
+}) {
+  const { slug } = params;
+  const currentPage = searchParams.page ? parseInt(searchParams.page) : 1;
+  const pageSize = 9; // Show 9 recipes per page
+
+  const allRecipes = (await getRecipesByCategory(slug)) as Recipe[];
+
+  if (!allRecipes || allRecipes.length === 0) {
     notFound();
   }
+
+  // Calculate total pages
+  const totalPages = Math.ceil(allRecipes.length / pageSize);
+
+  // Get current page of recipes
+  const startIndex = (currentPage - 1) * pageSize;
+  const paginatedRecipes = allRecipes.slice(startIndex, startIndex + pageSize);
+
+  // Base path for pagination links
+  const basePath = `/categories/${slug}`;
 
   return (
     <>
@@ -173,7 +208,12 @@ export default async function Page({ params }: { params: { slug: string } }) {
         {/* Explore Content - Middle */}
         <div className="lg:col-span-4">
           <div className="sticky top-8">
-            <Explore recipes={recipes} />
+            <Explore
+              recipes={paginatedRecipes}
+              currentPage={currentPage}
+              totalPages={totalPages}
+              basePath={basePath}
+            />
           </div>
         </div>
 
