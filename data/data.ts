@@ -531,7 +531,8 @@ export async function getCategories(): Promise<Category[]> {
                 recipe.categoryLink ||
                 `/categories/${recipe.category
                   .toLowerCase()
-                  .replace(/\s+/g, "-")}`,
+                  .replace(/\s+/g, "-")
+                  .replace(/[^a-z0-9-]/g, "")}`,
               recipes: [recipe],
             });
           }

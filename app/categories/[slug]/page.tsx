@@ -89,7 +89,10 @@ const RecipeCard = ({ recipe }: { recipe: Recipe }) => {
   return (
     <div className="bg-white rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-lg flex flex-col shadow-sm">
       {/* Smaller image height */}
-      <a href={recipe.href} className="block w-full h-40 overflow-hidden">
+      <a
+        href={"/recipes/" + recipe.slug}
+        className="block w-full h-40 overflow-hidden"
+      >
         <img
           src={recipe.img || recipe.heroImage}
           alt={recipe.imageAlt || recipe.title}
@@ -98,7 +101,7 @@ const RecipeCard = ({ recipe }: { recipe: Recipe }) => {
       </a>
 
       <div className="flex flex-col flex-1 gap-2 p-3">
-        <a href={recipe.href} className="block">
+        <a href={"/recipes/" + recipe.slug} className="block">
           <h3 className="text-base font-semibold text-black hover:text-gray-700 transition-colors line-clamp-1">
             {recipe.title}
           </h3>
