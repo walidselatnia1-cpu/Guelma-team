@@ -7,8 +7,9 @@ import Footer from "./layout/Footer";
 import ClientLayout from "@/components/ClientLayout";
 
 export const metadata: Metadata = {
-  title: "Recipes",
-  description: "Created with pain!",
+  title: "Calama Team Recipes - Delicious Family-Friendly Recipes",
+  description:
+    "Discover amazing recipes from Guelma Team. Perfect for family meals, special occasions, and everyday cooking. Easy-to-follow instructions with professional tips.",
 };
 
 export default function RootLayout({
@@ -19,7 +20,10 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
-        <meta name="title" content="Recipes!" />
+        <meta
+          name="title"
+          content="Guelma Team Recipes - Delicious Family-Friendly Recipes"
+        />
 
         <style>{`
 html {

@@ -42,8 +42,8 @@ export default function Header({ className }: HeaderProps) {
             className="flex items-center py-2 min-w-[90px]"
           >
             <img
-              src="https://c.animaapp.com/mer35j4wJPAxku/assets/logo.svg"
-              alt="Recipes by Clare"
+              src="/placeholder-logo.svg"
+              alt="Guelma Team Recipes"
               className="h-[50px] md:h-[70px] max-w-full"
             />
           </a>

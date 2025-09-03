@@ -12,8 +12,8 @@ export function Header() {
           {/* Logo */}
           <Link href="/" className="flex items-center space-x-2">
             <Image
-              src="https://ext.same-assets.com/3912301781/237098034.svg"
-              alt="Recipes By Clare"
+              src="/placeholder-logo.svg"
+              alt="Guelma Team Recipes"
               width={120}
               height={40}
             />
