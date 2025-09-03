@@ -1,9 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import {
-  revalidateAfterNewRecipe,
-  revalidateAfterRecipeUpdate,
-  revalidateRecipeData,
-} from "@/data/data";
+import { revalidatePath, revalidateTag } from "next/cache";
 
 /**
  * POST /api/admin/revalidate
@@ -26,28 +22,90 @@ export async function POST(request: NextRequest) {
     }
 
     let result = false;
+    let revalidatedPaths: string[] = [];
+    let revalidatedTags: string[] = [];
 
     switch (action) {
       case "new-recipe":
-        result = await revalidateAfterNewRecipe(recipe_category);
+        // Revalidate paths after new recipe
+        const newRecipePaths = [
+          "/",
+          "/recipes",
+          "/categories",
+          "/explore",
+          ...(recipe_category ? [`/categories/${recipe_category}`] : []),
+        ];
+
+        for (const path of newRecipePaths) {
+          await revalidatePath(path);
+          revalidatedPaths.push(path);
+        }
+
+        // Revalidate tags
+        const newRecipeTags = ["recipes", "latest", "trending"];
+        for (const tag of newRecipeTags) {
+          await revalidateTag(tag);
+          revalidatedTags.push(tag);
+        }
+        result = true;
         break;
 
       case "update-recipe":
-        result = await revalidateAfterRecipeUpdate(
-          recipe_slug,
-          recipe_category
-        );
+        // Revalidate paths after recipe update
+        const updatePaths = [
+          "/",
+          "/recipes",
+          "/categories",
+          ...(recipe_slug ? [`/recipes/${recipe_slug}`] : []),
+          ...(recipe_category ? [`/categories/${recipe_category}`] : []),
+        ];
+
+        for (const path of updatePaths) {
+          await revalidatePath(path);
+          revalidatedPaths.push(path);
+        }
+
+        // Revalidate tags
+        const updateTags = ["recipes", "latest", "trending"];
+        for (const tag of updateTags) {
+          await revalidateTag(tag);
+          revalidatedTags.push(tag);
+        }
+        result = true;
         break;
 
       case "custom":
-        result = await revalidateRecipeData({ paths, tags });
+        // Custom revalidation
+        if (paths && Array.isArray(paths)) {
+          for (const path of paths) {
+            await revalidatePath(path);
+            revalidatedPaths.push(path);
+          }
+        }
+
+        if (tags && Array.isArray(tags)) {
+          for (const tag of tags) {
+            await revalidateTag(tag);
+            revalidatedTags.push(tag);
+          }
+        }
+        result = true;
         break;
 
       case "all":
-        result = await revalidateRecipeData({
-          paths: ["/", "/recipes", "/categories", "/explore"],
-          tags: ["recipes", "categories", "trending", "latest"],
-        });
+        // Revalidate everything
+        const allPaths = ["/", "/recipes", "/categories", "/explore"];
+        for (const path of allPaths) {
+          await revalidatePath(path);
+          revalidatedPaths.push(path);
+        }
+
+        const allTags = ["recipes", "categories", "trending", "latest"];
+        for (const tag of allTags) {
+          await revalidateTag(tag);
+          revalidatedTags.push(tag);
+        }
+        result = true;
         break;
 
       default:
@@ -60,12 +118,20 @@ export async function POST(request: NextRequest) {
         );
     }
 
+    console.log(`✅ Admin revalidation completed:`, {
+      action,
+      revalidatedPaths,
+      revalidatedTags,
+    });
+
     return NextResponse.json({
       success: result,
       message: result
         ? "Revalidation triggered successfully"
         : "Revalidation failed",
       action,
+      revalidatedPaths,
+      revalidatedTags,
       timestamp: new Date().toISOString(),
     });
   } catch (error) {

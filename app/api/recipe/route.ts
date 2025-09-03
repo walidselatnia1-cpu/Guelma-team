@@ -1,14 +1,10 @@
-export const dynamic = "force-static";
-export const revalidate = 300; // ISR: revalidate every 5 minutes
-
-// Updated main recipe route with better error handling and cache tags
+export const dynamic = "force-dynamic"; // Changed from force-static to force-dynamic
+export const revalidate = 0; // Disable caching temporarily
+// Updated main recipe route with better error handling
 // app/api/recipe/route.ts (Enhanced version)
 import { NextResponse, NextRequest } from "next/server";
 import { auth } from "@/lib/auth";
 import prisma from "@/lib/prisma";
-import { getRecipeRelations } from "@/lib/prisma-helpers";
-import { unstable_cache } from "next/cache";
-import { revalidatePath, revalidateTag } from "next/cache";
 
 /**
  * GET /api/recipe
@@ -26,13 +22,21 @@ import { revalidatePath, revalidateTag } from "next/cache";
 export async function GET(request: NextRequest) {
   const url = new URL(request.nextUrl);
   const id = url.searchParams.get("id");
-  const slug = url.searchParams.get("slug");
 
   try {
     if (id) {
       const recipe = await prisma.recipe.findUnique({
         where: {
-          id: id,
+          id: parseInt(id),
+        },
+        include: {
+          author: {
+            select: {
+              id: true,
+              name: true,
+              email: true,
+            },
+          },
         },
       });
 
@@ -43,30 +47,19 @@ export async function GET(request: NextRequest) {
         );
       }
 
-      return NextResponse.json(recipe);
-    }
-
-    if (slug) {
-      console.log("🔍 API: Looking for recipe with slug:", slug);
-      const recipe = await prisma.recipe.findFirst({
-        where: {
-          slug: slug,
-        },
-      });
-
-      if (!recipe) {
-        console.log("❌ API: Recipe not found for slug:", slug);
-        return NextResponse.json(
-          { error: "Recipe not found" },
-          { status: 404 }
-        );
-      }
-
-      console.log("✅ API: Found recipe:", recipe.title);
       return NextResponse.json(recipe);
     }
 
     const recipes = await prisma.recipe.findMany({
+      include: {
+        author: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+          },
+        },
+      },
       orderBy: { createdAt: "desc" },
     });
 
@@ -82,315 +75,75 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
-    // Check environment and auth
-    const isDevelopment = process.env.NODE_ENV === "development";
-    const skipAuth = process.env.SKIP_AUTH === "true" || isDevelopment;
-
-    if (!skipAuth) {
-      const token = await auth.getToken(request);
-      if (!token) {
-        console.log("❌ Authentication failed - no valid token");
-        return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
-      }
-    } else {
-      console.log("🔓 Skipping auth (development mode or SKIP_AUTH=true)");
+    const token = await auth.getToken(request);
+    if (!token) {
+      return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
     }
 
     const recipe = await request.json();
-
-    // Debug: Log the received recipe data
-    console.log("🍳 Recipe API: Received recipe data");
-    console.log("- Title:", recipe.title);
-    console.log("- Main Image (img):", recipe.img);
-    console.log("- Hero Image:", recipe.heroImage);
-    console.log("- Additional Images:", recipe.images);
-    console.log(
-      "- Base64 Images:",
-      recipe.base64Images ? "Present" : "Not present"
-    );
-
-    // Handle image uploads if present
-    let mainImageUrl = recipe.img || "";
-    let heroImageUrl = recipe.heroImage || "";
-    let additionalImageUrls: string[] = recipe.images || [];
-
-    // Process images - handle both file paths and base64 images
-    // If img starts with '/uploads/', it's already an uploaded file path
-    if (
-      recipe.img &&
-      !recipe.img.startsWith("/uploads/") &&
-      recipe.img.startsWith("data:")
-    ) {
-      // This is base64, convert it
-      mainImageUrl = await uploadBase64Image(recipe.img, "recipes", "main");
-    } else if (recipe.img && recipe.img.startsWith("/uploads/")) {
-      // This is already a valid file path from FileUpload
-      mainImageUrl = recipe.img;
-    } else if (recipe.img && recipe.img.startsWith("blob:")) {
-      // This is a blob URL, filter it out
-      console.log("⚠️ Filtering out blob URL for main image:", recipe.img);
-      mainImageUrl = "";
-    }
-
-    if (
-      recipe.heroImage &&
-      !recipe.heroImage.startsWith("/uploads/") &&
-      recipe.heroImage.startsWith("data:")
-    ) {
-      heroImageUrl = await uploadBase64Image(
-        recipe.heroImage,
-        "recipes",
-        "hero"
-      );
-    } else if (recipe.heroImage && recipe.heroImage.startsWith("/uploads/")) {
-      heroImageUrl = recipe.heroImage;
-    } else if (recipe.heroImage && recipe.heroImage.startsWith("blob:")) {
-      // This is a blob URL, filter it out
-      console.log(
-        "⚠️ Filtering out blob URL for hero image:",
-        recipe.heroImage
-      );
-      heroImageUrl = "";
-    }
-
-    // Handle additional images array
-    if (recipe.images && Array.isArray(recipe.images)) {
-      additionalImageUrls = await Promise.all(
-        recipe.images
-          .filter((img: string) => {
-            // Filter out blob URLs as they're temporary and invalid
-            if (img.startsWith("blob:")) {
-              console.log("⚠️ Filtering out blob URL:", img);
-              return false;
-            }
-            return true;
-          })
-          .map(async (img: string, index: number) => {
-            if (img.startsWith("/uploads/")) {
-              return img; // Already a valid file path
-            } else if (img.startsWith("data:")) {
-              return await uploadBase64Image(
-                img,
-                "recipes",
-                `additional-${index}`
-              );
-            }
-            return img; // Return as-is for other formats
-          })
-      );
-    }
-
-    // Process base64 images if provided (legacy support)
-    if (recipe.base64Images) {
-      const { mainImage, heroImage, additionalImages } = recipe.base64Images;
-
-      // Upload main image
-      if (mainImage) {
-        mainImageUrl = await uploadBase64Image(mainImage, "recipes", "main");
-      }
-
-      // Upload hero image
-      if (heroImage) {
-        heroImageUrl = await uploadBase64Image(heroImage, "recipes", "hero");
-      }
-
-      // Upload additional images
-      if (additionalImages && additionalImages.length > 0) {
-        additionalImageUrls = await Promise.all(
-          additionalImages.map((img: string, index: number) =>
-            uploadBase64Image(img, "recipes", `additional-${index}`)
-          )
-        );
-      }
-    }
-
-    // Debug: Log processed image URLs
-    console.log("📸 Processed Images:");
-    console.log("- Main Image URL:", mainImageUrl);
-    console.log("- Hero Image URL:", heroImageUrl);
-    console.log("- Additional Images:", additionalImageUrls);
-
-    // Generate unique slug
-    let baseSlug =
-      recipe.slug ||
-      recipe.title
-        ?.toLowerCase()
-        .replace(/[^a-z0-9\s-]/g, "")
-        .replace(/\s+/g, "-") ||
-      `recipe-${Date.now()}`;
-
-    // Check if slug exists and make it unique
-    let uniqueSlug = baseSlug;
-    let counter = 1;
-    while (await prisma.recipe.findFirst({ where: { slug: uniqueSlug } })) {
-      uniqueSlug = `${baseSlug}-${counter}`;
-      counter++;
-    }
-
-    // Create recipe with processed image URLs
-    const recipeData = {
-      title: recipe.title || "Untitled Recipe",
-      slug: uniqueSlug,
-      intro: recipe.intro || "",
-      description: recipe.description || "",
-      shortDescription: recipe.shortDescription || recipe.intro || "",
-      story: recipe.story || "",
-      testimonial: recipe.testimonial || "",
-
-      // Image fields - key improvement for image linking
-      img: mainImageUrl,
-      heroImage: heroImageUrl,
-      images: additionalImageUrls,
-
-      // Category and metadata
-      category: recipe.category || "general",
-      categoryLink: recipe.categoryLink || "#general",
-      featuredText: recipe.featuredText || "",
-
-      // Recipe details
-      serving: recipe.serving || "",
-      storage: recipe.storage || "",
-      allergyInfo: recipe.allergyInfo || "",
-      nutritionDisclaimer: recipe.nutritionDisclaimer || "",
-
-      // Arrays
-      mustKnowTips: recipe.mustKnowTips || [],
-      professionalSecrets: recipe.professionalSecrets || [],
-      notes: recipe.notes || [],
-      tools: recipe.tools || [],
-
-      // JSON Objects - using proper JSON structure
-      author: recipe.author || {
-        name: "Anonymous",
-        link: "",
-        avatar: "",
-        bio: "",
-      },
-      timing: recipe.timing || null,
-      recipeInfo: recipe.recipeInfo || null,
-      whyYouLove: recipe.whyYouLove || null,
-      questions: recipe.questions || null,
-
-      // JSON Arrays
-      essIngredientGuide: recipe.essIngredientGuide || null,
-      ingredientGuide: recipe.ingredientGuide || null,
-      ingredients: recipe.ingredients || null,
-      instructions: recipe.instructions || null,
-      completeProcess: recipe.completeProcess || null,
-      sections: recipe.sections || null,
-      faq: recipe.faq || null,
-      relatedRecipes: recipe.relatedRecipes || null,
-
-      // Timestamps
-      updatedDate: new Date().toISOString(),
-    };
-
-    // Use direct Prisma create without relations for now
     const createdRecipe = await prisma.recipe.create({
-      data: recipeData,
+      data: {
+        title: recipe.title,
+        description: recipe.description,
+        ingredients: recipe.ingredients,
+        instructions: recipe.instructions,
+        category: recipe.category,
+        // Add other fields as needed based on your Recipe interface
+        author: {
+          connect: {
+            id: token.sub,
+          },
+        },
+      },
+      include: {
+        author: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+          },
+        },
+      },
     });
 
-    // Revalidate cache to show new recipe immediately
+    // Revalidate all related pages to show new recipe immediately
     try {
-      // Revalidate all pages that show recipes
-      revalidatePath("/recipes");
-      revalidatePath("/");
-      revalidatePath("/explore");
-      revalidatePath("/categories");
-
-      // Revalidate the specific category page if it exists
-      if (recipeData.category) {
-        revalidatePath(
-          `/categories/${recipeData.category
-            .toLowerCase()
-            .replace(/\s+/g, "-")}`
-        );
-      }
-
-      // Revalidate cache tags
-      revalidateTag("recipes");
-      revalidateTag("all-recipes");
-      revalidateTag("categories");
-      revalidateTag("latest-recipes");
-
-      console.log("✅ Cache revalidated for new recipe across all pages");
-    } catch (revalidationError) {
-      console.warn("⚠️ Cache revalidation failed:", revalidationError);
-      // Don't fail the request if revalidation fails
+      await fetch(
+        `${
+          process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000"
+        }/api/revalidate?path=/&secret=${process.env.REVALIDATE_SECRET}`
+      );
+      await fetch(
+        `${
+          process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000"
+        }/api/revalidate?path=/recipes&secret=${process.env.REVALIDATE_SECRET}`
+      );
+      await fetch(
+        `${
+          process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000"
+        }/api/revalidate?path=/categories&secret=${
+          process.env.REVALIDATE_SECRET
+        }`
+      );
+    } catch (revalidateError) {
+      console.warn("Failed to revalidate pages:", revalidateError);
     }
 
     return NextResponse.json(createdRecipe);
   } catch (error) {
     console.error("Error creating recipe:", error);
     return NextResponse.json(
-      {
-        error: "Failed to create recipe",
-        details: error instanceof Error ? error.message : "Unknown error",
-      },
+      { error: "Failed to create recipe" },
       { status: 500 }
     );
   }
 }
 
-// Helper function to upload base64 images
-async function uploadBase64Image(
-  base64Data: string,
-  category: string,
-  prefix: string
-): Promise<string> {
-  try {
-    // Extract file type and data
-    const matches = base64Data.match(/^data:image\/([a-zA-Z]+);base64,(.+)$/);
-    if (!matches) {
-      throw new Error("Invalid base64 image format");
-    }
-
-    const fileType = matches[1];
-    const imageData = matches[2];
-    const timestamp = Date.now();
-    const filename = `${prefix}-${timestamp}.${fileType}`;
-
-    // In production, upload to cloud storage (AWS S3, Cloudinary, etc.)
-    // For now, return a simulated URL
-    const uploadUrl = `/uploads/${category}/${filename}`;
-
-    // TODO: Implement actual file upload to your storage service
-    // const uploadResult = await cloudStorage.upload(Buffer.from(imageData, 'base64'), filename);
-    try {
-      revalidatePath("/recipes");
-      revalidatePath(`/recipes/${updatedRecipe.slug}`);
-      revalidateTag("recipes");
-      revalidateTag("all-recipes");
-      console.log("✅ Cache revalidated for updated recipe");
-    } catch (revalidationError) {
-      console.warn("⚠️ Cache revalidation failed:", revalidationError);
-    }
-    return uploadUrl;
-  } catch (error) {
-    console.error("Error uploading base64 image:", error);
-    throw new Error("Failed to upload image");
-  }
-}
-
 export async function PUT(request: NextRequest) {
   const url = new URL(request.nextUrl);
-  const recipe = await request.json();
-  let { id } = recipe;
-  console.log("PUT request received:");
-  console.log("- URL:", request.url);
-  console.log("- Query params:", Object.fromEntries(url.searchParams));
-  console.log("- ID from query:", id);
-
-  // Get the request body
-
-  // If no ID in query params, get it from the body
-  if (recipe.id && !id) {
-    id = recipe.id;
-    console.log("ID from body:", id);
-  }
+  const id = url.searchParams.get("id");
 
   if (!id) {
-    console.log("❌ No ID found in query parameters or body");
     return NextResponse.json(
       { error: "Recipe ID is required" },
       { status: 400 }
@@ -398,145 +151,57 @@ export async function PUT(request: NextRequest) {
   }
 
   try {
-    // Check environment and auth
-    const isDevelopment = process.env.NODE_ENV === "development";
-    const skipAuth = process.env.SKIP_AUTH === "true" || isDevelopment;
-
-    if (!skipAuth) {
-      const token = await auth.getToken(request);
-      if (!token) {
-        console.log("❌ Authentication failed - no valid token");
-        return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
-      }
-    } else {
-      console.log(
-        "🔓 Skipping auth for PUT (development mode or SKIP_AUTH=true)"
-      );
+    const token = await auth.getToken(request);
+    if (!token) {
+      return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
     }
 
-    // Debug: Log the received recipe data for update
-    console.log("🔄 Recipe API PUT: Received recipe update data");
-    console.log("- Title:", recipe.title);
-    console.log("- Main Image (img):", recipe.img);
-    console.log("- Hero Image:", recipe.heroImage);
-    console.log("- Additional Images:", recipe.images);
-
-    // Process images to filter out blob URLs
-    let processedImg = recipe.img;
-    let processedHeroImage = recipe.heroImage;
-    let processedImages = recipe.images;
-
-    if (recipe.img && recipe.img.startsWith("blob:")) {
-      console.log("⚠️ PUT: Filtering out blob URL for main image:", recipe.img);
-      processedImg = undefined; // Don't update this field
-    }
-
-    if (recipe.heroImage && recipe.heroImage.startsWith("blob:")) {
-      console.log(
-        "⚠️ PUT: Filtering out blob URL for hero image:",
-        recipe.heroImage
-      );
-      processedHeroImage = undefined; // Don't update this field
-    }
-
-    if (recipe.images && Array.isArray(recipe.images)) {
-      processedImages = recipe.images.filter((img: string) => {
-        if (img.startsWith("blob:")) {
-          console.log(
-            "⚠️ PUT: Filtering out blob URL from additional images:",
-            img
-          );
-          return false;
-        }
-        return true;
-      });
-    }
-
+    const recipe = await request.json();
     const updatedRecipe = await prisma.recipe.update({
       where: {
-        id: id,
+        id: parseInt(id),
       },
       data: {
-        ...(recipe.title && { title: recipe.title }),
-        ...(recipe.slug && { slug: recipe.slug }),
-        ...(recipe.href && { href: recipe.href }),
-        ...(processedImg && { img: processedImg }),
-        ...(recipe.intro && { intro: recipe.intro }),
-        ...(recipe.description && { description: recipe.description }),
-        ...(recipe.shortDescription && {
-          shortDescription: recipe.shortDescription,
-        }),
-        ...(recipe.story && { story: recipe.story }),
-        ...(recipe.testimonial && { testimonial: recipe.testimonial }),
-        ...(recipe.category && { category: recipe.category }),
-        ...(recipe.categoryLink && { categoryLink: recipe.categoryLink }),
-        ...(recipe.featuredText && { featuredText: recipe.featuredText }),
-        ...(recipe.imageAlt && { imageAlt: recipe.imageAlt }),
-        ...(recipe.categoryHref && { categoryHref: recipe.categoryHref }),
-        ...(recipe.author && { author: recipe.author }),
-        ...(recipe.whyYouLove && { whyYouLove: recipe.whyYouLove }),
-        ...(recipe.timing && { timing: recipe.timing }),
-        ...(recipe.recipeInfo && { recipeInfo: recipe.recipeInfo }),
-        ...(recipe.questions && { questions: recipe.questions }),
-        ...(recipe.essIngredientGuide && {
-          essIngredientGuide: recipe.essIngredientGuide,
-        }),
-        ...(recipe.ingredientGuide && {
-          ingredientGuide: recipe.ingredientGuide,
-        }),
-        ...(recipe.ingredients && { ingredients: recipe.ingredients }),
-        ...(recipe.instructions && { instructions: recipe.instructions }),
-        ...(recipe.completeProcess && {
-          completeProcess: recipe.completeProcess,
-        }),
-        ...(recipe.sections && { sections: recipe.sections }),
-        ...(recipe.faq && { faq: recipe.faq }),
-        ...(recipe.relatedRecipes && { relatedRecipes: recipe.relatedRecipes }),
-        ...(recipe.mustKnowTips && { mustKnowTips: recipe.mustKnowTips }),
-        ...(recipe.professionalSecrets && {
-          professionalSecrets: recipe.professionalSecrets,
-        }),
-        ...(recipe.serving && { serving: recipe.serving }),
-        ...(recipe.storage && { storage: recipe.storage }),
-        ...(processedHeroImage && { heroImage: processedHeroImage }),
-        ...(processedImages && { images: processedImages }),
-        ...(recipe.notes && { notes: recipe.notes }),
-        ...(recipe.tools && { tools: recipe.tools }),
-        ...(recipe.allergyInfo && { allergyInfo: recipe.allergyInfo }),
-        ...(recipe.nutritionDisclaimer && {
-          nutritionDisclaimer: recipe.nutritionDisclaimer,
-        }),
+        title: recipe.title,
+        description: recipe.description,
+        ingredients: recipe.ingredients,
+        instructions: recipe.instructions,
+        category: recipe.category,
+        // Add other fields as needed
         updatedAt: new Date(),
+      },
+      include: {
+        author: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+          },
+        },
       },
     });
 
-    // Revalidate cache to show updated recipe immediately
+    // Revalidate all related pages to show updated recipe immediately
     try {
-      // Revalidate all pages that show recipes
-      revalidatePath("/recipes");
-      revalidatePath("/");
-      revalidatePath("/explore");
-      revalidatePath("/categories");
-      revalidatePath(`/recipes/${updatedRecipe.slug}`);
-
-      // Revalidate the specific category page if it exists
-      if (updatedRecipe.category) {
-        revalidatePath(
-          `/categories/${updatedRecipe.category
-            .toLowerCase()
-            .replace(/\s+/g, "-")}`
-        );
-      }
-
-      // Revalidate cache tags
-      revalidateTag("recipes");
-      revalidateTag("all-recipes");
-      revalidateTag("categories");
-      revalidateTag("latest-recipes");
-
-      console.log("✅ Cache revalidated for updated recipe across all pages");
-    } catch (revalidationError) {
-      console.warn("⚠️ Cache revalidation failed:", revalidationError);
+      await fetch(
+        `${
+          process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000"
+        }/api/revalidate?path=/&secret=${process.env.REVALIDATE_SECRET}`
+      );
+      await fetch(
+        `${
+          process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000"
+        }/api/revalidate?path=/recipes&secret=${process.env.REVALIDATE_SECRET}`
+      );
+      await fetch(
+        `${
+          process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000"
+        }/api/revalidate?path=/categories&secret=${
+          process.env.REVALIDATE_SECRET
+        }`
+      );
+    } catch (revalidateError) {
+      console.warn("Failed to revalidate pages:", revalidateError);
     }
 
     return NextResponse.json(updatedRecipe);
@@ -551,26 +216,9 @@ export async function PUT(request: NextRequest) {
 
 export async function DELETE(request: NextRequest) {
   const url = new URL(request.nextUrl);
-  let id = url.searchParams.get("id");
-
-  console.log("DELETE request received:");
-  console.log("- URL:", request.url);
-  console.log("- Query params:", Object.fromEntries(url.searchParams));
-  console.log("- ID from query:", id);
-
-  // If no ID in query params, try to get it from the request body (like PUT does)
-  if (!id) {
-    try {
-      const body = await request.json();
-      id = body.id;
-      console.log("- ID from body:", id);
-    } catch (error) {
-      console.log("- No valid JSON body found");
-    }
-  }
+  const id = url.searchParams.get("id");
 
   if (!id) {
-    console.log("❌ No ID found in query parameters or body");
     return NextResponse.json(
       { error: "Recipe ID is required" },
       { status: 400 }
@@ -578,58 +226,38 @@ export async function DELETE(request: NextRequest) {
   }
 
   try {
-    // Check environment and auth
-    const isDevelopment = process.env.NODE_ENV === "development";
-    const skipAuth = process.env.SKIP_AUTH === "true" || isDevelopment;
-
-    if (!skipAuth) {
-      const token = await auth.getToken(request);
-      if (!token) {
-        console.log("❌ Authentication failed - no valid token");
-        return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
-      }
-    } else {
-      console.log(
-        "🔓 Skipping auth for DELETE (development mode or SKIP_AUTH=true)"
-      );
+    const token = await auth.getToken(request);
+    if (!token) {
+      return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
     }
 
     const deletedRecipe = await prisma.recipe.delete({
       where: {
-        id: id,
+        id: parseInt(id),
       },
     });
 
-    // Revalidate cache to remove deleted recipe immediately
+    // Revalidate all related pages to clear ISR cache
     try {
-      // Revalidate all pages that show recipes
-      revalidatePath("/recipes");
-      revalidatePath("/");
-      revalidatePath("/explore");
-      revalidatePath("/categories");
-
-      if (deletedRecipe.slug) {
-        revalidatePath(`/recipes/${deletedRecipe.slug}`);
-      }
-
-      // Revalidate the specific category page if it exists
-      if (deletedRecipe.category) {
-        revalidatePath(
-          `/categories/${deletedRecipe.category
-            .toLowerCase()
-            .replace(/\s+/g, "-")}`
-        );
-      }
-
-      // Revalidate cache tags
-      revalidateTag("recipes");
-      revalidateTag("all-recipes");
-      revalidateTag("categories");
-      revalidateTag("latest-recipes");
-
-      console.log("✅ Cache revalidated for deleted recipe across all pages");
-    } catch (revalidationError) {
-      console.warn("⚠️ Cache revalidation failed:", revalidationError);
+      await fetch(
+        `${
+          process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000"
+        }/api/revalidate?path=/&secret=${process.env.REVALIDATE_SECRET}`
+      );
+      await fetch(
+        `${
+          process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000"
+        }/api/revalidate?path=/recipes&secret=${process.env.REVALIDATE_SECRET}`
+      );
+      await fetch(
+        `${
+          process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000"
+        }/api/revalidate?path=/categories&secret=${
+          process.env.REVALIDATE_SECRET
+        }`
+      );
+    } catch (revalidateError) {
+      console.warn("Failed to revalidate pages:", revalidateError);
     }
 
     return NextResponse.json({ message: "Recipe deleted successfully" });
