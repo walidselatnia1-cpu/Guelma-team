@@ -10,21 +10,11 @@ import { auth } from "@/lib/auth";
  */
 export async function POST(request: NextRequest) {
   try {
-    // Check environment and auth
-    const isDevelopment = process.env.NODE_ENV === "development";
-    const skipAuth = process.env.SKIP_AUTH === "true" || isDevelopment;
+    // Auth is handled by middleware, so we can get user info from headers
+    const userId = request.headers.get("x-user-id");
+    const userEmail = request.headers.get("x-user-email");
 
-    if (!skipAuth) {
-      const token = await auth.getToken(request);
-      if (!token) {
-        console.log("❌ Authentication failed - no valid token");
-        return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
-      }
-    } else {
-      console.log(
-        "🔓 Skipping auth for upload (development mode or SKIP_AUTH=true)"
-      );
-    }
+    console.log(`� Upload request from user: ${userEmail} (ID: ${userId})`);
 
     const formData = await request.formData();
     const file = formData.get("file") as File;

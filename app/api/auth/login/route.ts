@@ -7,8 +7,10 @@ import { signToken } from "@/lib/jwt";
 
 // Replace with your DB logic
 async function authenticateUser(email: string, password: string) {
-  if (email === "test@example.com" && password === "123456") {
-    return { id: 1, email };
+  // For now using hardcoded admin credentials
+  // In production, you should hash passwords and store in database
+  if (email === "admin@guelma.com" && password === "admin123") {
+    return { id: 1, email, role: "admin" };
   }
   return null;
 }
@@ -22,7 +24,7 @@ export async function POST(request: Request) {
   }
 
   // Create JWT
-  const token = signToken(user.id);
+  const token = signToken(user.id, user.email, user.role);
 
   // Option A: Return token in JSON (good for mobile/web SPA)
   return NextResponse.json({ token });
