@@ -209,16 +209,27 @@ export async function POST(request: NextRequest) {
     console.log("- Hero Image URL:", heroImageUrl);
     console.log("- Additional Images:", additionalImageUrls);
 
+    // Generate unique slug
+    let baseSlug =
+      recipe.slug ||
+      recipe.title
+        ?.toLowerCase()
+        .replace(/[^a-z0-9\s-]/g, "")
+        .replace(/\s+/g, "-") ||
+      `recipe-${Date.now()}`;
+
+    // Check if slug exists and make it unique
+    let uniqueSlug = baseSlug;
+    let counter = 1;
+    while (await prisma.recipe.findFirst({ where: { slug: uniqueSlug } })) {
+      uniqueSlug = `${baseSlug}-${counter}`;
+      counter++;
+    }
+
     // Create recipe with processed image URLs
     const recipeData = {
       title: recipe.title || "Untitled Recipe",
-      slug:
-        recipe.slug ||
-        recipe.title
-          ?.toLowerCase()
-          .replace(/[^a-z0-9\s-]/g, "")
-          .replace(/\s+/g, "-") ||
-        `recipe-${Date.now()}`,
+      slug: uniqueSlug,
       intro: recipe.intro || "",
       description: recipe.description || "",
       shortDescription: recipe.shortDescription || recipe.intro || "",

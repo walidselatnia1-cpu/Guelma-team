@@ -13,6 +13,19 @@
 //[TODO: Optimize]
 // estimated time: 8*2h == 16h
 
+
+
+/*
+ssh root@82.25.90.64
+janean
+6:23 PM
+AKb01ldoAQxw01#
+You
+6:24 PM
+ssh root@82.25.90.64
+
+*/
+
 //alter user "prisma_guelma" with password '01305906559191';
 //[TODO: GET RECIPES BY CATEGORIES]
 
