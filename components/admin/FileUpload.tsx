@@ -56,10 +56,7 @@ export const FileUpload: React.FC<FileUploadProps> = ({
       setLastUploadedUrl(result.url);
       onFileUploaded?.(result.url, result.filename || file.name);
 
-      // Show recipe linking option if enabled and category is recipes
-      if (showRecipeLinking && category === "recipes") {
-        setShowLinker(true);
-      }
+      // Automatic recipe linking removed
     }
   };
 
@@ -210,18 +207,6 @@ export const FileUpload: React.FC<FileUploadProps> = ({
       </div>
 
       {error && <p className="mt-2 text-sm text-red-600">{error}</p>}
-
-      {/* Recipe Image Linker Modal */}
-      {showLinker && lastUploadedUrl && (
-        <RecipeImageLinker
-          imageUrl={lastUploadedUrl}
-          onClose={() => setShowLinker(false)}
-          onImageLinked={() => {
-            setShowLinker(false);
-            // Optionally show success message
-          }}
-        />
-      )}
     </div>
   );
 };
