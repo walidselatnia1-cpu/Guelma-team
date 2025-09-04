@@ -9,6 +9,7 @@ const nextConfig = {
   images: {
     unoptimized: true,
   },
+  output: "standalone", // Enable standalone output for Docker deployment
   //output: "export", // tells Next.js to generate static HTML
 };
 
