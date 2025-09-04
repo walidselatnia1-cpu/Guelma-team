@@ -74,6 +74,31 @@ export async function POST(request: NextRequest) {
         result = true;
         break;
 
+      case "delete-recipe":
+        // Revalidate paths after recipe deletion
+        const deletePaths = [
+          "/",
+          "/recipes",
+          "/categories",
+          "/explore",
+          ...(recipe_slug ? [`/recipes/${recipe_slug}`] : []),
+          ...(recipe_category ? [`/categories/${recipe_category}`] : []),
+        ];
+
+        for (const path of deletePaths) {
+          await revalidatePath(path);
+          revalidatedPaths.push(path);
+        }
+
+        // Revalidate tags
+        const deleteTags = ["recipes", "latest", "trending"];
+        for (const tag of deleteTags) {
+          await revalidateTag(tag);
+          revalidatedTags.push(tag);
+        }
+        result = true;
+        break;
+
       case "custom":
         // Custom revalidation
         if (paths && Array.isArray(paths)) {
@@ -112,7 +137,7 @@ export async function POST(request: NextRequest) {
         return NextResponse.json(
           {
             message:
-              "Invalid action. Use 'new-recipe', 'update-recipe', 'custom', or 'all'",
+              "Invalid action. Use 'new-recipe', 'update-recipe', 'delete-recipe', 'custom', or 'all'",
           },
           { status: 400 }
         );
