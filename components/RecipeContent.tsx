@@ -13,7 +13,7 @@ export function RecipeContent({ recipe }: RecipeContentProps) {
   return (
     <div className="space-y-8 mt-2 text-md ">
       {/* Hero Image */}
-      <div className="relative w-full h-96 md:h-[500px] rounded-lg overflow-hidden">
+      <div className="relative w-full aspect-[3/3.1] rounded-lg overflow-hidden">
         <Image
           src={recipe.images[0]}
           alt={recipe.title}
@@ -44,22 +44,12 @@ export function RecipeContent({ recipe }: RecipeContentProps) {
       </div>
       {/* Essential Ingredient Guide */}
       <EssentialIngredients essIngredientGuide={recipe.essIngredientGuide} />
-      {/* Second Image */}
-      <div className="relative w-full h-96 rounded-lg overflow-hidden">
-        <Image
-          src={recipe.images[0]}
-          alt="Honey Sesame Chicken and Broccoli cooking process"
-          fill
-          className="object-cover"
-        />
-        <div className="absolute bottom-4 left-4 bg-black/70 text-white px-3 py-1 rounded">
-          Honey Sesame Chicken and Broccoli | recipesbyclare.com
-        </div>
-      </div>
+      
       {/* Complete Cooking Process */}
       <CompleteCookingProcess completeProcess={recipe.completeProcess} />
-      {/* Third Image */}
-      <div className="relative w-full h-96 rounded-lg overflow-hidden">
+      
+      {/* Final Image */}
+      <div className="relative w-full aspect-[3/3.1] rounded-lg overflow-hidden">
         <Image
           src={recipe.images[1]}
           alt="Honey Sesame Chicken and Broccoli final dish"
@@ -108,7 +98,7 @@ export function RecipeContent({ recipe }: RecipeContentProps) {
               </>
             )}
             {item.img != undefined ? (
-              <div className="relative w-full h-96 rounded-lg overflow-hidden">
+              <div className="relative w-full aspect-[3/3.1] rounded-lg overflow-hidden">
                 <Image
                   src={recipe.images[1]}
                   alt="Honey Sesame Chicken and Broccoli final dish"

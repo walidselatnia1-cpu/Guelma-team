@@ -16,19 +16,21 @@ export default async function RecipePage({
 
   return (
     <>
-      <div className="grid grid-cols-1 lg:grid-cols-6 gap-8  px-4 py-8 ">
-        {/* Main Content */}
+      {/* Container with responsive margins for wide screens */}
+      <div className="w-full px-4 lg:px-8 xl:px-16 2xl:px-32 py-8">
+        <div className="max-w-[1400px] mx-auto">
+          <div className="grid grid-cols-1 lg:grid-cols-6 gap-8">
+            {/* Main Content */}
+            <div className="lg:col-span-4">
+              <RecipeContent recipe={recipe} />
+            </div>
 
-        {/* <div className="lg:col-span-1"></div>*/}
-
-        <div className="lg:col-span-4">
-          <RecipeContent recipe={recipe} />
-        </div>
-
-        {/* Sidebar */}
-        <div className="lg:col-span-2">
-          <div className="sticky top-8">
-            <Side recipe={recipe} />
+            {/* Sidebar */}
+            <div className="lg:col-span-2">
+              <div className="sticky top-5">
+                <Side recipe={recipe} />
+              </div>
+            </div>
           </div>
         </div>
       </div>

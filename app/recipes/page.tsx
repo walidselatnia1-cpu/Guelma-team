@@ -130,8 +130,8 @@ const RecipeCard = ({ recipe }: { recipe: Recipe }) => {
 
 function Explore({ recipes }: any) {
   return (
-    <div className="p-6 bg-gray-50 min-h-screen">
-      <div className="max-w-7xl mx-auto">
+    <div className="py-6 bg-gray-50 min-h-screen">
+      <div className="w-full">
         <h1 className="text-3xl font-bold text-gray-900 mb-8 text-center">
           Recipe Cards
         </h1>
@@ -159,26 +159,25 @@ export default async function Page() {
 
   return (
     <>
-      {/* Explore Section */}
-      <div className="grid grid-cols-1 lg:grid-cols-6 gap-8">
-        {/* Left Sidebar */}
-        <div className="lg:col-span-1">
-          <div className="sticky top-8">
-            {/* Left sidebar content can go here */}
-          </div>
-        </div>
+      {/* Container with responsive margins */}
+      <div className="w-full px-4 lg:px-8 xl:px-16 2xl:px-32">
+        <div className="max-w-[1400px] mx-auto">
+          {/* Explore Section */}
+          <div className="grid grid-cols-1 xl:grid-cols-12 gap-8">
+            {/* Left Margin Column - only on extra wide screens */}
+            <div className="hidden xl:block xl:col-span-1">
+              {/* Empty space for margin */}
+            </div>
 
-        {/* Explore Content - Middle */}
-        <div className="lg:col-span-4">
-          <div className="sticky top-8">
-            <Explore recipes={recipes} />
-          </div>
-        </div>
+            {/* Main Content */}
+            <div className="xl:col-span-10">
+              <Explore recipes={recipes} />
+            </div>
 
-        {/* Right Sidebar */}
-        <div className="lg:col-span-1">
-          <div className="sticky top-8">
-            {/* Right sidebar content can go here */}
+            {/* Right Margin Column - only on extra wide screens */}
+            <div className="hidden xl:block xl:col-span-1">
+              {/* Empty space for margin */}
+            </div>
           </div>
         </div>
       </div>
