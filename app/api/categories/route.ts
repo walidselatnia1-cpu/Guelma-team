@@ -1,6 +1,5 @@
 export const dynamic = "force-static";
-export const revalidate = 300; // ISR: revalidate every 5 minutes (categories change less frequently)
-
+export const revalidate = 60;
 import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { Category } from "@/outils/types";

@@ -346,6 +346,25 @@ export default function ProfessionalCMS() {
               id: editingId,
               createdAt: recipes.find((r) => r.id === editingId)?.createdAt,
               rating: Number(form.rating) || 0,
+              // Fix: Ensure nested objects are preserved/updated
+              timing: {
+                prepTime: form.prepTime || "0 mins",
+                cookTime: form.cookTime || "0 mins",
+                totalTime: `${
+                  parseInt(form.prepTime) + parseInt(form.cookTime) || 0
+                } mins`,
+              },
+              recipeInfo: {
+                difficulty: form.difficulty || "Easy",
+                servings: form.servings || "1",
+                cuisine: recipe.recipeInfo?.cuisine || "",
+              },
+              author: recipe.author || {
+                name: "Admin",
+                link: "",
+                avatar: "/placeholder-user.jpg",
+                bio: "",
+              },
             }
           : recipe
       );
@@ -357,6 +376,25 @@ export default function ProfessionalCMS() {
         id: Date.now(),
         createdAt: new Date().toISOString().split("T")[0],
         rating: Number(form.rating) || 0,
+        // Fix: Add required nested objects to prevent null reference errors
+        timing: {
+          prepTime: form.prepTime || "0 mins",
+          cookTime: form.cookTime || "0 mins",
+          totalTime: `${
+            parseInt(form.prepTime) + parseInt(form.cookTime) || 0
+          } mins`,
+        },
+        recipeInfo: {
+          difficulty: form.difficulty || "Easy",
+          servings: form.servings || "1",
+          cuisine: "",
+        },
+        author: {
+          name: "Admin",
+          link: "",
+          avatar: "/placeholder-user.jpg",
+          bio: "",
+        },
       };
       setRecipes([newRecipe, ...recipes]);
     }
@@ -393,6 +431,23 @@ export default function ProfessionalCMS() {
           id: Date.now() + index,
           createdAt: recipe.createdAt || now,
           rating: Number(recipe.rating) || 0,
+          // Ensure nested objects exist
+          timing: recipe.timing || {
+            prepTime: recipe.prepTime || "0 mins",
+            cookTime: recipe.cookTime || "0 mins",
+            totalTime: recipe.totalTime || "0 mins",
+          },
+          recipeInfo: recipe.recipeInfo || {
+            difficulty: recipe.difficulty || "Easy",
+            servings: recipe.servings || "1",
+            cuisine: "",
+          },
+          author: recipe.author || {
+            name: "Admin",
+            link: "",
+            avatar: "/placeholder-user.jpg",
+            bio: "",
+          },
         }));
         setRecipes((prev) => [...newRecipes, ...prev]);
       } else {
@@ -401,6 +456,23 @@ export default function ProfessionalCMS() {
           id: Date.now(),
           createdAt: jsonData.createdAt || now,
           rating: Number(jsonData.rating) || 0,
+          // Ensure nested objects exist
+          timing: jsonData.timing || {
+            prepTime: jsonData.prepTime || "0 mins",
+            cookTime: jsonData.cookTime || "0 mins",
+            totalTime: jsonData.totalTime || "0 mins",
+          },
+          recipeInfo: jsonData.recipeInfo || {
+            difficulty: jsonData.difficulty || "Easy",
+            servings: jsonData.servings || "1",
+            cuisine: "",
+          },
+          author: jsonData.author || {
+            name: "Admin",
+            link: "",
+            avatar: "/placeholder-user.jpg",
+            bio: "",
+          },
         };
         setRecipes((prev) => [newRecipe, ...prev]);
       }

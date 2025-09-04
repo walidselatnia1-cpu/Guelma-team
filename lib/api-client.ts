@@ -93,15 +93,25 @@ class ApiClient {
     data?: any,
     options?: ApiRequestOptions
   ): Promise<T> {
+    const body = data instanceof FormData ? data : JSON.stringify(data);
     return this.request<T>(url, {
       ...options,
       method: "PUT",
-      body: JSON.stringify(data),
+      body,
     });
   }
 
-  async delete<T = any>(url: string, options?: ApiRequestOptions): Promise<T> {
-    return this.request<T>(url, { ...options, method: "DELETE" });
+  async delete<T = any>(
+    url: string,
+    data?: any,
+    options?: ApiRequestOptions
+  ): Promise<T> {
+    const body = data ? JSON.stringify(data) : undefined;
+    return this.request<T>(url, {
+      ...options,
+      method: "DELETE",
+      body,
+    });
   }
 
   // File upload helper

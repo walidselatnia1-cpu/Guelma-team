@@ -1,12 +1,11 @@
+export const dynamic = "force-static";
+
 import { RecipeContent } from "@/components/RecipeContent";
 import { RelatedRecipes } from "@/components/RelatedRecipes";
 import { notFound } from "next/navigation";
 import { getRecipe, getRecipes, getRelated } from "@/data/data";
 import Side from "@/components/Side";
 import Recipe from "@/outils/types";
-
-// Force dynamic rendering to avoid build-time fetch issues
-export const dynamic = "force-dynamic";
 
 export default async function RecipePage({
   params,
@@ -49,13 +48,12 @@ export default async function RecipePage({
   );
 }
 
-// Temporarily disabled to avoid build-time fetch issues
-// export async function generateStaticParams() {
-//   const recipes = await getRecipes();
+export async function generateStaticParams() {
+  const recipes = await getRecipes();
 
-//   return (
-//     recipes?.map((recipe) => ({
-//       slug: recipe.slug,
-//     })) || []
-//   );
-// }
+  return (
+    recipes?.map((recipe) => ({
+      slug: recipe.slug,
+    })) || []
+  );
+}

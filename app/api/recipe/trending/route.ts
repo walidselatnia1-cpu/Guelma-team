@@ -1,5 +1,5 @@
-export const dynamic = "force-dynamic"; // Changed from force-static to force-dynamic
-export const revalidate = 0; // Disable caching temporarily
+export const dynamic = "force-static";
+export const revalidate = 60;
 // app/api/recipe/category/[category]/route.ts
 import { NextResponse, NextRequest } from "next/server";
 import prisma from "@/lib/prisma";
@@ -25,15 +25,6 @@ export async function GET(request: NextRequest) {
         // { likes: 'desc' },
         { createdAt: "desc" },
       ],
-      include: {
-        author: {
-          select: {
-            id: true,
-            name: true,
-            email: true,
-          },
-        },
-      },
     });
 
     return NextResponse.json(trendingRecipes);

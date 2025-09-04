@@ -1,4 +1,5 @@
 import { Article, Recipe, Category } from "@/outils/types";
+import { apiClient } from "@/lib/api-client";
 import latestArticles from "./articles";
 
 // ============================================================================
@@ -215,39 +216,43 @@ export async function getData(): Promise<Recipe[]> {
     return getDummyData(10);
   }
 
-  // During build time or server-side, use direct Prisma call with cache tags
+  // Use direct Prisma during build time, API fetch during production runtime
   if (typeof window === "undefined") {
-    try {
-      const { unstable_cache } = await import("next/cache");
-      const prisma = (await import("@/lib/prisma")).default;
+    // During build or development, use direct Prisma
+    if (
+      process.env.NODE_ENV === "development" ||
+      process.env.NEXT_PHASE === "phase-production-build"
+    ) {
+      try {
+        const { unstable_cache } = await import("next/cache");
+        const prisma = (await import("@/lib/prisma")).default;
 
-      // Wrap in Next.js cache with tags for revalidation
-      const getCachedRecipes = unstable_cache(
-        async () => {
-          const recipes = await prisma.recipe.findMany({
-            orderBy: { createdAt: "desc" },
-          });
-          return recipes as unknown as Recipe[];
-        },
-        ["all-recipes"], // Cache key
-        {
-          tags: ["recipes", "all-recipes"], // Cache tags for revalidation
-          revalidate: 300, // Cache for 5 minutes
-        }
-      );
+        // Wrap in Next.js cache with tags for revalidation
+        const getCachedRecipes = unstable_cache(
+          async () => {
+            const recipes = await prisma.recipe.findMany({
+              orderBy: { createdAt: "desc" },
+            });
+            return recipes as unknown as Recipe[];
+          },
+          ["all-recipes"], // Cache key
+          {
+            tags: ["recipes", "all-recipes"], // Only tags for on-demand revalidation
+          }
+        );
 
-      return await getCachedRecipes();
-    } catch (error) {
-      console.error("Direct DB call failed:", error);
-      return getDummyData(10);
+        return await getCachedRecipes();
+      } catch (error) {
+        console.error("Direct DB call failed:", error);
+        return getDummyData(10);
+      }
     }
   }
 
   // Client-side, use API fetch with ISR support
   const response = await fetch(`${BASE_URL}/api/recipe`, {
     next: {
-      revalidate: 60, // ISR: revalidate every minute
-      tags: ["recipes", "all-recipes"], // Cache tags for on-demand revalidation
+      tags: ["recipes", "all-recipes"], // Only tags for on-demand revalidation
     },
   });
 
@@ -276,8 +281,38 @@ export async function getRecipe(slug: string): Promise<Recipe | null> {
     return foundRecipe || null;
   }
 
+  // Use direct Prisma during build time, API fetch during production runtime
+  if (typeof window === "undefined") {
+    // During build or development, use direct Prisma
+    if (
+      process.env.NODE_ENV === "development" ||
+      process.env.NEXT_PHASE === "phase-production-build"
+    ) {
+      try {
+        const prisma = (await import("@/lib/prisma")).default;
+        const recipe = await prisma.recipe.findFirst({
+          where: {
+            slug: {
+              equals: slug,
+              mode: "insensitive",
+            },
+          },
+        });
+        return recipe as unknown as Recipe | null;
+      } catch (error) {
+        console.error("Direct DB call failed:", error);
+        return null;
+      }
+    }
+  }
+
   const response = await fetch(
-    `${BASE_URL}/api/recipe?slug=${encodeURIComponent(slug)}`
+    `${BASE_URL}/api/recipe?slug=${encodeURIComponent(slug)}`,
+    {
+      next: {
+        tags: ["recipes", `recipe-${slug}`], // Only tags for on-demand revalidation
+      },
+    }
   );
   if (!response.ok) {
     if (response.status === 404) return null;
@@ -302,8 +337,37 @@ export async function getTrending(limit: number = 10): Promise<Recipe[]> {
       }));
   }
 
+  // Use direct Prisma during build time, API fetch during production runtime
+  if (typeof window === "undefined") {
+    // During build or development, use direct Prisma
+    if (
+      process.env.NODE_ENV === "development" ||
+      process.env.NEXT_PHASE === "phase-production-build"
+    ) {
+      try {
+        const prisma = (await import("@/lib/prisma")).default;
+        const recipes = await prisma.recipe.findMany({
+          take: limit,
+          orderBy: [{ createdAt: "desc" }],
+        });
+        return recipes.map((recipe: any) => ({
+          ...recipe,
+          featuredText: "Trending Now",
+        })) as Recipe[];
+      } catch (error) {
+        console.error("Direct DB call failed:", error);
+        return [];
+      }
+    }
+  }
+
   const response = await fetch(
-    `${BASE_URL}/api/recipe/trending?limit=${limit}`
+    `${BASE_URL}/api/recipe/trending?limit=${limit}`,
+    {
+      next: {
+        tags: ["recipes", "trending"], // Only tags for on-demand revalidation
+      },
+    }
   );
   if (!response.ok) {
     throw new Error("Failed to fetch trending recipes");
@@ -332,13 +396,44 @@ export async function getRelated(
       }));
   }
 
+  // Use direct Prisma during build time, API fetch during production runtime
+  if (typeof window === "undefined") {
+    // During build or development, use direct Prisma
+    if (
+      process.env.NODE_ENV === "development" ||
+      process.env.NEXT_PHASE === "phase-production-build"
+    ) {
+      try {
+        const prisma = (await import("@/lib/prisma")).default;
+        const recipes = await prisma.recipe.findMany({
+          where: {
+            id: { not: recipeId },
+          },
+          take: limit,
+          orderBy: { createdAt: "desc" },
+        });
+        return recipes.map((recipe: any) => ({
+          ...recipe,
+          featuredText: "Related Recipe",
+        })) as Recipe[];
+      } catch (error) {
+        console.error("Direct DB call failed:", error);
+        return [];
+      }
+    }
+  }
+
   try {
     const baseUrl = isServer ? "" : BASE_URL;
     const url = `${baseUrl}/api/recipe/related?id=${encodeURIComponent(
       recipeId
     )}&limit=${limit}`;
 
-    const response = await fetch(url);
+    const response = await fetch(url, {
+      next: {
+        tags: ["recipes", "related", `related-${recipeId}`], // Only tags for on-demand revalidation
+      },
+    });
     if (!response.ok) {
       console.error(
         "❌ API response not ok:",
@@ -378,7 +473,35 @@ export async function getLatest(limit: number = 12): Promise<Recipe[]> {
       }));
   }
 
-  const response = await fetch(`${BASE_URL}/api/recipe/latest?limit=${limit}`);
+  // Use direct Prisma during build time, API fetch during production runtime
+  if (typeof window === "undefined") {
+    // During build or development, use direct Prisma
+    if (
+      process.env.NODE_ENV === "development" ||
+      process.env.NEXT_PHASE === "phase-production-build"
+    ) {
+      try {
+        const prisma = (await import("@/lib/prisma")).default;
+        const recipes = await prisma.recipe.findMany({
+          take: limit,
+          orderBy: { createdAt: "desc" },
+        });
+        return recipes.map((recipe: any) => ({
+          ...recipe,
+          featuredText: "Latest Recipe",
+        })) as Recipe[];
+      } catch (error) {
+        console.error("Direct DB call failed:", error);
+        return [];
+      }
+    }
+  }
+
+  const response = await fetch(`${BASE_URL}/api/recipe/latest?limit=${limit}`, {
+    next: {
+      tags: ["recipes", "latest"], // Only tags for on-demand revalidation
+    },
+  });
   if (!response.ok) {
     throw new Error("Failed to fetch latest recipes");
   }
@@ -403,37 +526,42 @@ export async function getRecipesByCategory(
     return limit ? filteredRecipes.slice(0, limit) : filteredRecipes;
   }
 
-  // During build time or server-side, use direct Prisma call
+  // Use direct Prisma during build time, API fetch during production runtime
   if (typeof window === "undefined") {
-    try {
-      const prisma = (await import("@/lib/prisma")).default;
-      const recipes = await prisma.recipe.findMany({
-        where: {
-          category: {
-            equals: category,
-            mode: "insensitive",
+    // During build or development, use direct Prisma
+    if (
+      process.env.NODE_ENV === "development" ||
+      process.env.NEXT_PHASE === "phase-production-build"
+    ) {
+      try {
+        const prisma = (await import("@/lib/prisma")).default;
+        const recipes = await prisma.recipe.findMany({
+          where: {
+            category: {
+              equals: category,
+              mode: "insensitive",
+            },
           },
-        },
-        ...(limit && { take: limit }),
-        orderBy: { createdAt: "desc" },
-      });
+          ...(limit && { take: limit }),
+          orderBy: { createdAt: "desc" },
+        });
 
-      return recipes as unknown as Recipe[];
-    } catch (error) {
-      console.error("Direct DB call failed for category:", error);
-      return [];
+        return recipes as unknown as Recipe[];
+      } catch (error) {
+        console.error("Direct DB call failed for category:", error);
+        return [];
+      }
     }
   }
 
-  // Client-side, use API fetch with ISR support
+  // Client-side or production runtime, use API fetch with cache
   const url = `${BASE_URL}/api/recipe/category/${encodeURIComponent(category)}${
     limit ? `?limit=${limit}` : ""
   }`;
 
   const response = await fetch(url, {
     next: {
-      revalidate: 120, // ISR: revalidate every 2 minutes for category data
-      tags: ["recipes", "categories", `category-${category.toLowerCase()}`], // Cache tags
+      tags: ["recipes", "categories", `category-${category.toLowerCase()}`], // Only tags for on-demand revalidation
     },
   });
 
@@ -507,7 +635,11 @@ export async function getCategories(): Promise<Category[]> {
 
   try {
     console.log("🌐 Fetching dynamic categories from API");
-    const response = await fetch(`${BASE_URL}/api/categories`);
+    const response = await fetch(`${BASE_URL}/api/categories`, {
+      next: {
+        tags: ["categories"], // Only tags for on-demand revalidation
+      },
+    });
 
     if (!response.ok) {
       throw new Error(`Failed to fetch categories: ${response.status}`);
@@ -517,86 +649,103 @@ export async function getCategories(): Promise<Category[]> {
   } catch (error) {
     console.error("❌ Error fetching categories:", error);
 
-    try {
-      const prisma = (await import("@/lib/prisma")).default;
-      const recipes = await prisma.recipe.findMany({
-        select: {
-          category: true,
-          categoryLink: true,
-          images: true,
-        },
-      });
+    // Use direct Prisma during build time, fallback to static data during production runtime
+    if (typeof window === "undefined") {
+      // During build or development, use direct Prisma
+      if (
+        process.env.NODE_ENV === "development" ||
+        process.env.NEXT_PHASE === "phase-production-build"
+      ) {
+        try {
+          const prisma = (await import("@/lib/prisma")).default;
+          const recipes = await prisma.recipe.findMany({
+            select: {
+              category: true,
+              categoryLink: true,
+              images: true,
+            },
+          });
 
-      const categoryMap = new Map<
-        string,
-        { count: number; link: string; recipes: { images: string[] }[] }
-      >();
+          const categoryMap = new Map<
+            string,
+            { count: number; link: string; recipes: { images: string[] }[] }
+          >();
 
-      recipes.forEach((recipe) => {
-        if (recipe.category) {
-          const existing = categoryMap.get(recipe.category);
-          if (existing) {
-            existing.count += 1;
-            existing.recipes.push(recipe);
-          } else {
-            categoryMap.set(recipe.category, {
-              count: 1,
-              link:
-                recipe.categoryLink ||
-                `/categories/${recipe.category
-                  .toLowerCase()
-                  .replace(/\s+/g, "-")
-                  .replace(/[^a-z0-9-]/g, "")}`,
-              recipes: [recipe],
-            });
-          }
-        }
-      });
-
-      const categories = Array.from(categoryMap.entries()).map(
-        ([categoryName, { count, link, recipes }], index) => {
-          let categoryImage = "/placeholder.jpg";
-          for (const recipe of recipes) {
-            if (recipe.images && recipe.images.length > 0) {
-              categoryImage = recipe.images[0];
-              break;
+          recipes.forEach((recipe) => {
+            if (recipe.category) {
+              const existing = categoryMap.get(recipe.category);
+              if (existing) {
+                existing.count += 1;
+                existing.recipes.push(recipe);
+              } else {
+                categoryMap.set(recipe.category, {
+                  count: 1,
+                  link:
+                    recipe.categoryLink ||
+                    `/categories/${recipe.category
+                      .toLowerCase()
+                      .replace(/\s+/g, "-")
+                      .replace(/[^a-z0-9-]/g, "")}`,
+                  recipes: [recipe],
+                });
+              }
             }
-          }
+          });
 
-          return {
-            id: (index + 1).toString(),
-            slug: categoryName.toLowerCase().replace(/\s+/g, "_"),
-            title: categoryName
-              .replace(/_/g, " ")
-              .replace(/\b\w/g, (l) => l.toUpperCase()),
-            href: link,
-            alt: `${categoryName.replace(/_/g, " ")} recipes`,
-            description: `Discover ${count} delicious ${categoryName.replace(
-              /_/g,
-              " "
-            )} recipes`,
-            image: categoryImage,
-            recipeCount: count,
-          };
+          const categories = Array.from(categoryMap.entries()).map(
+            ([categoryName, { count, link, recipes }], index) => {
+              let categoryImage = "/placeholder.jpg";
+              for (const recipe of recipes) {
+                if (recipe.images && recipe.images.length > 0) {
+                  categoryImage = recipe.images[0];
+                  break;
+                }
+              }
+
+              return {
+                id: (index + 1).toString(),
+                slug: categoryName.toLowerCase().replace(/\s+/g, "_"),
+                title: categoryName
+                  .replace(/_/g, " ")
+                  .replace(/\b\w/g, (l) => l.toUpperCase()),
+                href: link,
+                alt: `${categoryName.replace(/_/g, " ")} recipes`,
+                description: `Discover ${count} delicious ${categoryName.replace(
+                  /_/g,
+                  " "
+                )} recipes`,
+                image: categoryImage,
+                recipeCount: count,
+              };
+            }
+          );
+
+          categories.sort(
+            (a, b) => (b.recipeCount || 0) - (a.recipeCount || 0)
+          );
+          return categories;
+        } catch (dbError) {
+          console.error("❌ Direct database call also failed:", dbError);
+          // Return empty array instead of hardcoded category when database is empty
+          return [];
         }
-      );
-
-      categories.sort((a, b) => (b.recipeCount || 0) - (a.recipeCount || 0));
-      return categories;
-    } catch (dbError) {
-      console.error("❌ Direct database call also failed:", dbError);
-      return [
-        {
-          id: "1",
-          slug: "family_dinner",
-          title: "Family Dinner",
-          href: "/categories/family_dinner",
-          alt: "Family Dinner Recipes",
-          description: "Wholesome Meals for the Whole Family",
-          image: "/placeholder.jpg",
-        },
-      ];
+      }
     }
+
+    // Fallback to static categories in production when API fails
+    return [
+      {
+        id: "1",
+        slug: "main-dishes",
+        title: "Main Dishes",
+        href: "/categories/main-dishes",
+        alt: "Main dishes recipes",
+        description: "Discover hearty main dish recipes",
+        image: "/hearty-mains.png",
+        recipeCount: 0,
+      },
+      // Add other static categories as needed
+    ];
   }
 }
 
@@ -736,20 +885,10 @@ export async function adminCreateRecipe(
     return newRecipe;
   }
 
-  const baseUrl = isServer ? "" : BASE_URL;
-  const response = await fetch(`${baseUrl}/api/recipe`, {
+  return await apiClient.request<Recipe>("/api/recipe", {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
     body: JSON.stringify(newRecipe),
   });
-
-  if (!response.ok) {
-    throw new Error("Failed to create recipe");
-  }
-
-  return (await response.json()) as Recipe;
 }
 
 /**
@@ -776,23 +915,13 @@ export async function adminUpdateRecipe(
     return updatedRecipe;
   }
 
-  const baseUrl = isServer ? "" : BASE_URL;
-  const url = `${baseUrl}/api/recipe?id=${encodeURIComponent(id)}`;
+  const url = `/api/recipe?id=${encodeURIComponent(id)}`;
   const data = { ...recipeData, id: id };
 
-  const response = await fetch(url, {
+  return await apiClient.request<Recipe>(url, {
     method: "PUT",
-    headers: {
-      "Content-Type": "application/json",
-    },
     body: JSON.stringify(data),
   });
-
-  if (!response.ok) {
-    throw new Error("Failed to update recipe");
-  }
-
-  return (await response.json()) as Recipe;
 }
 
 /**
@@ -812,22 +941,9 @@ export async function adminDeleteRecipe(id: string): Promise<void> {
     return;
   }
 
-  // Client-side: use relative URL, Server-side: use full BASE_URL
-  const baseUrl = isServer ? BASE_URL : "";
-  const url = `${baseUrl}/api/recipe`;
-  console.log("🌐 DELETE request URL:", url, "isServer:", isServer);
+  // Use ApiClient for authenticated request
+  const url = `/api/recipe?id=${encodeURIComponent(id)}`;
+  console.log("🌐 DELETE request URL:", url);
 
-  const response = await fetch(url, {
-    method: "DELETE",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ id }),
-  });
-
-  if (!response.ok) {
-    const errorText = await response.text();
-    console.error("❌ DELETE request failed:", response.status, errorText);
-    throw new Error("Failed to delete recipe");
-  }
+  await apiClient.delete(url, { id });
 }

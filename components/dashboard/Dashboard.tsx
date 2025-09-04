@@ -107,7 +107,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
                       {recipe.title}
                     </p>
                     <p className="text-xs text-gray-500">
-                      {recipe.category} • {recipe.timing.total}
+                      {recipe.category} • {recipe.timing?.totalTime || "N/A"}
                     </p>
                   </div>
                   <div className="flex items-center gap-1 text-yellow-400">

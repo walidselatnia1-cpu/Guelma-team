@@ -35,15 +35,15 @@ export const RecipeCard: React.FC<RecipeCardProps> = ({ recipe, onEdit }) => {
         <div className="flex items-center gap-4 text-sm text-gray-500 mb-4">
           <div className="flex items-center gap-1">
             <Clock className="w-4 h-4" />
-            <span>{recipe.timing.total}</span>
+            <span>{recipe.timing?.totalTime || "N/A"}</span>
           </div>
           <div className="flex items-center gap-1">
             <Users className="w-4 h-4" />
-            <span>{recipe.recipeInfo.serves} servings</span>
+            <span>{recipe.recipeInfo?.servings || "N/A"} servings</span>
           </div>
           <div className="flex items-center gap-1">
             <ChefHat className="w-4 h-4" />
-            <span>{recipe.timing.difficulty}</span>
+            <span>{recipe.recipeInfo?.difficulty || "N/A"}</span>
           </div>
         </div>
 

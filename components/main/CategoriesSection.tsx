@@ -1,5 +1,4 @@
 import React from "react";
-import { Recipe } from "@prisma/client";
 import { getCategories } from "@/data/data";
 import { Category } from "@/outils/types";
 

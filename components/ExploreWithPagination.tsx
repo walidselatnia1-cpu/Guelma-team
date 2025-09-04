@@ -1,14 +1,18 @@
-import React from "react";
+"use client";
+
+import React, { useState } from "react";
 import { Recipe } from "@/outils/types";
-import { notFound } from "next/navigation";
-import { getCategories, getRecipesByCategory } from "@/data/data";
 import Link from "next/link";
-import ExploreWithPagination from "@/components/ExploreWithPagination";
 
-// Force static generation
-export const dynamic = "force-static";
-
-const Pagination = ({ currentPage = 1, totalPages = 311, basePath = "" }) => {
+const Pagination = ({
+  currentPage = 1,
+  totalPages = 311,
+  onPageChange,
+}: {
+  currentPage: number;
+  totalPages: number;
+  onPageChange: (page: number) => void;
+}) => {
   const isFirstPage = currentPage === 1;
   const isLastPage = currentPage === totalPages;
 
@@ -22,12 +26,12 @@ const Pagination = ({ currentPage = 1, totalPages = 311, basePath = "" }) => {
               «
             </span>
           ) : (
-            <Link
-              href={`${basePath}?page=1`}
+            <button
+              onClick={() => onPageChange(1)}
               className="px-3 py-2 rounded-2xl bg-black text-white hover:bg-gray-800 transition-colors block"
             >
               «
-            </Link>
+            </button>
           )}
         </li>
 
@@ -38,12 +42,12 @@ const Pagination = ({ currentPage = 1, totalPages = 311, basePath = "" }) => {
               Previous
             </span>
           ) : (
-            <Link
-              href={`${basePath}?page=${currentPage - 1}`}
+            <button
+              onClick={() => onPageChange(currentPage - 1)}
               className="px-3 py-2 rounded-2xl bg-black text-white hover:bg-gray-800 transition-colors block"
             >
               Previous
-            </Link>
+            </button>
           )}
         </li>
 
@@ -61,12 +65,12 @@ const Pagination = ({ currentPage = 1, totalPages = 311, basePath = "" }) => {
               Next
             </span>
           ) : (
-            <Link
-              href={`${basePath}?page=${currentPage + 1}`}
+            <button
+              onClick={() => onPageChange(currentPage + 1)}
               className="px-3 py-2 rounded-2xl bg-black text-white hover:bg-gray-800 transition-colors block"
             >
               Next
-            </Link>
+            </button>
           )}
         </li>
 
@@ -77,12 +81,12 @@ const Pagination = ({ currentPage = 1, totalPages = 311, basePath = "" }) => {
               »
             </span>
           ) : (
-            <Link
-              href={`${basePath}?page=${totalPages}`}
+            <button
+              onClick={() => onPageChange(totalPages)}
               className="px-3 py-2 rounded-2xl bg-black text-white hover:bg-gray-800 transition-colors block"
             >
               »
-            </Link>
+            </button>
           )}
         </li>
       </ul>
@@ -123,30 +127,44 @@ const RecipeCard = ({ recipe }: { recipe: Recipe }) => {
           href={recipe.href}
           className="text-green-700 font-semibold hover:text-green-500 transition-colors"
         >
-          Make 'em
-        </a>
-        <a
-          href={recipe.categoryHref}
-          className="text-green-700 font-semibold hover:text-green-500 transition-colors"
-        >
           {recipe.category}
         </a>
+        <span className="text-gray-500">•</span>
+        <span className="text-gray-500">
+          {recipe.timing?.totalTime || "N/A"}
+        </span>
       </div>
     </div>
   );
 };
 
-function Explore({
+export default function ExploreWithPagination({
   recipes,
-  currentPage,
-  totalPages,
   basePath,
 }: {
   recipes: Recipe[];
-  currentPage: number;
-  totalPages: number;
   basePath: string;
 }) {
+  const [currentPage, setCurrentPage] = useState(1);
+  const pageSize = 9; // Show 9 recipes per page
+
+  // Calculate total pages
+  const totalPages = Math.ceil(recipes.length / pageSize);
+
+  // Get current page of recipes
+  const startIndex = (currentPage - 1) * pageSize;
+  const paginatedRecipes = recipes.slice(startIndex, startIndex + pageSize);
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+    // Optionally update URL without page reload
+    if (typeof window !== "undefined") {
+      const url = new URL(window.location.href);
+      url.searchParams.set("page", page.toString());
+      window.history.replaceState({}, "", url.toString());
+    }
+  };
+
   return (
     <div className="p-6 bg-gray-50 min-h-screen">
       <div className="max-w-7xl mx-auto">
@@ -156,7 +174,7 @@ function Explore({
 
         {/* Recipe Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {recipes.map((recipe: Recipe, index: number) => (
+          {paginatedRecipes.map((recipe: Recipe, index: number) => (
             <RecipeCard recipe={recipe} key={index} />
           ))}
         </div>
@@ -165,73 +183,9 @@ function Explore({
         <Pagination
           currentPage={currentPage}
           totalPages={totalPages}
-          basePath={basePath}
+          onPageChange={handlePageChange}
         />
       </div>
     </div>
   );
-}
-
-export default async function Page({ params }: { params: { slug: string } }) {
-  const { slug } = params;
-
-  const allRecipes = (await getRecipesByCategory(slug)) as Recipe[];
-
-  if (!allRecipes || allRecipes.length === 0) {
-    notFound();
-  }
-
-  // Pass all recipes to client component for pagination
-  return (
-    <>
-      <div className="grid grid-cols-1 lg:grid-cols-6 gap-8">
-        {/* Left Sidebar */}
-        <div className="lg:col-span-1">
-          <div className="sticky top-8">
-            {/* Left sidebar content can go here */}
-          </div>
-        </div>
-
-        {/* Explore Content - Middle */}
-        <div className="lg:col-span-4">
-          <div className="sticky top-8">
-            <ExploreWithPagination
-              recipes={allRecipes}
-              basePath={`/categories/${slug}`}
-            />
-          </div>
-        </div>
-
-        {/* Right Sidebar */}
-        <div className="lg:col-span-1">
-          <div className="sticky top-8">
-            {/* Right sidebar content can go here */}
-          </div>
-        </div>
-      </div>
-    </>
-  );
-}
-
-export async function generateStaticParams() {
-  try {
-    const categories = await getCategories();
-
-    const params = categories
-      .map((category) => {
-        if (!category || !category.slug || typeof category.slug !== "string") {
-          console.error("Invalid category for static params:", category);
-          return null;
-        }
-
-        return {
-          slug: category.slug,
-        };
-      })
-      .filter(Boolean); // Remove null entries
-
-    return params;
-  } catch (error) {
-    return []; // Return empty array on error
-  }
 }

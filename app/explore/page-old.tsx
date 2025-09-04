@@ -3,7 +3,6 @@ import { Recipe } from "@/outils/types";
 import { notFound } from "next/navigation";
 import { getRecipes } from "@/data/data";
 import ExploreWithPagination from "@/components/ExploreWithPagination";
-import Link from "next/link";
 
 // Force static generation
 export const dynamic = "force-static";

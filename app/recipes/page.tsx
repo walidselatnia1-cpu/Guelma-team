@@ -3,9 +3,6 @@ import { Recipe } from "@/outils/types";
 import { notFound } from "next/navigation";
 import { getRecipes } from "@/data/data";
 
-// Enable ISR for this page - revalidate every 5 minutes
-export const revalidate = 300;
-
 const Pagination = ({ currentPage = 1, totalPages = 311 }) => {
   const isFirstPage = currentPage === 1;
   const isLastPage = currentPage === totalPages;
