@@ -65,34 +65,12 @@ export async function POST(request: NextRequest) {
 
      */
     const recipe = await request.json();
+    // Create the recipe using all fields from the incoming recipe object
     const createdRecipe = await prisma.recipe.create({
       data: {
-        title: recipe.title,
-        description: recipe.description,
-        ingredients: recipe.ingredients,
-        instructions: recipe.instructions,
-        category: recipe.category,
-        // Required fields from schema
-        allergyInfo: recipe.allergyInfo || "",
-        author: recipe.author || {},
-        categoryLink: recipe.categoryLink || "",
-        featuredText: recipe.featuredText || "",
-        heroImage: recipe.heroImage || "",
-        img: recipe.img || "",
-        intro: recipe.intro || "",
-        mustKnowTips: recipe.mustKnowTips || [],
-        notes: recipe.notes || [],
-        nutritionDisclaimer: recipe.nutritionDisclaimer || "",
-        professionalSecrets: recipe.professionalSecrets || [],
-        serving: recipe.serving || "",
-        shortDescription: recipe.shortDescription || "",
-        slug: recipe.slug || recipe.title.toLowerCase().replace(/\s+/g, "-"),
-        storage: recipe.storage || "",
-        story: recipe.story || "",
-        testimonial: recipe.testimonial || "",
-        tools: recipe.tools || [],
+        ...recipe,
+        slug: recipe.slug || recipe.title?.toLowerCase().replace(/\s+/g, "-"),
         updatedDate: recipe.updatedDate || new Date().toISOString(),
-        images: recipe.images || [],
       },
     });
 
@@ -184,16 +162,9 @@ export async function PUT(request: NextRequest) {
     }
 */
     const updatedRecipe = await prisma.recipe.update({
-      where: {
-        id: id,
-      },
+      where: { id },
       data: {
-        title: recipe.title,
-        description: recipe.description,
-        ingredients: recipe.ingredients,
-        instructions: recipe.instructions,
-        category: recipe.category,
-        // Add other fields as needed
+        ...recipe,
         updatedAt: new Date(),
       },
     });

@@ -10,16 +10,12 @@ interface RecipeContentProps {
 }
 
 export function RecipeContent({ recipe }: RecipeContentProps) {
-  recipe = Array.isArray(recipe) ? recipe[0] : recipe;
-
-  console.log("Rendering RecipeContent for:", recipe);
-
   return (
     <div className="space-y-8 mt-2 text-md ">
       {/* Hero Image */}
       <div className="relative w-full h-96 md:h-[500px] rounded-lg overflow-hidden">
         <Image
-          src={recipe?.images ? recipe.images[0] : ""}
+          src={recipe.images[0]}
           alt={recipe.title}
           fill
           className="object-cover"
@@ -37,8 +33,8 @@ export function RecipeContent({ recipe }: RecipeContentProps) {
       </div>
       {/* Why You'll Love This */}
       <TipCard
-        title={recipe?.whyYouLove?.title}
-        items={recipe?.whyYouLove?.items}
+        title={recipe.whyYouLove.title}
+        items={recipe.whyYouLove.items}
       />
       {/* Testimonial */}
       <div className="prose prose-lg max-w-none text-[1.2rem]">
@@ -75,7 +71,7 @@ export function RecipeContent({ recipe }: RecipeContentProps) {
         </div>
       </div>
       {/* Sections */}
-      {recipe?.sections?.map((item: any, index: number) => {
+      {recipe.sections.map((item: any, index: number) => {
         return (
           <div>
             {item.type === "card" ? (
