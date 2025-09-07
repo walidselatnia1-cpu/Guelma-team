@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import Dashboard from "@/components/main/Dashboard";
+import Dashboard from "../../components/main/Dashboard";
 
 export default function Admin() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);

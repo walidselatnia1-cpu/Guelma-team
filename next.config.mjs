@@ -27,7 +27,6 @@ const nextConfig = {
   // Experimental features for better performance
   experimental: {
     webpackMemoryOptimizations: true,
-    optimizePackageImports: ["react-icons", "lucide-react"],
   },
 
   // Compiler options
@@ -98,6 +97,11 @@ const nextConfig = {
         },
       }
     : {}),
+
+  webpack: (config) => {
+    config.resolve.alias["@"] = path.resolve(__dirname);
+    return config;
+  },
 };
 
 export default nextConfig;
