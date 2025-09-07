@@ -50,4 +50,4 @@ EXPOSE 3000
 COPY run.sh /app/run.sh
 RUN chmod +x /app/run.sh
 
-CMD ["sh", "/app/start.sh"]
+CMD ["sh", "/app/run.sh"]
