@@ -50,15 +50,6 @@ RUN mkdir -p uploads && chmod 755 uploads
 EXPOSE 3000
 
 # Create startup script (wait for db, run migrations before start)
-RUN echo '#!/bin/sh\n\
-echo "Waiting for database to be ready..."\n\
-until nc -z db 5432; do\n\
-  echo "Database not ready, waiting..."\n\
-  sleep 2\n\
-done\n\
-echo "Database is ready, running migrations..."\n\
-npx prisma migrate deploy\n\
-echo "Starting application..."\n\
-pnpm build && pnpm start' > /app/start.sh && chmod +x /app/start.sh
+RUN printf '#!/bin/sh\necho "Waiting for database to be ready..."\nuntil nc -z db 5432; do\n  echo "Database not ready, waiting..."\n  sleep 2\ndone\necho "Database is ready, running migrations..."\nnpx prisma migrate deploy\necho "Starting application..."\npnpm build && pnpm start\n' > /app/start.sh && chmod +x /app/start.sh
 
 CMD ["/app/start.sh"]
