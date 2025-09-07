@@ -43,14 +43,11 @@ COPY . .
 # Ensure uploads directory exists
 RUN mkdir -p uploads && chmod 755 uploads
 
-# Build Next.js app (with env available)
-
-
 # Expose port (Next.js default)
 EXPOSE 3000
 
-# Create startup script (wait for db, run migrations before start)
+# Copy and setup startup script
 COPY run.sh /app/run.sh
 RUN chmod +x /app/run.sh
 
-CMD ["/app/run.sh"]
+CMD ["sh", "/app/start.sh"]
