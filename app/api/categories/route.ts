@@ -1,5 +1,5 @@
-export const dynamic = "force-static";
-export const revalidate = 60;
+export const dynamic = "force-dynamic";
+
 import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { Category } from "@/outils/types";
