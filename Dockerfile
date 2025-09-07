@@ -28,9 +28,10 @@ ENV STATIC_EXPORT=${STATIC_EXPORT}
 ENV MOCK=${MOCK}
 ENV DB_PASSWORD=${DB_PASSWORD}
 
-# Install dependencies
+# Install dependencies and netcat for database connectivity check
 COPY package.json  ./
-RUN npm install -g pnpm && pnpm install --no-frozen-lockfile
+RUN apk add --no-cache netcat-openbsd && \
+    npm install -g pnpm && pnpm install --no-frozen-lockfile
 
 # Copy Prisma schema and generate client
 COPY prisma ./prisma
@@ -43,14 +44,21 @@ COPY . .
 RUN mkdir -p uploads && chmod 755 uploads
 
 # Build Next.js app (with env available)
-RUN pnpm build
+
 
 # Expose port (Next.js default)
 EXPOSE 3000
 
-# Create startup script (run migrations before start)
+# Create startup script (wait for db, run migrations before start)
 RUN echo '#!/bin/sh\n\
+echo "Waiting for database to be ready..."\n\
+until nc -z db 5432; do\n\
+  echo "Database not ready, waiting..."\n\
+  sleep 2\n\
+done\n\
+echo "Database is ready, running migrations..."\n\
 npx prisma migrate deploy\n\
-pnpm start' > /app/start.sh && chmod +x /app/start.sh
+echo "Starting application..."\n\
+pnpm build && pnpm start' > /app/start.sh && chmod +x /app/start.sh
 
 CMD ["/app/start.sh"]
