@@ -46,7 +46,5 @@ RUN mkdir -p uploads && chmod 755 uploads
 # Expose port (Next.js default)
 EXPOSE 3000
 
-COPY run.sh /app/run.sh
-RUN sed -i 's/\r$//' /app/run.sh && chmod +x /app/run.sh
-
-CMD ["sh", "/app/run.sh"]
+# Run commands directly without a script file
+CMD ["sh", "-c", "echo '⏳ Waiting for database to be ready...' && until nc -z db 5432; do echo 'Database not ready, waiting...'; sleep 2; done && echo '✅ Database is ready, running migrations...' && npx prisma migrate deploy && echo '🚀 Starting application...' && pnpm build && pnpm start"]
