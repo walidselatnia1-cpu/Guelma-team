@@ -7,4 +7,4 @@ done
 echo "✅ Database is ready, running migrations..."
 npx prisma migrate deploy
 echo "🚀 Starting application..."
-pnpm build && pnpm start
+yarn build && yarn start

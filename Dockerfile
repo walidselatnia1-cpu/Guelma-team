@@ -37,6 +37,9 @@ COPY package.json yarn.lock* ./
 # Install dependencies
 RUN yarn install --frozen-lockfile --include=dev || yarn install --include=dev
 
+# Install Next.js globally to ensure it's available in PATH
+RUN yarn global add next
+
 # Copy Prisma schema and generate client
 COPY prisma ./prisma
 RUN npx prisma generate
