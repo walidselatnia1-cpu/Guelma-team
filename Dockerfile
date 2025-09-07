@@ -28,10 +28,15 @@ ENV STATIC_EXPORT=${STATIC_EXPORT}
 ENV MOCK=${MOCK}
 ENV DB_PASSWORD=${DB_PASSWORD}
 
-# Install dependencies and netcat for database connectivity check
-COPY package.json  ./
+# Install netcat and yarn
 RUN apk add --no-cache netcat-openbsd && \
-    npm install -g pnpm && pnpm install --include=dev
+    npm install -g yarn
+
+# Copy package files
+COPY package.json yarn.lock* ./
+
+# Install dependencies
+RUN yarn install --frozen-lockfile || yarn install
 
 # Copy Prisma schema and generate client
 COPY prisma ./prisma
@@ -47,4 +52,4 @@ RUN mkdir -p uploads && chmod 755 uploads
 EXPOSE 3000
 
 # Run commands directly without a script file
-CMD ["sh", "-c", "echo '⏳ Waiting for database to be ready...' && until nc -z db 5432; do echo 'Database not ready, waiting...'; sleep 2; done && echo '✅ Database is ready, running migrations...' && npx prisma migrate deploy && echo '🚀 Starting application...' && npx next build && pnpm start"]
+CMD ["sh", "-c", "echo '⏳ Waiting for database to be ready...' && until nc -z db 5432; do echo 'Database not ready, waiting...'; sleep 2; done && echo '✅ Database is ready, running migrations...' && npx prisma migrate deploy && echo '🚀 Starting application...' && yarn build && yarn start"]
