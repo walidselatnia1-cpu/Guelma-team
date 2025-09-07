@@ -29,7 +29,7 @@ ENV MOCK=${MOCK}
 ENV DB_PASSWORD=${DB_PASSWORD}
 
 # Install dependencies
-COPY package.json pnpm-lock.yaml* ./
+COPY package.json  ./
 RUN npm install -g pnpm && pnpm install --no-frozen-lockfile
 
 # Copy Prisma schema and generate client
