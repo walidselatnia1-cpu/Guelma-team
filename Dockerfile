@@ -35,7 +35,7 @@ RUN apk add --no-cache netcat-openbsd
 COPY package.json yarn.lock* ./
 
 # Install dependencies
-RUN yarn install --frozen-lockfile || yarn install
+RUN yarn install --frozen-lockfile --include=dev || yarn install --include=dev
 
 # Copy Prisma schema and generate client
 COPY prisma ./prisma

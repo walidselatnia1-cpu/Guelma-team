@@ -1,3 +1,4 @@
+// Remove static import of 'path' and use dynamic import in webpack function
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   // Build optimizations (swcMinify is default in Next.js 15)
@@ -98,8 +99,9 @@ const nextConfig = {
       }
     : {}),
 
-  webpack: (config) => {
-    config.resolve.alias["@"] = path.resolve(__dirname);
+  webpack: async (config) => {
+    const path = await import("path");
+    config.resolve.alias["@"] = path.resolve(process.cwd());
     return config;
   },
 };
