@@ -46,17 +46,9 @@ RUN mkdir -p uploads && chmod 755 uploads
 # Expose port (Next.js default)
 EXPOSE 3000
 
-# Copy and setup startup script
-RUN printf '#!/bin/sh\n\
-echo "⏳ Waiting for database to be ready..."\n\
-until nc -z db 5432; do\n\
-  echo "Database not ready, waiting..."\n\
-  sleep 2\n\
-done\n\
-echo "✅ Database is ready, running migrations..."\n\
-npx prisma migrate deploy\n\
-echo "🚀 Starting application..."\n\
-pnpm build && pnpm start\n' \
-> /app/run.sh && chmod +x /app/run.sh
+RUN chmod +x /app/run.sh
+
+# Expose port (Next.js default)
+EXPOSE 3000
 
 CMD ["sh", "/app/run.sh"]
