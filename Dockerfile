@@ -31,7 +31,7 @@ ENV DB_PASSWORD=${DB_PASSWORD}
 # Install dependencies and netcat for database connectivity check
 COPY package.json  ./
 RUN apk add --no-cache netcat-openbsd && \
-    npm install -g pnpm && pnpm install --include=dev --no-frozen-lockfile
+    npm install -g pnpm && pnpm install --include=dev
 
 # Copy Prisma schema and generate client
 COPY prisma ./prisma
