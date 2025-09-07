@@ -50,7 +50,7 @@ RUN mkdir -p uploads && chmod 755 uploads
 EXPOSE 3000
 
 # Create startup script (wait for db, run migrations before start)
-COPY start.sh /app/start.sh
-RUN chmod +x /app/start.sh
+COPY start.sh /app/run.sh
+RUN chmod +x /app/run.sh
 
-CMD ["/app/start.sh"]
+CMD ["/app/run.sh"]
