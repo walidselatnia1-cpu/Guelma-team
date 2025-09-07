@@ -29,8 +29,7 @@ ENV MOCK=${MOCK}
 ENV DB_PASSWORD=${DB_PASSWORD}
 
 # Install netcat and yarn
-RUN apk add --no-cache netcat-openbsd && \
-    npm install -g yarn
+RUN apk add --no-cache netcat-openbsd 
 
 # Copy package files
 COPY package.json yarn.lock* ./
