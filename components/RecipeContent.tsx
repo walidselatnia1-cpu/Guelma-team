@@ -11,15 +11,12 @@ interface RecipeContentProps {
 
 export function RecipeContent({ recipe }: RecipeContentProps) {
   recipe = Array.isArray(recipe) ? recipe[0] : recipe;
-
-  console.log("Rendering RecipeContent for:", recipe);
-
   return (
     <div className="space-y-8 mt-2 text-md ">
       {/* Hero Image */}
       <div className="relative w-full h-96 md:h-[500px] rounded-lg overflow-hidden">
         <Image
-          src={recipe?.images ? recipe.images[0] : ""}
+          src={recipe.images[0]}
           alt={recipe.title}
           fill
           className="object-cover"
@@ -37,8 +34,8 @@ export function RecipeContent({ recipe }: RecipeContentProps) {
       </div>
       {/* Why You'll Love This */}
       <TipCard
-        title={recipe?.whyYouLove?.title}
-        items={recipe?.whyYouLove?.items}
+        title={recipe.whyYouLove?.title}
+        items={recipe.whyYouLove?.items}
       />
       {/* Testimonial */}
       <div className="prose prose-lg max-w-none text-[1.2rem]">
@@ -75,7 +72,7 @@ export function RecipeContent({ recipe }: RecipeContentProps) {
         </div>
       </div>
       {/* Sections */}
-      {recipe?.sections?.map((item: any, index: number) => {
+      {recipe.sections?.map((item: any, index: number) => {
         return (
           <div>
             {item.type === "card" ? (
@@ -86,7 +83,6 @@ export function RecipeContent({ recipe }: RecipeContentProps) {
               />
             ) : (
               <>
-                {" "}
                 <h2
                   className="
           relative flex items-center
@@ -123,9 +119,7 @@ export function RecipeContent({ recipe }: RecipeContentProps) {
                   Honey Sesame Chicken and Broccoli | recipesbyclare.com
                 </div>
               </div>
-            ) : (
-              <> </>
-            )}
+            ) : null}
           </div>
         );
       })}
@@ -146,10 +140,10 @@ export function RecipeContent({ recipe }: RecipeContentProps) {
           ml-0
         "
         >
-          {recipe.questions.title}
+          {recipe.questions?.title}
         </h2>
         <div className="space-y-6 text-[1.2rem]">
-          {recipe.questions.items.map((item: any, index: any) => (
+          {recipe.questions?.items?.map((item: any, index: any) => (
             <div key={index} className="border-b border-gray-200 pb-4">
               <h3 className="flex font-bold items-center space-x-2 font-bold text-gray-900 mb-2">
                 <span>{"→" + item.question}</span>

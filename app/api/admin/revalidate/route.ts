@@ -1,3 +1,4 @@
+const dynamic = "force-static";
 import { NextRequest, NextResponse } from "next/server";
 import { revalidatePath, revalidateTag } from "next/cache";
 
@@ -42,7 +43,7 @@ export async function POST(request: NextRequest) {
         }
 
         // Revalidate tags
-        const newRecipeTags = ["recipes", "latest", "trending"];
+        const newRecipeTags = ["recipes", "all-recipes", "latest", "trending"];
         for (const tag of newRecipeTags) {
           await revalidateTag(tag);
           revalidatedTags.push(tag);
@@ -66,7 +67,14 @@ export async function POST(request: NextRequest) {
         }
 
         // Revalidate tags
-        const updateTags = ["recipes", "latest", "trending"];
+        const updateTags = [
+          "recipes",
+          "all-recipes",
+          "latest-recipes",
+          "latest",
+          "trending",
+          "categories",
+        ];
         for (const tag of updateTags) {
           await revalidateTag(tag);
           revalidatedTags.push(tag);
@@ -91,7 +99,15 @@ export async function POST(request: NextRequest) {
         }
 
         // Revalidate tags
-        const deleteTags = ["recipes", "latest", "trending"];
+        const deleteTags = [
+          "recipes",
+          "all-recipes",
+          "latest",
+          "latest-recipes",
+
+          "trending",
+          "categories",
+        ];
         for (const tag of deleteTags) {
           await revalidateTag(tag);
           revalidatedTags.push(tag);
@@ -125,7 +141,15 @@ export async function POST(request: NextRequest) {
           revalidatedPaths.push(path);
         }
 
-        const allTags = ["recipes", "categories", "trending", "latest"];
+        const allTags = [
+          "recipes",
+          "all-recipes",
+          "categories",
+          "latest-recipes",
+
+          "trending",
+          "latest",
+        ];
         for (const tag of allTags) {
           await revalidateTag(tag);
           revalidatedTags.push(tag);

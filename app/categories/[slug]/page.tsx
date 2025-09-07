@@ -1,12 +1,11 @@
+export const dynamic = "force-static";
+
 import React from "react";
 import { Recipe } from "@/outils/types";
 import { notFound } from "next/navigation";
 import { getCategories, getRecipesByCategory } from "@/data/data";
 import Link from "next/link";
 import ExploreWithPagination from "@/components/ExploreWithPagination";
-
-// Force static generation
-export const dynamic = "force-static";
 
 const Pagination = ({ currentPage = 1, totalPages = 311, basePath = "" }) => {
   const isFirstPage = currentPage === 1;

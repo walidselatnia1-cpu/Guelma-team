@@ -3,6 +3,8 @@
 import React from "react";
 import { usePathname } from "next/navigation";
 import { navigationItems } from "@/data/navigation";
+import { siteConfig } from "@/config/site";
+import Icon from "@/components/Icon";
 
 interface HeaderProps {
   className?: string;
@@ -13,9 +15,7 @@ export default function Header({ className }: HeaderProps) {
   const segments = pathname.split("/").filter(Boolean);
 
   const isAdmin = segments[segments.length - 1] === "admin";
-  const isMedia = segments[segments.length - 2] === "media";
-
-  if (isAdmin || isMedia) {
+  if (isAdmin) {
     return <></>;
   }
 
@@ -34,51 +34,68 @@ export default function Header({ className }: HeaderProps) {
       }`}
     >
       <div className="relative max-w-full w-full mx-auto px-4">
-        <nav className="flex items-center justify-between">
+        <nav className="flex items-center justify-between py-5">
           {/* Logo */}
           <a
             href="/"
-            title="Family-Friendly Recipes That Everyone Will Love"
-            className="flex items-center py-2 min-w-[90px]"
+            title={siteConfig.description}
+            className="flex items-center flex-shrink-0"
           >
             <img
-              src="/placeholder-logo.svg"
-              alt="Guelma Team Recipes"
-              className="h-[50px] md:h-[70px] max-w-full"
+              src="https://c.animaapp.com/mer35j4wJPAxku/assets/logo.svg"
+              alt={siteConfig.name}
+              className="h-[40px] sm:h-[50px] lg:h-[60px] xl:h-[70px] w-auto max-w-full"
             />
           </a>
 
-          {/* Desktop Nav */}
-          <ul className="items-center hidden md:flex gap-x-4">
+          {/* Desktop Nav - Full labels on XL screens */}
+          <ul className="items-center hidden xl:flex gap-x-3 flex-shrink-0">
             {navigationItems.map((item) => (
               <li key={item.id}>
                 <a
                   href={item.href}
                   title={item.title}
-                  className={`relative text-neutral-900 font-bold inline-flex items-center gap-x-1.5 p-2 rounded-[32px] md:px-4 transition ${
+                  className={`relative text-neutral-900 font-bold inline-flex items-center gap-x-1.5 p-2 rounded-[32px] xl:px-3 2xl:px-4 transition whitespace-nowrap ${
                     isActive(item.href)
                       ? "bg-gray-300" // Persistent active state
                       : "hover:bg-gray-300" // Only hover when not active
                   }`}
                 >
-                  <svg className="h-4 w-4 text-black" aria-hidden="true">
-                    <use href={item.iconSrc} />
-                  </svg>
-                  {item.label && <span>{item.label}</span>}
+                  <Icon name={item.iconSrc} size={19} className="text-black" />
+                  {item.label && (
+                    <span className="text-sm xl:text-base">{item.label}</span>
+                  )}
+                </a>
+              </li>
+            ))}
+          </ul>
+
+          {/* Tablet Nav - Icons only on large screens */}
+          <ul className="items-center hidden lg:flex xl:hidden gap-x-2 flex-shrink-0">
+            {navigationItems.map((item) => (
+              <li key={item.id}>
+                <a
+                  href={item.href}
+                  title={item.title}
+                  className={`relative inline-flex items-center justify-center p-3 rounded-full transition ${
+                    isActive(item.href)
+                      ? "bg-gray-300" // Persistent active state
+                      : "hover:bg-gray-300" // Only hover when not active
+                  }`}
+                >
+                  <Icon name={item.iconSrc} size={20} className="text-black" />
                 </a>
               </li>
             ))}
           </ul>
 
           {/* Mobile Full-Screen Menu */}
-          <details className="md:hidden relative">
+          <details className="lg:hidden relative flex-shrink-0">
             <summary
               aria-label="Toggle Mobile Menu"
               className="list-none cursor-pointer inline-flex items-center justify-center p-2 rounded-full hover:bg-gray-300"
             >
-              <svg className="h-8 w-8 text-black" aria-hidden="true">
-                <use href="/symbols-v4.svg#menu" />
-              </svg>
+              <Icon name="menu" size={32} className="text-black" />
             </summary>
 
             <div className="fixed inset-0 bg-white z-50 flex flex-col">
@@ -94,9 +111,7 @@ export default function Header({ className }: HeaderProps) {
                   className="inline-flex items-center justify-center p-2 rounded-full hover:bg-gray-300"
                   aria-label="Close Menu"
                 >
-                  <svg className="h-6 w-6 text-black" aria-hidden="true">
-                    <use href="/symbols-v4.svg#close" />
-                  </svg>
+                  <Icon name="close" size={24} className="text-black" />
                 </button>
               </div>
 
@@ -120,9 +135,11 @@ export default function Header({ className }: HeaderProps) {
                           if (details) details.removeAttribute("open");
                         }}
                       >
-                        <svg className="h-4 w-4 text-black" aria-hidden="true">
-                          <use href={item.iconSrc} />
-                        </svg>
+                        <Icon
+                          name={item.iconSrc}
+                          size={16}
+                          className="text-black"
+                        />
                         {item.label && <span>{item.label}</span>}
                       </a>
                     </li>

@@ -1,3 +1,5 @@
+export const dynamic = "force-static";
+
 import CategoriesSection from "@/components/main/CategoriesSection";
 import HeroSection from "@/components/main/HeroSection";
 import LatestArticlesSection from "@/components/main/LatestArticlesSection";

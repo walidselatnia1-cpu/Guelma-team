@@ -91,11 +91,16 @@ export async function POST(request: NextRequest) {
     const fileUrl = `/uploads/${category}/${fileName}`;
 
     try {
+      // Revalidate relevant paths and tags for image uploads
       revalidatePath("/recipes");
-      revalidatePath(`/recipes/${updatedRecipe.slug}`);
+      revalidatePath("/categories");
+      revalidatePath("/");
+
+      revalidatePath("/explore");
       revalidateTag("recipes");
       revalidateTag("all-recipes");
-      console.log("✅ Cache revalidated for updated recipe");
+      revalidateTag("categories");
+      console.log("✅ Cache revalidated for uploaded image");
     } catch (revalidationError) {
       console.warn("⚠️ Cache revalidation failed:", revalidationError);
     }

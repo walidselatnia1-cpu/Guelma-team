@@ -1,4 +1,5 @@
 import React from "react";
+import Icon from "@/components/Icon";
 
 // Contact Card Component
 const ContactCard = ({ title, description, email }: any) => {
@@ -10,9 +11,7 @@ const ContactCard = ({ title, description, email }: any) => {
         <ul className="flex flex-col gap-2 list-none p-0 break-words">
           <li>
             <strong className="inline-flex items-center gap-1.5 text-[#394840] font-semibold">
-              <svg className="w-4 h-4">
-                <use href="/symbols-v4.svg?#email"></use>
-              </svg>
+              <Icon name="email" size={16} className="text-gray-600" />
               Email
             </strong>
             <br />

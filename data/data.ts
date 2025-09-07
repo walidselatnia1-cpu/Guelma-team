@@ -1,50 +1,45 @@
 import { Article, Recipe, Category } from "@/outils/types";
 import { apiClient } from "@/lib/api-client";
 import latestArticles from "./articles";
+import { unstable_cache } from "next/cache";
 
 // ============================================================================
 // CONFIGURATION
 // ============================================================================
 
-// Use environment variable for mock mode
-
 const isServer = typeof window === "undefined";
-const isClient = !isServer;
 
-// Runtime environment checks
+// Environment configuration
 const IS_DEVELOPMENT = process.env.NODE_ENV === "development";
-const IS_PRODUCTION = process.env.NODE_ENV === "production";
-const IS_TEST = process.env.NODE_ENV === "test";
-
-const MOCK_MODE = false;
-
-console.log(
-  "🔧 MOCK_MODE is:",
-  MOCK_MODE,
-  "| ENV:",
-  process.env.NODE_ENV,
-  "| FORCE_REAL_DB:",
-  process.env.NEXT_PUBLIC_FORCE_REAL_DB
-);
-
-// Base URL for API calls
+const IS_BUILD_TIME = process.env.NEXT_PHASE === "phase-production-build";
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
 
+// Log configuration for debugging
+if (IS_DEVELOPMENT) {
+  console.log("🔧 Data Service Config:", {
+    NODE_ENV: process.env.NODE_ENV,
+    IS_BUILD_TIME,
+    BASE_URL,
+    isServer,
+  });
+}
+
 // ============================================================================
-// PROGRESSIVE UTILITIES
+// CACHE & REVALIDATION UTILITIES
 // ============================================================================
+
+interface RevalidationOptions {
+  type?: "path" | "tag" | "default";
+  target?: string;
+  paths?: string[];
+  tags?: string[];
+}
 
 /**
  * Trigger on-demand revalidation after data changes
- * Call this after adding/updating/deleting recipes
  */
-export async function revalidateRecipeData(
-  options: {
-    type?: "path" | "tag" | "default";
-    target?: string;
-    paths?: string[];
-    tags?: string[];
-  } = {}
+async function revalidateRecipeData(
+  options: RevalidationOptions = {}
 ): Promise<boolean> {
   try {
     const revalidateSecret =
@@ -59,38 +54,43 @@ export async function revalidateRecipeData(
     }
 
     const { type = "default", target, paths, tags } = options;
+    const baseBody = { secret: revalidateSecret, type };
 
-    const body: any = {
-      secret: revalidateSecret,
-      type,
-    };
+    // Handle bulk revalidation
+    if (paths || tags) {
+      const promises: Promise<Response>[] = [];
 
-    if (type === "path" && target) {
-      body.path = target;
-    } else if (type === "tag" && target) {
-      body.tag = target;
-    } else if (paths || tags) {
-      // Custom bulk revalidation
-      if (paths) {
-        for (const path of paths) {
-          await fetch(`${BASE_URL}/api/revalidate`, {
+      paths?.forEach((path) => {
+        promises.push(
+          fetch(`${BASE_URL}/api/revalidate`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ ...body, type: "path", path }),
-          });
-        }
-      }
-      if (tags) {
-        for (const tag of tags) {
-          await fetch(`${BASE_URL}/api/revalidate`, {
+            body: JSON.stringify({ ...baseBody, type: "path", path }),
+          })
+        );
+      });
+
+      tags?.forEach((tag) => {
+        promises.push(
+          fetch(`${BASE_URL}/api/revalidate`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ ...body, type: "tag", tag }),
-          });
-        }
-      }
+            body: JSON.stringify({ ...baseBody, type: "tag", tag }),
+          })
+        );
+      });
+
+      await Promise.all(promises);
+      console.log("✅ Bulk revalidation completed");
       return true;
     }
+
+    // Handle single revalidation
+    const body = {
+      ...baseBody,
+      ...(type === "path" && target && { path: target }),
+      ...(type === "tag" && target && { tag: target }),
+    };
 
     const response = await fetch(`${BASE_URL}/api/revalidate`, {
       method: "POST",
@@ -115,25 +115,24 @@ export async function revalidateRecipeData(
 /**
  * Helper to revalidate after adding a new recipe
  */
-export async function revalidateAfterNewRecipe(category?: string) {
+async function revalidateAfterNewRecipe(category?: string): Promise<boolean> {
   const tags = ["recipes", "all-recipes", "trending", "latest"];
+  const paths = ["/", "/recipes", "/explore", "/categories"];
+
   if (category) {
     tags.push(`category-${category.toLowerCase()}`);
   }
 
-  return await revalidateRecipeData({
-    tags,
-    paths: ["/", "/recipes", "/explore", "/categories"],
-  });
+  return await revalidateRecipeData({ tags, paths });
 }
 
 /**
  * Helper to revalidate after updating a recipe
  */
-export async function revalidateAfterRecipeUpdate(
+async function revalidateAfterRecipeUpdate(
   slug: string,
   category?: string
-) {
+): Promise<boolean> {
   const tags = ["recipes", "all-recipes"];
   const paths = [`/recipes/${slug}`];
 
@@ -146,55 +145,73 @@ export async function revalidateAfterRecipeUpdate(
 }
 
 // ============================================================================
-// MOCK DATA UTILITIES
+// DATABASE ACCESS UTILITIES
 // ============================================================================
 
-// In-memory storage for mock mode
-let mockRecipes: Recipe[] = [];
-let isInitialized = false;
-
 /**
- * Initialize mock recipes from dummy data
+ * Get Prisma client for server-side operations
  */
-async function initializeMockRecipes() {
-  if (!isInitialized) {
-    mockRecipes = await getDummyData(10);
-    isInitialized = true;
+async function getPrisma() {
+  try {
+    return (await import("@/lib/prisma")).default;
+  } catch (error) {
+    console.error("❌ Failed to import Prisma:", error);
+    throw new Error("Database connection failed");
   }
 }
 
 /**
- * Generates dummy recipe data for testing
+ * Check if we should use direct database access
  */
-export async function getDummyData(length: number): Promise<Recipe[]> {
-  console.log("🏗️ Generating dummy data with length:", length);
-
-  const data = (await import("../data/recipe.json")).default as any;
-
-  // Start with the base recipe using its original slug
-  const dummyData: Recipe[] = [data as Recipe];
-  console.log("📄 Base recipe loaded:", data?.title, "slug:", data?.slug);
-
-  // Add mock variations
-  for (let i = 0; i < length; i++) {
-    dummyData.push({
-      ...data,
-      id: (i + 1).toString(),
-      slug: `${data.slug}-mock-${i}`,
-      title: `${data.title} Mock ${i}`,
-      shortDescription: `${data.shortDescription} - Mock Recipe ${i}`,
-      href: `/recipes/${data.slug}-mock-${i}`,
-    } as Recipe);
-  }
-
-  return dummyData;
+function shouldUseDirectDB(): boolean {
+  return isServer && (IS_DEVELOPMENT || IS_BUILD_TIME);
 }
 
 /**
- * Generates dummy article data for testing
+ * Fetch data with fallback between direct DB and API
  */
-export async function getDummyDataArticles(): Promise<Article[]> {
-  return latestArticles;
+async function fetchWithFallback<T>(
+  directDbFn: () => Promise<T>,
+  apiUrl: string,
+  cacheOptions?: {
+    tags?: string[];
+    revalidate?: number;
+  }
+): Promise<T> {
+  // Use direct database during build time and development
+  if (shouldUseDirectDB()) {
+    try {
+      return await directDbFn();
+    } catch (error) {
+      console.error("❌ Direct DB call failed:", error);
+      throw new Error("Database operation failed during build");
+    }
+  }
+
+  // Use API fetch for client-side and production
+  try {
+    const fetchOptions: RequestInit = {};
+
+    if (cacheOptions) {
+      fetchOptions.next = {
+        tags: cacheOptions.tags,
+        revalidate: cacheOptions.revalidate,
+      };
+    }
+
+    const response = await fetch(apiUrl, fetchOptions);
+
+    if (!response.ok) {
+      throw new Error(
+        `API request failed: ${response.status} ${response.statusText}`
+      );
+    }
+
+    return (await response.json()) as T;
+  } catch (error) {
+    console.error("❌ API fetch failed:", error);
+    throw new Error("Failed to fetch data from API");
+  }
 }
 
 // ============================================================================
@@ -202,94 +219,55 @@ export async function getDummyDataArticles(): Promise<Article[]> {
 // ============================================================================
 
 /**
- * Gets all recipes
+ * Get all recipes with caching support
  */
-export async function getRecipes(): Promise<Recipe[]> {
+async function getRecipes(): Promise<Recipe[]> {
   return await getData();
 }
 
 /**
- * Gets all recipes - either from API or direct DB call during build
+ * Core data fetching function with environment-aware logic
  */
-export async function getData(): Promise<Recipe[]> {
-  if (MOCK_MODE) {
-    return getDummyData(10);
-  }
-
-  // Use direct Prisma during build time, API fetch during production runtime
-  if (typeof window === "undefined") {
-    // During build or development, use direct Prisma
-    if (
-      process.env.NODE_ENV === "development" ||
-      process.env.NEXT_PHASE === "phase-production-build"
-    ) {
-      try {
-        const { unstable_cache } = await import("next/cache");
-        const prisma = (await import("@/lib/prisma")).default;
-
-        // Wrap in Next.js cache with tags for revalidation
-        const getCachedRecipes = unstable_cache(
-          async () => {
-            const recipes = await prisma.recipe.findMany({
-              orderBy: { createdAt: "desc" },
-            });
-            return recipes as unknown as Recipe[];
-          },
-          ["all-recipes"], // Cache key
-          {
-            tags: ["recipes", "all-recipes"], // Only tags for on-demand revalidation
-          }
-        );
-
-        return await getCachedRecipes();
-      } catch (error) {
-        console.error("Direct DB call failed:", error);
-        return getDummyData(10);
-      }
-    }
-  }
-
-  // Client-side, use API fetch with ISR support
-  const response = await fetch(`${BASE_URL}/api/recipe`, {
-    next: {
-      tags: ["recipes", "all-recipes"], // Only tags for on-demand revalidation
+async function getData(): Promise<Recipe[]> {
+  const getCachedRecipes = unstable_cache(
+    async (): Promise<Recipe[]> => {
+      return await fetchWithFallback(
+        async () => {
+          const prisma = await getPrisma();
+          const recipes = await prisma.recipe.findMany({
+            orderBy: { createdAt: "desc" },
+          });
+          return recipes as unknown as Recipe[];
+        },
+        `${BASE_URL}/api/recipe`,
+        {
+          tags: ["recipes", "all-recipes"],
+          revalidate: 3600,
+        }
+      );
     },
-  });
+    ["all-recipes"],
+    {
+      tags: ["recipes", "all-recipes"],
+      revalidate: 3600,
+    }
+  );
 
-  if (!response.ok) {
-    throw new Error("Failed to fetch data");
-  }
-  return (await response.json()) as Recipe[];
+  return await getCachedRecipes();
 }
 
 /**
- * Gets a single recipe by slug
+ * Get a single recipe by slug
  */
-export async function getRecipe(slug: string): Promise<Recipe | null> {
-  console.log("🔍 getRecipe called with slug:", slug);
-
-  if (MOCK_MODE) {
-    const recipes = await getDummyData(10);
-
-    // Try both exact match and case-insensitive match
-    let foundRecipe = recipes.find((recipe: Recipe) => recipe.slug === slug);
-    if (!foundRecipe) {
-      foundRecipe = recipes.find(
-        (recipe: Recipe) => recipe.slug.toLowerCase() === slug.toLowerCase()
-      );
-    }
-    return foundRecipe || null;
+async function getRecipe(slug: string): Promise<Recipe | null> {
+  if (IS_DEVELOPMENT) {
+    console.log("🔍 getRecipe called with slug:", slug);
   }
 
-  // Use direct Prisma during build time, API fetch during production runtime
-  if (typeof window === "undefined") {
-    // During build or development, use direct Prisma
-    if (
-      process.env.NODE_ENV === "development" ||
-      process.env.NEXT_PHASE === "phase-production-build"
-    ) {
-      try {
-        const prisma = (await import("@/lib/prisma")).default;
+  try {
+    return await fetchWithFallback(
+      async () => {
+        const prisma = await getPrisma();
         const recipe = await prisma.recipe.findFirst({
           where: {
             slug: {
@@ -299,53 +277,31 @@ export async function getRecipe(slug: string): Promise<Recipe | null> {
           },
         });
         return recipe as unknown as Recipe | null;
-      } catch (error) {
-        console.error("Direct DB call failed:", error);
-        return null;
-      }
-    }
-  }
-
-  const response = await fetch(
-    `${BASE_URL}/api/recipe?slug=${encodeURIComponent(slug)}`,
-    {
-      next: {
-        tags: ["recipes", `recipe-${slug}`], // Only tags for on-demand revalidation
       },
+      `${BASE_URL}/api/recipe?slug=${encodeURIComponent(slug)}`,
+      {
+        tags: ["recipes", `recipe-${slug}`],
+        revalidate: 3600,
+      }
+    );
+  } catch (error) {
+    // Handle 404 case specifically
+    if (error instanceof Error && error.message.includes("404")) {
+      return null;
     }
-  );
-  if (!response.ok) {
-    if (response.status === 404) return null;
-    throw new Error("Failed to fetch recipe");
+    console.error("❌ Failed to fetch recipe:", error);
+    return null;
   }
-
-  return (await response.json()) as Recipe;
 }
 
 /**
- * Gets trending recipes
+ * Get trending recipes
  */
-export async function getTrending(limit: number = 10): Promise<Recipe[]> {
-  if (MOCK_MODE) {
-    const recipes = await getDummyData(20);
-    return recipes
-      .sort(() => Math.random() - 0.5)
-      .slice(0, limit)
-      .map((recipe: Recipe) => ({
-        ...recipe,
-        featuredText: "Trending Now",
-      }));
-  }
-
-  // Use direct Prisma during build time, API fetch during production runtime
-  if (typeof window === "undefined") {
-    // During build or development, use direct Prisma
-    if (
-      process.env.NODE_ENV === "development" ||
-      process.env.NEXT_PHASE === "phase-production-build"
-    ) {
-      try {
-        const prisma = (await import("@/lib/prisma")).default;
+async function getTrending(limit: number = 10): Promise<Recipe[]> {
+  try {
+    const recipes = await fetchWithFallback(
+      async () => {
+        const prisma = await getPrisma();
         const recipes = await prisma.recipe.findMany({
           take: limit,
           orderBy: [{ createdAt: "desc" }],
@@ -354,61 +310,43 @@ export async function getTrending(limit: number = 10): Promise<Recipe[]> {
           ...recipe,
           featuredText: "Trending Now",
         })) as Recipe[];
-      } catch (error) {
-        console.error("Direct DB call failed:", error);
-        return [];
-      }
-    }
-  }
-
-  const response = await fetch(
-    `${BASE_URL}/api/recipe/trending?limit=${limit}`,
-    {
-      next: {
-        tags: ["recipes", "trending"], // Only tags for on-demand revalidation
       },
-    }
-  );
-  if (!response.ok) {
-    throw new Error("Failed to fetch trending recipes");
-  }
+      `${BASE_URL}/api/recipe/trending?limit=${limit}`,
+      {
+        tags: ["recipes", "trending"],
+        revalidate: 1800, // 30 minutes for trending
+      }
+    );
 
-  return (await response.json()) as Recipe[];
+    return recipes;
+  } catch (error) {
+    console.error("❌ Failed to fetch trending recipes:", error);
+    return [];
+  }
 }
 
 /**
- * Gets related recipes for a specific recipe
+ * Get related recipes for a specific recipe
  */
-export async function getRelated(
+async function getRelated(
   recipeId: string,
   limit: number = 6
 ): Promise<Recipe[]> {
-  console.log("🔍 getRelated called with recipeId:", recipeId, "limit:", limit);
-
-  if (MOCK_MODE) {
-    const recipes = await getDummyData(15);
-    return recipes
-      .filter((recipe: Recipe) => recipe.id !== recipeId)
-      .slice(0, limit)
-      .map((recipe: Recipe) => ({
-        ...recipe,
-        featuredText: "Related Recipe",
-      }));
+  if (IS_DEVELOPMENT) {
+    console.log(
+      "🔍 getRelated called with recipeId:",
+      recipeId,
+      "limit:",
+      limit
+    );
   }
 
-  // Use direct Prisma during build time, API fetch during production runtime
-  if (typeof window === "undefined") {
-    // During build or development, use direct Prisma
-    if (
-      process.env.NODE_ENV === "development" ||
-      process.env.NEXT_PHASE === "phase-production-build"
-    ) {
-      try {
-        const prisma = (await import("@/lib/prisma")).default;
+  try {
+    const recipes = await fetchWithFallback(
+      async () => {
+        const prisma = await getPrisma();
         const recipes = await prisma.recipe.findMany({
-          where: {
-            id: { not: recipeId },
-          },
+          where: { id: { not: recipeId } },
           take: limit,
           orderBy: { createdAt: "desc" },
         });
@@ -416,72 +354,31 @@ export async function getRelated(
           ...recipe,
           featuredText: "Related Recipe",
         })) as Recipe[];
-      } catch (error) {
-        console.error("Direct DB call failed:", error);
-        return [];
-      }
-    }
-  }
-
-  try {
-    const baseUrl = isServer ? "" : BASE_URL;
-    const url = `${baseUrl}/api/recipe/related?id=${encodeURIComponent(
-      recipeId
-    )}&limit=${limit}`;
-
-    const response = await fetch(url, {
-      next: {
-        tags: ["recipes", "related", `related-${recipeId}`], // Only tags for on-demand revalidation
       },
-    });
-    if (!response.ok) {
-      console.error(
-        "❌ API response not ok:",
-        response.status,
-        response.statusText
-      );
-      return [];
-    }
+      `${BASE_URL}/api/recipe/related?id=${encodeURIComponent(
+        recipeId
+      )}&limit=${limit}`,
+      {
+        tags: ["recipes", "related", `related-${recipeId}`],
+        revalidate: 3600,
+      }
+    );
 
-    const recipes = await response.json();
-    return recipes.map((recipe: any) => ({
-      ...recipe,
-      featuredText: "Related Recipe",
-    }));
+    return recipes;
   } catch (error) {
-    console.error("❌ API call failed for related recipes:", error);
+    console.error("❌ Failed to fetch related recipes:", error);
     return [];
   }
 }
 
 /**
- * Gets latest recipes
+ * Get latest recipes
  */
-export async function getLatest(limit: number = 12): Promise<Recipe[]> {
-  if (MOCK_MODE) {
-    const recipes = await getDummyData(20);
-    return recipes
-      .sort((a: Recipe, b: Recipe) => {
-        const aDate = a.updatedDate ? new Date(a.updatedDate).getTime() : 0;
-        const bDate = b.updatedDate ? new Date(b.updatedDate).getTime() : 0;
-        return bDate - aDate;
-      })
-      .slice(0, limit)
-      .map((recipe: Recipe) => ({
-        ...recipe,
-        featuredText: "Latest Recipe",
-      }));
-  }
-
-  // Use direct Prisma during build time, API fetch during production runtime
-  if (typeof window === "undefined") {
-    // During build or development, use direct Prisma
-    if (
-      process.env.NODE_ENV === "development" ||
-      process.env.NEXT_PHASE === "phase-production-build"
-    ) {
-      try {
-        const prisma = (await import("@/lib/prisma")).default;
+async function getLatest(limit: number = 12): Promise<Recipe[]> {
+  try {
+    const recipes = await fetchWithFallback(
+      async () => {
+        const prisma = await getPrisma();
         const recipes = await prisma.recipe.findMany({
           take: limit,
           orderBy: { createdAt: "desc" },
@@ -490,51 +387,32 @@ export async function getLatest(limit: number = 12): Promise<Recipe[]> {
           ...recipe,
           featuredText: "Latest Recipe",
         })) as Recipe[];
-      } catch (error) {
-        console.error("Direct DB call failed:", error);
-        return [];
+      },
+      `${BASE_URL}/api/recipe/latest?limit=${limit}`,
+      {
+        tags: ["recipes", "latest"],
+        revalidate: 1800, // 30 minutes for latest
       }
-    }
-  }
+    );
 
-  const response = await fetch(`${BASE_URL}/api/recipe/latest?limit=${limit}`, {
-    next: {
-      tags: ["recipes", "latest"], // Only tags for on-demand revalidation
-    },
-  });
-  if (!response.ok) {
-    throw new Error("Failed to fetch latest recipes");
+    return recipes;
+  } catch (error) {
+    console.error("❌ Failed to fetch latest recipes:", error);
+    return [];
   }
-
-  return (await response.json()) as Recipe[];
 }
 
 /**
- * Gets recipes by category
+ * Get recipes by category
  */
-export async function getRecipesByCategory(
+async function getRecipesByCategory(
   category: string,
   limit?: number
 ): Promise<Recipe[]> {
-  if (MOCK_MODE) {
-    const recipes = await getDummyData(20);
-    const filteredRecipes = recipes.filter(
-      (recipe: Recipe) =>
-        recipe?.category?.toLowerCase() === category.toLowerCase()
-    );
-
-    return limit ? filteredRecipes.slice(0, limit) : filteredRecipes;
-  }
-
-  // Use direct Prisma during build time, API fetch during production runtime
-  if (typeof window === "undefined") {
-    // During build or development, use direct Prisma
-    if (
-      process.env.NODE_ENV === "development" ||
-      process.env.NEXT_PHASE === "phase-production-build"
-    ) {
-      try {
-        const prisma = (await import("@/lib/prisma")).default;
+  try {
+    return await fetchWithFallback(
+      async () => {
+        const prisma = await getPrisma();
         const recipes = await prisma.recipe.findMany({
           where: {
             category: {
@@ -545,31 +423,20 @@ export async function getRecipesByCategory(
           ...(limit && { take: limit }),
           orderBy: { createdAt: "desc" },
         });
-
         return recipes as unknown as Recipe[];
-      } catch (error) {
-        console.error("Direct DB call failed for category:", error);
-        return [];
+      },
+      `${BASE_URL}/api/recipe/category/${encodeURIComponent(category)}${
+        limit ? `?limit=${limit}` : ""
+      }`,
+      {
+        tags: ["recipes", "categories", `category-${category.toLowerCase()}`],
+        revalidate: 3600,
       }
-    }
+    );
+  } catch (error) {
+    console.error("❌ Failed to fetch recipes by category:", error);
+    return [];
   }
-
-  // Client-side or production runtime, use API fetch with cache
-  const url = `${BASE_URL}/api/recipe/category/${encodeURIComponent(category)}${
-    limit ? `?limit=${limit}` : ""
-  }`;
-
-  const response = await fetch(url, {
-    next: {
-      tags: ["recipes", "categories", `category-${category.toLowerCase()}`], // Only tags for on-demand revalidation
-    },
-  });
-
-  if (!response.ok) {
-    throw new Error(`Failed to fetch recipes for category: ${category}`);
-  }
-
-  return (await response.json()) as Recipe[];
 }
 
 // ============================================================================
@@ -577,216 +444,131 @@ export async function getRecipesByCategory(
 // ============================================================================
 
 /**
- * Helper function to create category object from category name and recipes
+ * Create category object from name and recipes
  */
-async function createCategoryFromName(
+function createCategoryFromName(
   categoryName: string,
-  allRecipes?: Recipe[]
-): Promise<Category> {
-  const slug = categoryName;
-  let categoryImage = `/images/categories/default.jpg`;
-
-  if (allRecipes) {
-    const firstRecipeInCategory = allRecipes.find(
-      (recipe: Recipe) => recipe.category === categoryName
-    );
-
-    if (
-      firstRecipeInCategory &&
-      firstRecipeInCategory.images &&
-      firstRecipeInCategory.images.length > 0
-    ) {
-      categoryImage = firstRecipeInCategory.images[0];
-    }
-  }
+  count: number,
+  link: string,
+  image?: string
+): Category {
+  const slug = categoryName.toLowerCase().replace(/\s+/g, "-");
 
   return {
     id: slug,
-    slug: slug,
-    title: categoryName,
-    href: `/category/${slug}`,
-    description: `Discover delicious ${categoryName.toLowerCase()} recipes`,
-    image: categoryImage,
-    alt: `${categoryName} recipes`,
+    slug,
+    title: categoryName
+      .replace(/_/g, " ")
+      .replace(/\b\w/g, (l) => l.toUpperCase()),
+    href: link,
+    description: `Discover ${count} delicious ${categoryName
+      .replace(/_/g, " ")
+      .toLowerCase()} recipes`,
+    image: image || "/images/categories/default.jpg",
+    alt: `${categoryName.replace(/_/g, " ")} recipes`,
     sizes: "(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw",
+    recipeCount: count,
   };
 }
 
 /**
- * Gets all categories
+ * Get all categories
  */
-export async function getCategories(): Promise<Category[]> {
-  if (MOCK_MODE) {
-    const recipes = await getDummyData(10);
-    const uniqueCategoryNames = [
-      ...new Set(
-        recipes
-          .map((recipe: Recipe) => recipe.category)
-          .filter((category): category is string => Boolean(category))
-      ),
-    ];
-
-    return Promise.all(
-      uniqueCategoryNames.map((categoryName: string) =>
-        createCategoryFromName(categoryName, recipes)
-      )
-    );
-  }
-
+async function getCategories(): Promise<Category[]> {
   try {
-    console.log("🌐 Fetching dynamic categories from API");
-    const response = await fetch(`${BASE_URL}/api/categories`, {
-      next: {
-        tags: ["categories"], // Only tags for on-demand revalidation
+    return await fetchWithFallback(
+      async () => {
+        const prisma = await getPrisma();
+        const recipes = await prisma.recipe.findMany({
+          select: {
+            category: true,
+            categoryLink: true,
+            images: true,
+          },
+        });
+
+        const categoryMap = new Map<
+          string,
+          { count: number; link: string; image?: string }
+        >();
+
+        recipes.forEach((recipe) => {
+          if (recipe.category) {
+            const existing = categoryMap.get(recipe.category);
+            if (existing) {
+              existing.count += 1;
+              // Use first available image
+              if (!existing.image && recipe.images?.[0]) {
+                existing.image = recipe.images[0];
+              }
+            } else {
+              categoryMap.set(recipe.category, {
+                count: 1,
+                link:
+                  recipe.categoryLink ||
+                  `/categories/${recipe.category
+                    .toLowerCase()
+                    .replace(/\s+/g, "-")}`,
+                image: recipe.images?.[0],
+              });
+            }
+          }
+        });
+
+        const categories = Array.from(categoryMap.entries()).map(
+          ([categoryName, { count, link, image }]) =>
+            createCategoryFromName(categoryName, count, link, image)
+        );
+
+        return categories.sort(
+          (a, b) => (b.recipeCount || 0) - (a.recipeCount || 0)
+        );
       },
-    });
-
-    if (!response.ok) {
-      throw new Error(`Failed to fetch categories: ${response.status}`);
-    }
-
-    return await response.json();
-  } catch (error) {
-    console.error("❌ Error fetching categories:", error);
-
-    // Use direct Prisma during build time, fallback to static data during production runtime
-    if (typeof window === "undefined") {
-      // During build or development, use direct Prisma
-      if (
-        process.env.NODE_ENV === "development" ||
-        process.env.NEXT_PHASE === "phase-production-build"
-      ) {
-        try {
-          const prisma = (await import("@/lib/prisma")).default;
-          const recipes = await prisma.recipe.findMany({
-            select: {
-              category: true,
-              categoryLink: true,
-              images: true,
-            },
-          });
-
-          const categoryMap = new Map<
-            string,
-            { count: number; link: string; recipes: { images: string[] }[] }
-          >();
-
-          recipes.forEach((recipe) => {
-            if (recipe.category) {
-              const existing = categoryMap.get(recipe.category);
-              if (existing) {
-                existing.count += 1;
-                existing.recipes.push(recipe);
-              } else {
-                categoryMap.set(recipe.category, {
-                  count: 1,
-                  link:
-                    recipe.categoryLink ||
-                    `/categories/${recipe.category
-                      .toLowerCase()
-                      .replace(/\s+/g, "-")
-                      .replace(/[^a-z0-9-]/g, "")}`,
-                  recipes: [recipe],
-                });
-              }
-            }
-          });
-
-          const categories = Array.from(categoryMap.entries()).map(
-            ([categoryName, { count, link, recipes }], index) => {
-              let categoryImage = "/placeholder.jpg";
-              for (const recipe of recipes) {
-                if (recipe.images && recipe.images.length > 0) {
-                  categoryImage = recipe.images[0];
-                  break;
-                }
-              }
-
-              return {
-                id: (index + 1).toString(),
-                slug: categoryName.toLowerCase().replace(/\s+/g, "_"),
-                title: categoryName
-                  .replace(/_/g, " ")
-                  .replace(/\b\w/g, (l) => l.toUpperCase()),
-                href: link,
-                alt: `${categoryName.replace(/_/g, " ")} recipes`,
-                description: `Discover ${count} delicious ${categoryName.replace(
-                  /_/g,
-                  " "
-                )} recipes`,
-                image: categoryImage,
-                recipeCount: count,
-              };
-            }
-          );
-
-          categories.sort(
-            (a, b) => (b.recipeCount || 0) - (a.recipeCount || 0)
-          );
-          return categories;
-        } catch (dbError) {
-          console.error("❌ Direct database call also failed:", dbError);
-          // Return empty array instead of hardcoded category when database is empty
-          return [];
-        }
-      }
-    }
-
-    // Fallback to static categories in production when API fails
-    return [
+      `${BASE_URL}/api/categories`,
       {
-        id: "1",
-        slug: "main-dishes",
-        title: "Main Dishes",
-        href: "/categories/main-dishes",
-        alt: "Main dishes recipes",
-        description: "Discover hearty main dish recipes",
-        image: "/hearty-mains.png",
-        recipeCount: 0,
-      },
-      // Add other static categories as needed
-    ];
+        tags: ["categories"],
+        revalidate: 3600,
+      }
+    );
+  } catch (error) {
+    console.error("❌ Failed to fetch categories:", error);
+    return [];
   }
 }
 
 /**
- * Gets best categories (popular categories with counts)
+ * Get best categories with counts
  */
-export async function getBestCategories(
+async function getBestCategories(
   limit: number = 5
 ): Promise<{ category: string; count: number }[]> {
-  if (MOCK_MODE) {
-    const recipes = await getDummyData(50);
-    const categoryCounts = recipes.reduce((acc, recipe: Recipe) => {
-      if (!recipe.category) return acc;
-      acc[recipe.category] = (acc[recipe.category] || 0) + 1;
-      return acc;
-    }, {} as Record<string, number>);
-
-    return Object.entries(categoryCounts)
-      .map(([category, count]) => ({ category, count }))
-      .sort((a, b) => b.count - a.count)
-      .slice(0, limit);
-  }
-
   try {
-    const prisma = (await import("@/lib/prisma")).default;
-    const recipes = await prisma.recipe.findMany({
-      select: { category: true },
-    });
+    return await fetchWithFallback(
+      async () => {
+        const prisma = await getPrisma();
+        const recipes = await prisma.recipe.findMany({
+          select: { category: true },
+        });
 
-    const categoryCounts = recipes.reduce((acc, recipe) => {
-      if (!recipe.category) return acc;
-      acc[recipe.category] = (acc[recipe.category] || 0) + 1;
-      return acc;
-    }, {} as Record<string, number>);
+        const categoryCounts = recipes.reduce((acc, recipe) => {
+          if (!recipe.category) return acc;
+          acc[recipe.category] = (acc[recipe.category] || 0) + 1;
+          return acc;
+        }, {} as Record<string, number>);
 
-    return Object.entries(categoryCounts)
-      .map(([category, count]) => ({ category, count }))
-      .sort((a, b) => b.count - a.count)
-      .slice(0, limit);
+        return Object.entries(categoryCounts)
+          .map(([category, count]) => ({ category, count }))
+          .sort((a, b) => b.count - a.count)
+          .slice(0, limit);
+      },
+      `${BASE_URL}/api/categories/best?limit=${limit}`,
+      {
+        tags: ["categories", "best-categories"],
+        revalidate: 3600,
+      }
+    );
   } catch (error) {
-    console.error("❌ Direct DB call failed for best categories:", error);
+    console.error("❌ Failed to fetch best categories:", error);
     throw new Error("Failed to fetch best categories");
   }
 }
@@ -796,26 +578,15 @@ export async function getBestCategories(
 // ============================================================================
 
 /**
- * Gets latest articles
+ * Get latest articles
  */
-export async function getLatestArticles(
-  limit: number = 12
-): Promise<Article[]> {
-  if (MOCK_MODE) {
-    const articles = await getDummyDataArticles();
-    return articles
-      .sort((a: Article, b: Article) => {
-        const aDate = new Date(a.updatedDate).getTime();
-        const bDate = new Date(b.updatedDate).getTime();
-        return bDate - aDate;
-      })
-      .slice(0, limit);
-  }
-
+async function getLatestArticles(limit: number = 12): Promise<Article[]> {
   try {
-    const articles = await getDummyDataArticles();
+    // For now, using local articles data
+    // This can be extended to use database when articles are stored there
+    const articles = latestArticles;
     return articles
-      .sort((a: Article, b: Article) => {
+      .sort((a, b) => {
         const aDate = new Date(a.updatedDate).getTime();
         const bDate = new Date(b.updatedDate).getTime();
         return bDate - aDate;
@@ -823,7 +594,7 @@ export async function getLatestArticles(
       .slice(0, limit);
   } catch (error) {
     console.error("❌ Failed to get articles:", error);
-    throw new Error("Failed to fetch latest articles");
+    return [];
   }
 }
 
@@ -832,118 +603,129 @@ export async function getLatestArticles(
 // ============================================================================
 
 /**
- * Admin function: Get all recipes for management
+ * Admin: Get all recipes for management
  */
-export async function adminGetAllRecipes(): Promise<Recipe[]> {
-  if (MOCK_MODE) {
-    await initializeMockRecipes();
-    return mockRecipes;
-  }
+async function adminGetAllRecipes(): Promise<Recipe[]> {
+  try {
+    const baseUrl = isServer ? "" : BASE_URL;
+    const response = await fetch(`${baseUrl}/api/recipe`);
 
-  const baseUrl = isServer ? "" : BASE_URL;
-  const response = await fetch(`${baseUrl}/api/recipe`);
-  if (!response.ok) {
+    if (!response.ok) {
+      throw new Error(`Failed to fetch recipes: ${response.status}`);
+    }
+
+    return (await response.json()) as Recipe[];
+  } catch (error) {
+    console.error("❌ Failed to fetch admin recipes:", error);
     throw new Error("Failed to fetch recipes");
   }
-
-  return (await response.json()) as Recipe[];
 }
 
 /**
- * Admin function: Get recipe by ID
+ * Admin: Get recipe by ID
  */
-export async function adminGetRecipeById(id: string): Promise<Recipe | null> {
-  if (MOCK_MODE) {
-    await initializeMockRecipes();
-    return mockRecipes.find((recipe) => recipe.id === id) || null;
-  }
+async function adminGetRecipeById(id: string): Promise<Recipe | null> {
+  try {
+    const baseUrl = isServer ? "" : BASE_URL;
+    const response = await fetch(`${baseUrl}/api/recipe?id=${id}`);
 
-  const baseUrl = isServer ? "" : BASE_URL;
-  const response = await fetch(`${baseUrl}/api/recipe?id=${id}`);
-  if (!response.ok) {
     if (response.status === 404) return null;
-    throw new Error("Failed to fetch recipe");
-  }
+    if (!response.ok) {
+      throw new Error(`Failed to fetch recipe: ${response.status}`);
+    }
 
-  return (await response.json()) as Recipe;
+    return (await response.json()) as Recipe;
+  } catch (error) {
+    console.error("❌ Failed to fetch recipe by ID:", error);
+    return null;
+  }
 }
 
 /**
- * Admin function: Create new recipe
+ * Admin: Create new recipe
  */
-export async function adminCreateRecipe(
+async function adminCreateRecipe(
   recipeData: Omit<Recipe, "id">
 ): Promise<Recipe> {
-  const newRecipe: Recipe = {
-    ...recipeData,
-    id: (Date.now() + Math.random()).toString(),
-  };
-
-  if (MOCK_MODE) {
-    await initializeMockRecipes();
-    mockRecipes.unshift(newRecipe);
-    return newRecipe;
+  try {
+    return await apiClient.request<Recipe>("/api/recipe", {
+      method: "POST",
+      body: JSON.stringify(recipeData),
+    });
+  } catch (error) {
+    console.error("❌ Failed to create recipe:", error);
+    throw new Error("Failed to create recipe");
   }
-
-  return await apiClient.request<Recipe>("/api/recipe", {
-    method: "POST",
-    body: JSON.stringify(newRecipe),
-  });
 }
 
 /**
- * Admin function: Update existing recipe
+ * Admin: Update existing recipe
  */
-export async function adminUpdateRecipe(
+async function adminUpdateRecipe(
   id: string,
   recipeData: Partial<Recipe>
 ): Promise<Recipe> {
-  if (MOCK_MODE) {
-    await initializeMockRecipes();
-    const index = mockRecipes.findIndex((recipe) => recipe.id === id);
-    if (index === -1) {
-      throw new Error("Recipe not found");
-    }
+  try {
+    const url = `/api/recipe?id=${encodeURIComponent(id)}`;
+    const data = { ...recipeData, id };
 
-    const updatedRecipe = {
-      ...mockRecipes[index],
-      ...recipeData,
-      id,
-    };
-
-    mockRecipes[index] = updatedRecipe;
-    return updatedRecipe;
+    return await apiClient.request<Recipe>(url, {
+      method: "PUT",
+      body: JSON.stringify(data),
+    });
+  } catch (error) {
+    console.error("❌ Failed to update recipe:", error);
+    throw new Error("Failed to update recipe");
   }
-
-  const url = `/api/recipe?id=${encodeURIComponent(id)}`;
-  const data = { ...recipeData, id: id };
-
-  return await apiClient.request<Recipe>(url, {
-    method: "PUT",
-    body: JSON.stringify(data),
-  });
 }
 
 /**
- * Admin function: Delete recipe
+ * Admin: Delete recipe
  */
-export async function adminDeleteRecipe(id: string): Promise<void> {
-  console.log("🗑️ adminDeleteRecipe called with id:", id, "type:", typeof id);
-
-  if (MOCK_MODE) {
-    await initializeMockRecipes();
-    const index = mockRecipes.findIndex((recipe) => recipe.id === id);
-    if (index === -1) {
-      throw new Error("Recipe not found");
-    }
-
-    mockRecipes.splice(index, 1);
-    return;
+async function adminDeleteRecipe(id: string): Promise<void> {
+  if (IS_DEVELOPMENT) {
+    console.log("🗑️ adminDeleteRecipe called with id:", id);
   }
 
-  // Use ApiClient for authenticated request
-  const url = `/api/recipe?id=${encodeURIComponent(id)}`;
-  console.log("🌐 DELETE request URL:", url);
-
-  await apiClient.delete(url, { id });
+  try {
+    const url = `/api/recipe?id=${encodeURIComponent(id)}`;
+    await apiClient.delete(url, { id });
+  } catch (error) {
+    console.error("❌ Failed to delete recipe:", error);
+    throw new Error("Failed to delete recipe");
+  }
 }
+
+// ============================================================================
+// EXPORT HELPERS
+// ============================================================================
+
+export {
+  // Core recipe functions
+  getRecipes,
+  getData,
+  getRecipe,
+  getTrending,
+  getRelated,
+  getLatest,
+  getRecipesByCategory,
+
+  // Category functions
+  getCategories,
+  getBestCategories,
+
+  // Article functions
+  getLatestArticles,
+
+  // Admin functions
+  adminGetAllRecipes,
+  adminGetRecipeById,
+  adminCreateRecipe,
+  adminUpdateRecipe,
+  adminDeleteRecipe,
+
+  // Revalidation functions
+  revalidateRecipeData,
+  revalidateAfterNewRecipe,
+  revalidateAfterRecipeUpdate,
+};

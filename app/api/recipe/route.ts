@@ -1,10 +1,11 @@
-export const dynamic = "force-static";
-export const revalidate = 60;
+export const dynamic = "force-dynamic";
+//export const revalidate = 60;
 // Updated main recipe route with better error handling
 // app/api/recipe/route.ts (Enhanced version)
 import { NextResponse, NextRequest } from "next/server";
 import { auth } from "@/lib/auth";
 import prisma from "@/lib/prisma";
+import { withRetry } from "@/lib/prisma-helpers";
 
 /**
  * GET /api/recipe
@@ -25,11 +26,13 @@ export async function GET(request: NextRequest) {
 
   try {
     if (id) {
-      const recipe = await prisma.recipe.findUnique({
-        where: {
-          id: id,
-        },
-      });
+      const recipe = await withRetry(() =>
+        prisma.recipe.findUnique({
+          where: {
+            id: id,
+          },
+        })
+      );
 
       if (!recipe) {
         return NextResponse.json(
@@ -41,9 +44,11 @@ export async function GET(request: NextRequest) {
       return NextResponse.json(recipe);
     }
 
-    const recipes = await prisma.recipe.findMany({
-      orderBy: { createdAt: "desc" },
-    });
+    const recipes = await withRetry(() =>
+      prisma.recipe.findMany({
+        orderBy: { createdAt: "desc" },
+      })
+    );
 
     return NextResponse.json(recipes);
   } catch (error) {
@@ -98,6 +103,7 @@ export async function POST(request: NextRequest) {
               "recipes",
               "all-recipes",
               "latest",
+              "/",
               "trending",
               "categories",
               ...(categorySlug ? [`category-${categorySlug}`] : []),
@@ -191,12 +197,15 @@ export async function PUT(request: NextRequest) {
             recipe_category: categorySlug,
             tags: [
               "recipes",
+              "/",
               "all-recipes",
               `recipe-${updatedRecipe.slug}`,
+              `${updatedRecipe.slug}`,
               "latest",
               "trending",
               "categories",
               ...(categorySlug ? [`category-${categorySlug}`] : []),
+              ...(categorySlug ? [`${categorySlug}`] : []),
             ],
           }),
         }
@@ -281,12 +290,15 @@ export async function DELETE(request: NextRequest) {
             recipe_category: categorySlug,
             tags: [
               "recipes",
+              "/",
               "all-recipes",
               `recipe-${deletedRecipe.slug}`,
+              `${deletedRecipe.slug}`,
               "latest",
               "trending",
               "categories",
               ...(categorySlug ? [`category-${categorySlug}`] : []),
+              ...(categorySlug ? [`${categorySlug}`] : []),
             ],
           }),
         }

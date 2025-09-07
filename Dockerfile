@@ -8,8 +8,15 @@ WORKDIR /app
 COPY package*.json pnpm-lock.yaml ./
 RUN npm install -g pnpm && pnpm install --frozen-lockfile
 
+# Copy Prisma schema and generate client
+COPY prisma ./prisma
+RUN npx prisma generate
+
 # Copy the rest of the app
 COPY . .
+
+# Ensure uploads directory exists and has proper permissions
+RUN mkdir -p uploads && chmod 755 uploads
 
 # Build the app
 RUN pnpm build
@@ -17,5 +24,10 @@ RUN pnpm build
 # Expose port (default Next.js port)
 EXPOSE 3000
 
-# Start the app
-CMD ["pnpm", "start"]
+# Create startup script
+RUN echo '#!/bin/sh\n\
+npx prisma migrate deploy\n\
+pnpm start' > /app/start.sh && chmod +x /app/start.sh
+
+# Start the app with migrations
+CMD ["/app/start.sh"]
