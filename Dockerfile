@@ -4,9 +4,19 @@ FROM node:20-alpine
 # Set working directory
 WORKDIR /app
 
-# Copy package files and install dependencies
-COPY package.json ./
-RUN npm install -g pnpm && pnpm install --no-frozen-lockfile
+# Build-time args
+ARG DATABASE_URL
+ARG JWT_SECRET
+ARG NODE_ENV=production
+
+# Make them available at build & runtime
+ENV DATABASE_URL=${DATABASE_URL}
+ENV JWT_SECRET=${JWT_SECRET}
+ENV NODE_ENV=${NODE_ENV}
+
+# Install dependencies
+COPY package.json pnpm-lock.yaml* ./
+RUN npm install -g pnpm && pnpm install --frozen-lockfile
 
 # Copy Prisma schema and generate client
 COPY prisma ./prisma
@@ -15,19 +25,18 @@ RUN npx prisma generate
 # Copy the rest of the app
 COPY . .
 
-# Ensure uploads directory exists and has proper permissions
+# Ensure uploads directory exists
 RUN mkdir -p uploads && chmod 755 uploads
 
-# Build the app
+# Build Next.js app (with env available)
 RUN pnpm build
 
-# Expose port (default Next.js port)
+# Expose port (Next.js default)
 EXPOSE 3000
 
-# Create startup script
+# Create startup script (run migrations before start)
 RUN echo '#!/bin/sh\n\
 npx prisma migrate deploy\n\
 pnpm start' > /app/start.sh && chmod +x /app/start.sh
 
-# Start the app with migrations
 CMD ["/app/start.sh"]
