@@ -47,7 +47,16 @@ RUN mkdir -p uploads && chmod 755 uploads
 EXPOSE 3000
 
 # Copy and setup startup script
-COPY run.sh /app/run.sh
-RUN chmod +x /app/run.sh
+RUN printf '#!/bin/sh\n\
+echo "⏳ Waiting for database to be ready..."\n\
+until nc -z db 5432; do\n\
+  echo "Database not ready, waiting..."\n\
+  sleep 2\n\
+done\n\
+echo "✅ Database is ready, running migrations..."\n\
+npx prisma migrate deploy\n\
+echo "🚀 Starting application..."\n\
+pnpm build && pnpm start\n' \
+> /app/run.sh && chmod +x /app/run.sh
 
 CMD ["sh", "/app/run.sh"]
