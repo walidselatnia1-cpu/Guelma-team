@@ -46,9 +46,7 @@ RUN mkdir -p uploads && chmod 755 uploads
 # Expose port (Next.js default)
 EXPOSE 3000
 
-RUN chmod +x /app/run.sh
-
-# Expose port (Next.js default)
-EXPOSE 3000
+COPY run.sh /app/run.sh
+RUN sed -i 's/\r$//' /app/run.sh && chmod +x /app/run.sh
 
 CMD ["sh", "/app/run.sh"]
