@@ -98,6 +98,12 @@ const nextConfig = {
         },
       }
     : {}),
+
+  webpack: async (config) => {
+    const path = await import("path");
+    config.resolve.alias["@"] = path.resolve(process.cwd());
+    return config;
+  },
 };
 
 export default nextConfig;
