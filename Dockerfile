@@ -71,21 +71,8 @@ ENV NEXT_PUBLIC_BASE_URL=${NEXT_PUBLIC_BASE_URL}
 RUN mkdir -p uploads && chmod 755 uploads
 RUN apk add --no-cache wget
 
-COPY --from=builder /app/node_modules ./node_modules
-COPY --from=builder /app/prisma ./prisma
-COPY --from=builder /app/package.json ./package.json
-COPY --from=builder /app/public ./public
-COPY --from=builder /app/data ./data
-COPY --from=builder /app/app ./app
-COPY --from=builder /app/components ./components
-COPY --from=builder /app/lib ./lib
-COPY --from=builder /app/config ./config
-COPY --from=builder /app/outils ./outils
-COPY --from=builder /app/middleware.ts ./middleware.ts
-COPY --from=builder /app/next.config.mjs ./next.config.mjs
-COPY --from=builder /app/tailwind.config.js ./tailwind.config.js
-COPY --from=builder /app/postcss.config.mjs ./postcss.config.mjs
-COPY --from=builder /app/tsconfig.json ./tsconfig.json
+COPY --from=builder /app .
+
 
 EXPOSE 3000
 
