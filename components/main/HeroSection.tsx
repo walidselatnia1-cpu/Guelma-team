@@ -40,9 +40,11 @@ export default function HeroSection({ className }: HeroSectionProps) {
                 key={link.id}
                 href={link.href}
                 title={link.title}
-                className="text-white items-center bg-black/70 box-border flex h-6 justify-center w-6 rounded-[50%] transition-transform duration-300 hover:scale-110 hover:bg-black/90 backdrop-blur-sm"
+                className="text-white items-center bg-black/70 box-border flex h-9 justify-center w-9 rounded-[50%] transition-transform duration-300 hover:scale-110 hover:bg-black/90 backdrop-blur-sm"
               >
-                <Icon name={link.iconSrc} size={16} className="text-white" />
+                <svg className={" text-white h-6 h-6"} aria-hidden="true">
+                  <use href={`/symbols-v4.svg#${link.id}`} />
+                </svg>
               </a>
             ))}
           </div>

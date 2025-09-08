@@ -61,7 +61,12 @@ export default function Header({ className }: HeaderProps) {
                       : "hover:bg-gray-300" // Only hover when not active
                   }`}
                 >
-                  <Icon name={item.iconSrc} size={19} className="text-black" />
+                  <svg
+                    className={item.iconClassName + " text-black"}
+                    aria-hidden="true"
+                  >
+                    <use href={`/symbols-v4.svg#${item.iconSrc}`} />
+                  </svg>
                   {item.label && (
                     <span className="text-sm xl:text-base">{item.label}</span>
                   )}
@@ -83,7 +88,12 @@ export default function Header({ className }: HeaderProps) {
                       : "hover:bg-gray-300" // Only hover when not active
                   }`}
                 >
-                  <Icon name={item.iconSrc} size={20} className="text-black" />
+                  <svg
+                    className={item.iconClassName + " text-black"}
+                    aria-hidden="true"
+                  >
+                    <use href={`/symbols-v4.svg#${item.iconSrc}`} />
+                  </svg>
                 </a>
               </li>
             ))}

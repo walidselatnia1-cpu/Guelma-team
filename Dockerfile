@@ -69,6 +69,7 @@ ENV DB_PASSWORD=${DB_PASSWORD}
 ENV NEXT_PUBLIC_BASE_URL=${NEXT_PUBLIC_BASE_URL}
 
 RUN mkdir -p uploads && chmod 755 uploads
+RUN apk add --no-cache wget
 
 COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/prisma ./prisma
