@@ -1,10 +1,10 @@
-# Use official Node.js image
-FROM node:20-alpine
-
-# Set working directory
+# ========================
+# Builder (deps + prisma client)
+# ========================
+FROM node:20-alpine AS builder
 WORKDIR /app
 
-# Build-time args
+# build-time args
 ARG DATABASE_URL
 ARG JWT_SECRET
 ARG NODE_ENV=production
@@ -16,7 +16,7 @@ ARG STATIC_EXPORT
 ARG MOCK
 ARG DB_PASSWORD
 
-# Make them available at build & runtime
+# make them available inside build phase too
 ENV DATABASE_URL=${DATABASE_URL}
 ENV JWT_SECRET=${JWT_SECRET}
 ENV NODE_ENV=${NODE_ENV}
@@ -28,26 +28,49 @@ ENV STATIC_EXPORT=${STATIC_EXPORT}
 ENV MOCK=${MOCK}
 ENV DB_PASSWORD=${DB_PASSWORD}
 
-# Install netcat and yarn
-RUN apk add --no-cache netcat-openbsd 
-
-# Copy package files
 COPY package.json yarn.lock* ./
+RUN yarn install --frozen-lockfile
 
-# Install dependencies
-RUN yarn install --frozen-lockfile || yarn install
-
-# Copy Prisma schema and generate client
 COPY prisma ./prisma
 RUN npx prisma generate
 
-# Copy the rest of the app
 COPY . .
 
-# Ensure uploads directory exists
-RUN mkdir -p uploads && chmod 755 uploads
+# ========================
+# Runner (runtime only)
+# ========================
+FROM node:20-alpine AS runner
+WORKDIR /app
+ENV NODE_ENV=production
 
-# Expose port (Next.js default)
+# copy envs through to runtime container as well
+ARG DATABASE_URL
+ARG JWT_SECRET
+ARG NODE_ENV=production
+ARG SKIP_AUTH
+ARG REVALIDATE_SECRET
+ARG WEBHOOK_SECRET
+ARG ADMIN_SECRET
+ARG STATIC_EXPORT
+ARG MOCK
+ARG DB_PASSWORD
+
+ENV DATABASE_URL=${DATABASE_URL}
+ENV JWT_SECRET=${JWT_SECRET}
+ENV NODE_ENV=${NODE_ENV}
+ENV SKIP_AUTH=${SKIP_AUTH}
+ENV REVALIDATE_SECRET=${REVALIDATE_SECRET}
+ENV WEBHOOK_SECRET=${WEBHOOK_SECRET}
+ENV ADMIN_SECRET=${ADMIN_SECRET}
+ENV STATIC_EXPORT=${STATIC_EXPORT}
+ENV MOCK=${MOCK}
+ENV DB_PASSWORD=${DB_PASSWORD}
+
+COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/prisma ./prisma
+COPY --from=builder /app/package.json ./package.json
+COPY --from=builder /app/public ./public
+
 EXPOSE 3000
 
 # Run commands directly without a script file
