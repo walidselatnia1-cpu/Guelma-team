@@ -28,8 +28,8 @@ ENV STATIC_EXPORT=${STATIC_EXPORT}
 ENV MOCK=${MOCK}
 ENV DB_PASSWORD=${DB_PASSWORD}
 
-COPY package.json yarn.lock* ./
-RUN yarn install --frozen-lockfile
+COPY package.json ./
+RUN yarn install 
 
 COPY prisma ./prisma
 RUN npx prisma generate
