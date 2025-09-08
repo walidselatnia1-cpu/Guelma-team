@@ -28,17 +28,14 @@ ENV STATIC_EXPORT=${STATIC_EXPORT}
 ENV MOCK=${MOCK}
 ENV DB_PASSWORD=${DB_PASSWORD}
 
-# Install netcat and yarn
-RUN apk add --no-cache netcat-openbsd 
+# Install netcat
+RUN apk add --no-cache netcat-openbsd
 
 # Copy package files
-COPY package.json yarn.lock* ./
+COPY package.json ./
 
-# Install dependencies
-RUN yarn install --frozen-lockfile --include=dev || yarn install --include=dev
-
-# Install Next.js globally to ensure it's available in PATH
-RUN yarn global add next
+# Install dependencies using npm (more reliable in Docker)
+RUN npm install --include=dev
 
 # Copy Prisma schema and generate client
 COPY prisma ./prisma
