@@ -1,6 +1,5 @@
 import React from "react";
 import { socialLinks } from "../../data/socialLinks";
-import Icon from "@/components/Icon";
 
 interface HeroSectionProps {
   className?: string;
