@@ -41,7 +41,8 @@ services:
         condition: service_healthy
     restart: unless-stopped
     volumes:
-      - .:/app
+      - uploads:/app/uploads
 
 volumes:
   postgres_data:
+  uploads:
