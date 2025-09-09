@@ -7,7 +7,7 @@ const FlameIcon = () => (
     width="32"
     viewBox="0 0 24 24"
     xmlns="http://www.w3.org/2000/svg"
-    className="box-border m-0 overflow-hidden max-w-full h-auto w-full text-black fill-black"
+    className="box-border m-0 overflow-hidden max-w-full h-auto w-full text-black fill-black md:h-8 md:w-8 h-12 w-12"
   >
     <g
       color="currentColor"
@@ -30,7 +30,7 @@ const ChefIcon = () => (
     width="32"
     viewBox="0 0 24 24"
     xmlns="http://www.w3.org/2000/svg"
-    className="box-border m-0 overflow-hidden max-w-full h-auto w-full text-black fill-black"
+    className="box-border m-0 overflow-hidden max-w-full h-auto w-full text-black fill-black md:h-8 md:w-8 h-12 w-12"
   >
     <path
       color="currentColor"
@@ -50,7 +50,7 @@ const HandIcon = () => (
     width="32"
     viewBox="0 0 24 24"
     xmlns="http://www.w3.org/2000/svg"
-    className="box-border m-0 overflow-hidden max-w-full h-auto w-full text-black fill-black"
+    className="box-border m-0 overflow-hidden max-w-full h-auto w-full text-black fill-black md:h-8 md:w-8 h-12 w-12"
   >
     <path
       color="currentColor"
@@ -73,11 +73,9 @@ const StyledList = ({ children }: any) => (
 
 // ---------- Card ----------
 const AboutCard = ({ icon, title, children, position = "left" }: any) => {
-  const colStart = position === "left" ? "col-start-1" : "col-start-3";
-
   return (
     <li
-      className={`col-span-10 ${colStart} w-max bg-stone-100 rounded-3xl overflow-hidden transition-all duration-300 outline outline-1 outline-dashed outline-black text-black grid grid-cols-[1fr_3fr] w-full shadow-lg`}
+      className={`col-span-1 md:col-span-10 md:col-start-1 bg-stone-100 rounded-3xl overflow-hidden transition-all duration-300 outline outline-1 outline-dashed outline-black text-black grid grid-cols-[1fr_3fr] w-full shadow-lg`}
       style={{ outlineOffset: "calc(-0.5rem)" }}
     >
       <div className="p-6 bg-stone-200 flex items-center justify-center">
@@ -95,7 +93,7 @@ const AboutCard = ({ icon, title, children, position = "left" }: any) => {
 export default function About() {
   return (
     <div className="flex flex-col gap-12">
-      <ul className="grid grid-cols-12 auto-rows-auto gap-12 p-0">
+      <ul className="grid grid-cols-1 md:grid-cols-12 auto-rows-auto gap-12 p-0">
         <AboutCard
           icon={<FlameIcon />}
           title="What Will You Find on Recipes by Clare?"

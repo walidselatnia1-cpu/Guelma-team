@@ -4,6 +4,7 @@ import { TipCard } from "./TipCard";
 import EssentialIngredients from "./EssentialIngerdients";
 import CompleteCookingProcess from "./CompleteProcess";
 import { Card } from "./Card";
+import { getHostname } from "@/lib/utils";
 
 interface RecipeContentProps {
   recipe: Recipe;
@@ -23,7 +24,7 @@ export function RecipeContent({ recipe }: RecipeContentProps) {
           priority
         />
         <div className="absolute bottom-4 left-4 bg-black/70 text-white px-3 py-1 rounded">
-          {recipe.title} | recipesbyclare.com
+          {recipe.title} | {getHostname()}
         </div>
       </div>
       {/* Story */}
@@ -48,13 +49,13 @@ export function RecipeContent({ recipe }: RecipeContentProps) {
       {/* Second Image */}
       <div className="relative w-full h-96 rounded-lg overflow-hidden">
         <Image
-          src={recipe.images[0]}
+          src={recipe.images[1]}
           alt="Honey Sesame Chicken and Broccoli cooking process"
           fill
           className="object-cover"
         />
         <div className="absolute bottom-4 left-4 bg-black/70 text-white px-3 py-1 rounded">
-          Honey Sesame Chicken and Broccoli | recipesbyclare.com
+          {recipe.title} | {getHostname()}
         </div>
       </div>
       {/* Complete Cooking Process */}
@@ -62,13 +63,13 @@ export function RecipeContent({ recipe }: RecipeContentProps) {
       {/* Third Image */}
       <div className="relative w-full h-96 rounded-lg overflow-hidden">
         <Image
-          src={recipe.images[1]}
+          src={recipe.images[2]}
           alt="Honey Sesame Chicken and Broccoli final dish"
           fill
           className="object-cover"
         />
         <div className="absolute bottom-4 left-4 bg-black/70 text-white px-3 py-1 rounded">
-          Honey Sesame Chicken and Broccoli | recipesbyclare.com
+          {recipe.title} | {getHostname()}
         </div>
       </div>
       {/* Sections */}
@@ -116,7 +117,7 @@ export function RecipeContent({ recipe }: RecipeContentProps) {
                   className="object-cover"
                 />
                 <div className="absolute bottom-4 left-4 bg-black/70 text-white px-3 py-1 rounded">
-                  Honey Sesame Chicken and Broccoli | recipesbyclare.com
+                  {recipe.title} | {getHostname()}
                 </div>
               </div>
             ) : null}

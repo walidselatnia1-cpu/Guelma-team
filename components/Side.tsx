@@ -20,7 +20,7 @@ export default function Side({ recipe, relatedRecipes = [] }: any) {
             {/* Inner dashed ring */}
 
             <a
-              href={recipe?.author?.link || getFullUrl("/authors/emily-smith")}
+              href={getFullUrl(recipe?.author?.link)}
               title={`Recipes by ${
                 recipe?.author?.name || "Author"
               } | Delicious Home Cooking Made Easy`}

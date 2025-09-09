@@ -322,7 +322,7 @@ export function RecipeHero({ recipe }: { recipe?: Recipe }) {
         </p>
 
         <p className="text-[calc(var(--mo-font-size))] text-gray-700 leading-relaxed">
-          {recipe?.description}
+          {recipe?.shortDescription}
         </p>
       </div>
 

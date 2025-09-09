@@ -32,7 +32,7 @@ const RecipeCard = ({ recipe }: { recipe: Recipe }) => {
 
         {/* Limit description length */}
         <p className="text-gray-600 text-sm leading-snug line-clamp-2">
-          {recipe.description}
+          {recipe.shortDescription || recipe.description}
         </p>
       </div>
 

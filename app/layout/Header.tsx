@@ -44,7 +44,7 @@ export default function Header({ className }: HeaderProps) {
             <img
               src="https://c.animaapp.com/mer35j4wJPAxku/assets/logo.svg"
               alt={siteConfig.name}
-              className="h-[40px] sm:h-[50px] lg:h-[60px] xl:h-[70px] w-auto max-w-full"
+              className="h-10 sm:h-12 lg:h-14 xl:h-16 w-auto max-w-full"
             />
           </a>
 

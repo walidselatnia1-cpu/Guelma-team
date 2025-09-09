@@ -32,34 +32,34 @@ interface FooterProps {
 // Icon mapping for footer links
 const getIcon = (id: string) => {
   const iconMap: { [key: string]: React.ReactNode } = {
-    home: <Home className="w-[19.2px] h-[19.2px]" />,
-    authors: <Users className="w-[19.2px] h-[19.2px]" />,
-    categories: <FolderOpen className="w-[19.2px] h-[19.2px]" />,
-    explore: <Search className="w-[19.2px] h-[19.2px]" />,
-    articles: <FileText className="w-[19.2px] h-[19.2px]" />,
-    recipes: <ChefHat className="w-[19.2px] h-[19.2px]" />,
-    about: <Info className="w-[19.2px] h-[19.2px]" />,
-    privacy: <Shield className="w-[19.2px] h-[19.2px]" />,
-    terms: <ScrollText className="w-[19.2px] h-[19.2px]" />,
-    cookies: <Cookie className="w-[19.2px] h-[19.2px]" />,
-    disclaimer: <AlertTriangle className="w-[19.2px] h-[19.2px]" />,
-    faq: <HelpCircle className="w-[19.2px] h-[19.2px]" />,
-    contact: <Mail className="w-[19.2px] h-[19.2px]" />,
-    search: <Search className="w-[19.2px] h-[19.2px]" />,
-    sitemap: <Map className="w-[19.2px] h-[19.2px]" />,
-    feed: <Rss className="w-[19.2px] h-[19.2px]" />,
+    home: <Home className="w-5 h-5" />,
+    authors: <Users className="w-5 h-5" />,
+    categories: <FolderOpen className="w-5 h-5" />,
+    explore: <Search className="w-5 h-5" />,
+    articles: <FileText className="w-5 h-5" />,
+    recipes: <ChefHat className="w-5 h-5" />,
+    about: <Info className="w-5 h-5" />,
+    privacy: <Shield className="w-5 h-5" />,
+    terms: <ScrollText className="w-5 h-5" />,
+    cookies: <Cookie className="w-5 h-5" />,
+    disclaimer: <AlertTriangle className="w-5 h-5" />,
+    faq: <HelpCircle className="w-5 h-5" />,
+    contact: <Mail className="w-5 h-5" />,
+    search: <Search className="w-5 h-5" />,
+    sitemap: <Map className="w-5 h-5" />,
+    feed: <Rss className="w-5 h-5" />,
   };
-  return iconMap[id] || <FileText className="w-[19.2px] h-[19.2px]" />;
+  return iconMap[id] || <FileText className="w-5 h-5" />;
 };
 
 // Social icon mapping
 const getSocialIcon = (iconSrc: string) => {
   const socialIconMap: { [key: string]: React.ReactNode } = {
-    facebook: <Facebook className="w-4 h-4" />,
-    instagram: <Instagram className="w-4 h-4" />,
-    email: <Mail className="w-4 h-4" />,
+    facebook: <Facebook className="w-5 h-5" />,
+    instagram: <Instagram className="w-5 h-5" />,
+    email: <Mail className="w-5 h-5" />,
   };
-  return socialIconMap[iconSrc] || <Mail className="w-4 h-4" />;
+  return socialIconMap[iconSrc] || <Mail className="w-5 h-5" />;
 };
 
 interface FooterProps {
@@ -76,13 +76,13 @@ export default function Footer({ className }: FooterProps) {
   }
   return (
     <footer
-      className={`items-center box-border gap-x-[25.6px] flex flex-col gap-y-[25.6px] my-[51.2px] ${
+      className={`items-center box-border gap-x-6 flex flex-col gap-y-6 my-12 ${
         className || ""
       }`}
     >
       <div className="relative bg-stone-100 box-border max-w-full outline-neutral-900 -outline-offset-8 outline-dashed outline-1 w-full p-8">
         <div className="relative box-border max-w-full w-full mx-auto px-4">
-          <ul className="text-[15.36px] box-border gap-x-4 flex flex-wrap justify-center leading-[24.576px] gap-y-2 pl-0 md:text-[19.2px] md:leading-[30.72px]">
+          <ul className="text-sm gap-x-4 flex flex-wrap justify-center gap-y-2 pl-0 md:text-lg">
             {footerLinks.map((link) => {
               // Check if current link is active based on pathname
               const isActive =
@@ -98,7 +98,7 @@ export default function Footer({ className }: FooterProps) {
               return (
                 <li
                   key={link.id}
-                  className="text-[15.36px] box-border flex leading-[24.576px] list-none text-left md:text-[19.2px] md:leading-[30.72px]"
+                  className="text-sm flex list-none text-left md:text-lg"
                 >
                   <Link
                     href={link.href}
@@ -106,7 +106,7 @@ export default function Footer({ className }: FooterProps) {
                     className={`${dynamicClassName} hover:text-blue-600 transition-colors duration-200`}
                   >
                     {getIcon(link.id)}
-                    <span className="text-[15.36px] box-border block leading-[24.576px] md:text-[19.2px] md:leading-[30.72px]">
+                    <span className="text-sm block md:text-lg">
                       {link.label}
                     </span>
                   </Link>
@@ -133,14 +133,10 @@ export default function Footer({ className }: FooterProps) {
           </div>
         </div>
 
-        <div className="text-neutral-900 text-[11.52px] font-bold box-border leading-[18.432px] text-center mt-[12.8px] md:text-[13.44px] md:leading-[21.504px]">
-          <span className="text-[11.52px] box-border leading-[18.432px] md:text-[13.44px] md:leading-[21.504px]">
-            {getCopyrightText()}
-          </span>
-          <br className="text-[11.52px] box-border leading-[18.432px] md:text-[13.44px] md:leading-[21.504px]" />
-          <span className="text-[11.52px] box-border leading-[18.432px] md:text-[13.44px] md:leading-[21.504px]">
-            {siteConfig.version}
-          </span>
+        <div className="text-neutral-900 text-xs font-bold text-center mt-3 md:text-sm">
+          <span className="text-xs md:text-sm">{getCopyrightText()}</span>
+          <br className="text-xs md:text-sm" />
+          <span className="text-xs md:text-sm">{siteConfig.version}</span>
         </div>
       </div>
     </footer>
