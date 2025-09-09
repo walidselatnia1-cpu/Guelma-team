@@ -114,7 +114,11 @@ export default function Side({ recipe, relatedRecipes = [] }: any) {
               />
               <div className="flex flex-col justify-around p-6">
                 <a
-                  href={relatedRecipe.href || `/recipes/${relatedRecipe.slug}`}
+                  href={
+                    relatedRecipe.slug
+                      ? `/recipes/${relatedRecipe.slug}`
+                      : `/recipe/${relatedRecipe.id}`
+                  }
                   title={relatedRecipe.title}
                   className="text-black no-underline font-bold text-xl leading-snug hover:underline"
                 >

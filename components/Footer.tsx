@@ -171,7 +171,7 @@ export function Footer() {
       <div className="border-t border-gray-300">
         <div className=" xl mx-auto px-4 py-4 text-center">
           <p className="text-sm text-gray-600">
-            2025 Recipes by Clare. All rights reserved.
+            2025 Recipes by Calama. All rights reserved.
           </p>
           <p className="text-xs text-gray-500 mt-1">V3.01</p>
         </div>

@@ -51,7 +51,11 @@ export default async function TrendingSection({
                 className="items-center box-border gap-x-2 flex flex-col col-start-[span_1] gap-y-2 text-center overflow-hidden group"
               >
                 <a
-                  href={recipe.href || `/recipe/${recipe.slug || recipe.id}`}
+                  href={
+                    recipe.slug
+                      ? `/recipes/${recipe.slug}`
+                      : `/recipe/${recipe.id}`
+                  }
                   title={recipe.title}
                   className="text-blue-700 bg-stone-100 box-border block h-[300px] transform transition-transform duration-300 w-full overflow-hidden rounded-[14px] group-hover:scale-105"
                 >
