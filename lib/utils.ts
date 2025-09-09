@@ -25,7 +25,7 @@ export function getHostname(): string {
   }
 
   // Fallback for development
-  return "localhost:3000";
+  return "flavorfable.com";
 }
 
 /**
