@@ -6,6 +6,7 @@ import { NextResponse, NextRequest } from "next/server";
 import { auth } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 import { withRetry } from "@/lib/prisma-helpers";
+import { revalidateTag, revalidatePath } from "next/cache";
 
 /**
  * GET /api/recipe
@@ -23,8 +24,33 @@ import { withRetry } from "@/lib/prisma-helpers";
 export async function GET(request: NextRequest) {
   const url = new URL(request.nextUrl);
   const id = url.searchParams.get("id");
+  const slug = url.searchParams.get("slug");
 
   try {
+    // Handle slug query
+    if (slug) {
+      const recipe = await withRetry(() =>
+        prisma.recipe.findFirst({
+          where: {
+            slug: {
+              equals: slug,
+              mode: "insensitive",
+            },
+          },
+        })
+      );
+
+      if (!recipe) {
+        return NextResponse.json(
+          { error: "Recipe not found" },
+          { status: 404 }
+        );
+      }
+
+      return NextResponse.json(recipe);
+    }
+
+    // Handle id query
     if (id) {
       const recipe = await withRetry(() =>
         prisma.recipe.findUnique({
@@ -265,6 +291,16 @@ export async function DELETE(request: NextRequest) {
         id: id,
       },
     });
+
+    // Immediately clear all recipe-related caches
+    revalidateTag("recipes");
+    revalidateTag("all-recipes");
+    revalidateTag("latest");
+    revalidateTag("trending");
+    revalidateTag("categories");
+
+    // Force revalidate the home page
+    revalidatePath("/");
 
     // Automatically revalidate affected pages using tags
     try {

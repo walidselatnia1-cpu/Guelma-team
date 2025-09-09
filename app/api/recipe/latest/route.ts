@@ -1,4 +1,4 @@
-export const dynamic = "force-static";
+export const dynamic = "force-dynamic";
 export const revalidate = 60;
 // app/api/recipe/latest/route.ts - Get latest recipes
 import { NextResponse, NextRequest } from "next/server";

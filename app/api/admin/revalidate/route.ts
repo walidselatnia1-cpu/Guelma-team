@@ -66,14 +66,13 @@ export async function POST(request: NextRequest) {
           revalidatedPaths.push(path);
         }
 
-        // Revalidate tags
+        // Revalidate tags - must match data.ts cache tags exactly
         const updateTags = [
-          "recipes",
-          "all-recipes",
-          "latest-recipes",
-          "latest",
-          "trending",
-          "categories",
+          "recipes", // matches getData() and getRecipes()
+          "all-recipes", // matches getData() and getRecipes()
+          "latest", // matches getLatest()
+          "trending", // matches getTrending()
+          "categories", // matches getCategories()
         ];
         for (const tag of updateTags) {
           await revalidateTag(tag);
@@ -98,15 +97,13 @@ export async function POST(request: NextRequest) {
           revalidatedPaths.push(path);
         }
 
-        // Revalidate tags
+        // Revalidate tags - must match data.ts cache tags exactly
         const deleteTags = [
-          "recipes",
-          "all-recipes",
-          "latest",
-          "latest-recipes",
-
-          "trending",
-          "categories",
+          "recipes", // matches getData() and getRecipes()
+          "all-recipes", // matches getData() and getRecipes()
+          "latest", // matches getLatest() - was "latest-recipes"
+          "trending", // matches getTrending()
+          "categories", // matches getCategories()
         ];
         for (const tag of deleteTags) {
           await revalidateTag(tag);
@@ -142,13 +139,11 @@ export async function POST(request: NextRequest) {
         }
 
         const allTags = [
-          "recipes",
-          "all-recipes",
-          "categories",
-          "latest-recipes",
-
-          "trending",
-          "latest",
+          "recipes", // matches getData() and getRecipes()
+          "all-recipes", // matches getData() and getRecipes()
+          "latest", // matches getLatest() - was "latest-recipes"
+          "trending", // matches getTrending()
+          "categories", // matches getCategories()
         ];
         for (const tag of allTags) {
           await revalidateTag(tag);
