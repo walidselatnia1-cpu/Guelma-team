@@ -13,9 +13,113 @@
 //[TODO: Optimize]
 // estimated time: 8*2h == 16h
 
-
+2025-Sep-07 22:09:50.795700
+#14 41.46 > Build error occurred
+2025-Sep-07 22:09:50.795700
+#14 41.49 [Error: Failed to collect page data for /api/categories] {
+2025-Sep-07 22:09:50.795700
+#14 41.49   type: 'Error'
+2025-Sep-07 22:09:50.795700
+#14 41.49 }
+2025-Sep-07 22:09:50.795700
+#14 41.56  ELIFECYCLE  Command failed with exit code 1.
+2025-Sep-07 22:09:50.924905
+#14 ERROR: process "/bin/sh -c pnpm build" did not complete successfully: exit code: 1
+2025-Sep-07 22:09:50.924905
+------
+2025-Sep-07 22:09:50.924905
+> [ 9/10] RUN pnpm build:
+2025-Sep-07 22:09:50.924905
+41.45     at t (.next/server/webpack-runtime.js:1:127)
+2025-Sep-07 22:09:50.924905
+41.45     at t (.next/server/app/api/categories/route.js:1:2671)
+2025-Sep-07 22:09:50.924905
+41.45     at <unknown> (.next/server/app/api/categories/route.js:1:2703)
+2025-Sep-07 22:09:50.924905
+41.45     at t.X (.next/server/webpack-runtime.js:1:1191)
+2025-Sep-07 22:09:50.924905
+41.46
+2025-Sep-07 22:09:50.924905
+41.46 > Build error occurred
+2025-Sep-07 22:09:50.924905
+41.49 [Error: Failed to collect page data for /api/categories] {
+2025-Sep-07 22:09:50.924905
+41.49   type: 'Error'
+2025-Sep-07 22:09:50.924905
+41.49 }
+2025-Sep-07 22:09:50.924905
+41.56  ELIFECYCLE  Command failed with exit code 1.
+2025-Sep-07 22:09:50.924905
+------
+2025-Sep-07 22:09:50.929431
+Dockerfile:22
+2025-Sep-07 22:09:50.929431
+2025-Sep-07 22:09:50.929431
+--------------------
+2025-Sep-07 22:09:50.929431
+2025-Sep-07 22:09:50.929431
+20 |
+2025-Sep-07 22:09:50.929431
+2025-Sep-07 22:09:50.929431
+21 |     # Build the app
+2025-Sep-07 22:09:50.929431
+2025-Sep-07 22:09:50.929431
+22 | >>> RUN pnpm build
+2025-Sep-07 22:09:50.929431
+2025-Sep-07 22:09:50.929431
+23 |
+2025-Sep-07 22:09:50.929431
+2025-Sep-07 22:09:50.929431
+24 |     # Expose port (default Next.js port)
+2025-Sep-07 22:09:50.929431
+2025-Sep-07 22:09:50.929431
+--------------------
+2025-Sep-07 22:09:50.929431
+2025-Sep-07 22:09:50.929431
+failed to solve: process "/bin/sh -c pnpm build" did not complete successfully: exit code: 1
+2025-Sep-07 22:09:50.932570
+exit status 1
+2025-Sep-07 22:09:50.996058
+Oops something is not okay, are you okay? 😢
+2025-Sep-07 22:09:51.001876
+Dockerfile:22
+2025-Sep-07 22:09:51.001876
+2025-Sep-07 22:09:51.001876
+--------------------
+2025-Sep-07 22:09:51.001876
+2025-Sep-07 22:09:51.001876
+20 |
+2025-Sep-07 22:09:51.001876
+2025-Sep-07 22:09:51.001876
+21 |     # Build the app
+2025-Sep-07 22:09:51.001876
+2025-Sep-07 22:09:51.001876
+22 | >>> RUN pnpm build
+2025-Sep-07 22:09:51.001876
+2025-Sep-07 22:09:51.001876
+23 |
+2025-Sep-07 22:09:51.001876
+2025-Sep-07 22:09:51.001876
+24 |     # Expose port (default Next.js port)
+2025-Sep-07 22:09:51.001876
+2025-Sep-07 22:09:51.001876
+--------------------
+2025-Sep-07 22:09:51.001876
+2025-Sep-07 22:09:51.001876
+failed to solve: process "/bin/sh -c pnpm build" did not complete successfully: exit code: 1
+2025-Sep-07 22:09:51.001876
+2025-Sep-07 22:09:51.001876
+exit status 1
+2025-Sep-07 22:09:51.448379
+Gracefully shutting down build container: u4o0s8c4k4cs0gc4o888cs0w
 
 /*
+
+pm2 start "yarn preview" --name "app"
+pm2 save
+pm2 startup
+
+
 ssh root@82.25.90.64
 janean
 6:23 PM

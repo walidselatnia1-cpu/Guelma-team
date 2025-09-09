@@ -25,7 +25,7 @@ export default async function Layout({
   return (
     <div className="min-h-screen bg-gray-50">
       <main>
-        <div className="bg-stone-100 grid grid-cols-1 lg:grid-cols-12 xl:grid-cols-16 w-full px-4 pt-2 max-w-7xl mx-auto">
+        <div className="bg-stone-100 grid grid-cols-1 lg:grid-cols-12 xl:grid-cols-16 w-full px-4 pt-2  mx-auto">
           {/* Main Content */}
           <div className="lg:col-span-2 xl:col-span-3"></div>
 

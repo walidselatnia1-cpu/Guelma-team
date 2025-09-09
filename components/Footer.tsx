@@ -47,7 +47,7 @@ export function Footer() {
       </div>
 
       {/* Navigation Links */}
-      <div className="max-w-7xl mx-auto px-4 py-6">
+      <div className=" xl mx-auto px-4 py-6">
         <nav className="flex flex-wrap justify-center items-center space-x-6 text-sm text-gray-600">
           <Link
             href="/"
@@ -144,7 +144,7 @@ export function Footer() {
       </div>
 
       {/* Social Media Icons */}
-      <div className="max-w-7xl mx-auto px-4 pb-6">
+      <div className=" xl mx-auto px-4 pb-6">
         <div className="flex justify-center space-x-4">
           <Link
             href="#"
@@ -169,7 +169,7 @@ export function Footer() {
 
       {/* Copyright */}
       <div className="border-t border-gray-300">
-        <div className="max-w-7xl mx-auto px-4 py-4 text-center">
+        <div className=" xl mx-auto px-4 py-4 text-center">
           <p className="text-sm text-gray-600">
             2025 Recipes by Clare. All rights reserved.
           </p>

@@ -148,7 +148,7 @@ export default function Search() {
   ];
 
   return (
-    <div className="flex flex-col gap-12 p-8 max-w-7xl mx-auto">
+    <div className="flex flex-col gap-12 p-8  xl mx-auto">
       {/* Categories Section */}
       <div className="flex flex-col gap-6">
         <h2 className="text-3xl font-bold text-gray-900 uppercase tracking-wide">
