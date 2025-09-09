@@ -13,7 +13,7 @@ interface RecipeContentProps {
 export function RecipeContent({ recipe }: RecipeContentProps) {
   recipe = Array.isArray(recipe) ? recipe[0] : recipe;
   return (
-    <div className="space-y-8 mt-2 text-md ">
+    <div className="space-y-8 mt-2 text-md max-w-none">
       {/* Hero Image */}
       <div className="relative w-full h-96 md:h-[500px] rounded-lg overflow-hidden">
         <Image
