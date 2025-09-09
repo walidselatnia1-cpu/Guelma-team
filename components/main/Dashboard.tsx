@@ -112,6 +112,7 @@ function AdminDashboardContent() {
       </main>
 
       <RecipeModal
+        key={`${state.modalMode}-${Date.now()}`}
         isOpen={state.isModalOpen}
         onClose={closeModal}
         recipe={state.selectedRecipe}

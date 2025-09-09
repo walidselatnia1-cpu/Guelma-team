@@ -109,8 +109,8 @@ export const RecipeModal: React.FC<RecipeModalProps> = ({
   useEffect(() => {
     if (recipe && mode === "edit") {
       setFormData(recipe);
-    } else {
-      // Initialize with default values for add mode
+    } else if (mode === "add") {
+      // Always reset to empty values for add mode, regardless of previous state
       setFormData({
         id: Date.now().toString(),
         slug: "",
@@ -153,6 +153,12 @@ export const RecipeModal: React.FC<RecipeModalProps> = ({
         },
         relatedRecipes: [],
       });
+      // Also clear JSON input when switching to add mode
+      setJsonInput("");
+      setJsonError("");
+      setJsonSuccess(false);
+      // Reset to first step
+      setCurrentStep(0);
     }
   }, [recipe, mode]);
 
