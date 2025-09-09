@@ -10,7 +10,7 @@ interface DashboardProps {
 export const Dashboard: React.FC<DashboardProps> = ({
   recipes,
   onEditRecipe,
-}: any) => {
+}) => {
   const stats = [
     {
       label: "Total Recipes",
@@ -98,8 +98,8 @@ export const Dashboard: React.FC<DashboardProps> = ({
                   onClick={() => onEditRecipe(recipe)}
                 >
                   <img
-                    src={recipe.img}
-                    alt={recipe.imageAlt}
+                    src={recipe.img || recipe.heroImage}
+                    alt={recipe.imageAlt || recipe.title}
                     className="w-12 h-12 rounded-lg object-cover"
                   />
                   <div className="flex-1 min-w-0">

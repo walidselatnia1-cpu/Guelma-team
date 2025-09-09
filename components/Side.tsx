@@ -1,3 +1,5 @@
+import { getFullUrl, getHostname } from "@/lib/utils";
+
 export default function Side({ recipe, relatedRecipes = [] }: any) {
   recipe = Array.isArray(recipe) ? recipe[0] : recipe;
 
@@ -18,15 +20,21 @@ export default function Side({ recipe, relatedRecipes = [] }: any) {
             {/* Inner dashed ring */}
 
             <a
-              href="https://recipesbyclare.com/authors/emily-smith"
-              title="Recipes by Clare | Delicious Home Cooking Made Easy"
+              href={recipe?.author?.link || getFullUrl("/authors/emily-smith")}
+              title={`Recipes by ${
+                recipe?.author?.name || "Author"
+              } | Delicious Home Cooking Made Easy`}
               className="no-underline"
             >
               <img
                 height={144}
                 width={144}
-                alt="emily for recipes by clare"
-                src={recipe.heroImage || recipe.author.avatar}
+                alt={recipe?.author?.name || "Author"}
+                src={
+                  recipe?.heroImage ||
+                  recipe?.author?.avatar ||
+                  "/placeholder-user.jpg"
+                }
                 className="block w-full h-full aspect-square object-cover transition-transform duration-300 ease-[cubic-bezier(0.5,1.25,0.75,1.25)] hover:scale-105 rounded-full"
               />
             </a>
@@ -37,10 +45,10 @@ export default function Side({ recipe, relatedRecipes = [] }: any) {
         <div className=" daflex flex-col justify-center items-center text-center gap-4">
           <a
             className="text-2xl text-black no-underline font-bold block hover:underline"
-            href="https://recipesbyclare.com/authors/emily-smith"
-            title="Recipes by Clare | Delicious Home Cooking Made Easy"
+            href={recipe?.author?.link || "#"}
+            title={recipe?.author?.name || "Author"}
           >
-            Emily Smith
+            {recipe?.author?.name || "Unknown Author"}
           </a>
 
           <p className="text-lg m-0 text-gray-700">
@@ -54,7 +62,7 @@ export default function Side({ recipe, relatedRecipes = [] }: any) {
             <div className="flex items-center flex-wrap justify-center gap-4">
               <a
                 className="rounded-full no-underline transition-all duration-[400ms] inline-flex justify-center items-center w-9 h-9 bg-black hover:scale-110 hover:bg-gray-800"
-                href="https://pinterest.com/recipesbyclare"
+                href={`https://pinterest.com/${getHostname().split(".")[0]}`}
                 rel="noopener noreferrer"
                 target="_blank"
                 title="Pinterest"
@@ -69,7 +77,7 @@ export default function Side({ recipe, relatedRecipes = [] }: any) {
 
               <a
                 className="rounded-full no-underline transition-all duration-[400ms] inline-flex justify-center items-center w-9 h-9 bg-black hover:scale-110 hover:bg-gray-800"
-                href="mailto:emily@recipesbyclare.com"
+                href={`mailto:hello@${getHostname()}`}
                 title="Email"
               >
                 <svg

@@ -12,8 +12,8 @@ export const RecipeCard: React.FC<RecipeCardProps> = ({ recipe, onEdit }) => {
     <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition-shadow duration-300">
       <div className="aspect-video bg-gray-100 relative overflow-hidden">
         <img
-          src={recipe.img}
-          alt={recipe.imageAlt}
+          src={recipe.img || recipe.heroImage}
+          alt={recipe.imageAlt || recipe.title}
           className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
         />
         <div className="absolute top-3 left-3">
@@ -50,11 +50,17 @@ export const RecipeCard: React.FC<RecipeCardProps> = ({ recipe, onEdit }) => {
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <img
-              src={recipe.heroImage || recipe.author.avatar}
-              alt={recipe.author.name}
+              src={
+                recipe.heroImage ||
+                recipe.author?.avatar ||
+                "/placeholder-user.jpg"
+              }
+              alt={recipe.author?.name || "Author"}
               className="w-6 h-6 rounded-full"
             />
-            <span className="text-sm text-gray-600">{recipe.author.name}</span>
+            <span className="text-sm text-gray-600">
+              {recipe.author?.name || "Unknown Author"}
+            </span>
           </div>
 
           <button

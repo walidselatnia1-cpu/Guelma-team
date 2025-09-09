@@ -93,7 +93,7 @@ const RecipeCard = ({ recipe }: { recipe: Recipe }) => {
       {/* Smaller image height */}
       <a href={recipe.href} className="block w-full h-40 overflow-hidden">
         <img
-          src={recipe.images[0]}
+          src={recipe.img || recipe.heroImage}
           alt={recipe.imageAlt || recipe.title}
           className="w-full h-full object-cover object-center transition-transform duration-300 hover:scale-105"
         />
