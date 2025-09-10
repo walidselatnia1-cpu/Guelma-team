@@ -9,7 +9,12 @@ export default async function AuthorsPage() {
   const authorsMap = new Map<string, Author>();
   recipes.forEach((recipe: any) => {
     if (recipe.author && recipe.author.name) {
-      authorsMap.set(recipe.author.name, recipe.author);
+      // Use recipe.heroImage instead of author.avatar
+      const authorWithHeroImage = {
+        ...recipe.author,
+        avatar: recipe.heroImage,
+      };
+      authorsMap.set(recipe.author.name, authorWithHeroImage);
     }
   });
   const authors = Array.from(authorsMap.values());
