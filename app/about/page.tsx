@@ -1,10 +1,4 @@
-import { RecipeHero } from "@/components/RecipeHero";
-import { RecipeContent } from "@/components/RecipeContent";
-import { RelatedRecipes } from "@/components/RelatedRecipes";
-import { Footer } from "@/components/Footer";
-import { notFound } from "next/navigation";
-import { getRecipe } from "@/data/data";
-import Side from "@/components/Side";
+export const dynamic = "force-static";
 import About from "@/components/main/Aboute";
 
 export default async function RecipePage({}) {

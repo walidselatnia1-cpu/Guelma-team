@@ -1,3 +1,5 @@
+export const dynamic = "force-static";
+
 import Terms from "@/components/main/Terms";
 
 export default async function TermsPage({}) {

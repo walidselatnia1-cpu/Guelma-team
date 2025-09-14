@@ -1,3 +1,5 @@
+export const dynamic = "force-static";
+
 import Cookies from "@/components/main/Cookies";
 
 export default async function CookiesPage({}) {

@@ -1,3 +1,5 @@
+export const dynamic = "force-static";
+
 import Disclaimer from "@/components/main/Disclaimer";
 
 export default async function DisclaimerPage({}) {

@@ -5,7 +5,6 @@ import { getRecipes } from "@/data/data";
 import ExploreWithPagination from "@/components/ExploreWithPagination";
 
 // Force static generation
-export const dynamic = "force-static";
 
 const RecipeCard = ({ recipe }: { recipe: Recipe }) => {
   return (

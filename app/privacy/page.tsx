@@ -1,3 +1,5 @@
+export const dynamic = "force-static";
+
 import Privacy from "@/components/main/Privacy";
 
 export default async function PrivacyPage({}) {

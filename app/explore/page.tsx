@@ -1,3 +1,5 @@
+export const dynamic = "force-static";
+
 import React from "react";
 import { Recipe } from "@/outils/types";
 import { notFound } from "next/navigation";
@@ -6,7 +8,6 @@ import ExploreWithPagination from "@/components/ExploreWithPagination";
 import Link from "next/link";
 
 // Force static generation
-export const dynamic = "force-static";
 
 const RecipeCard = ({ recipe }: { recipe: Recipe }) => {
   return (

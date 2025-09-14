@@ -31,7 +31,6 @@ export async function GET() {
       status: 200,
       headers: {
         "Content-Type": "text/plain",
-        "Cache-Control": "s-maxage=12, stale-while-revalidate",
       },
     });
   } catch (error) {

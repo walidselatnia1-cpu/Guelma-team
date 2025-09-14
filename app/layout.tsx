@@ -5,6 +5,7 @@ import "./globals.css";
 import Header from "./layout/Header";
 import Footer from "./layout/Footer";
 import ClientLayout from "@/components/ClientLayout";
+import CustomCodeInjector from "@/components/CustomCodeInjector";
 import { getHeaderCode, getBodyCode, getFooterCode } from "@/lib/custom-code";
 
 export const metadata: Metadata = {
@@ -33,32 +34,22 @@ export default async function RootLayout({
           content="Guelma Team Recipes - Delicious Family-Friendly Recipes"
         />
 
-        <style>{`
+        <style>
+          {`
 html {
   font-family: ${GeistSans.style.fontFamily};
   --font-sans: ${GeistSans.variable};
   --font-mono: ${GeistMono.variable};
 }
-        `}</style>
+        `}
+        </style>
 
-        {/* Custom Header Code */}
-        {headerCode.html && (
-          <div dangerouslySetInnerHTML={{ __html: headerCode.html }} />
-        )}
-        {headerCode.css && (
-          <style dangerouslySetInnerHTML={{ __html: headerCode.css }} />
-        )}
-        {headerCode.javascript && (
-          <script dangerouslySetInnerHTML={{ __html: headerCode.javascript }} />
-        )}
+        <CustomCodeInjector />
       </head>
       <body className="layout-container">
         {/* Custom Body Code */}
         {bodyCode.html && (
-          <>
-            {/* Custom Body HTML [TODO: should be rendered html] */}
-            <span dangerouslySetInnerHTML={{ __html: bodyCode.html }} />
-          </>
+          <div dangerouslySetInnerHTML={{ __html: bodyCode.html }} />
         )}
         {bodyCode.css && (
           <style dangerouslySetInnerHTML={{ __html: bodyCode.css }} />

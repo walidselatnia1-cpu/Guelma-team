@@ -1,3 +1,5 @@
+export const dynamic = "force-static";
+
 import React from "react";
 import { Recipe } from "@/outils/types";
 import { notFound } from "next/navigation";

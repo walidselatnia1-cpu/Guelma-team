@@ -1,5 +1,5 @@
-import { notFound } from "next/navigation";
-import { getRecipe } from "@/data/data";
+export const dynamic = "force-static";
+
 import Contact from "@/components/main/Contact";
 
 export default async function ContactPage({}: {}) {
@@ -15,16 +15,22 @@ export default async function ContactPage({}: {}) {
           {/* Contact Form */}
           <div className="bg-stone-100 box-border border border-dashed border-black rounded-[40px] overflow-hidden py-8 pr-8 pl-4 shadow-lg mb-12">
             <div className="text-center mb-8">
-              <h2 className="text-[2.28rem] font-bold text-black mb-4">Get In Touch</h2>
+              <h2 className="text-[2.28rem] font-bold text-black mb-4">
+                Get In Touch
+              </h2>
               <p className="text-lg text-black">
-                Have a question or want to share a recipe? We'd love to hear from you!
+                Have a question or want to share a recipe? We'd love to hear
+                from you!
               </p>
             </div>
 
             <form className="space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                  <label htmlFor="name" className="block text-sm font-bold text-black mb-3">
+                  <label
+                    htmlFor="name"
+                    className="block text-sm font-bold text-black mb-3"
+                  >
                     Full Name *
                   </label>
                   <input
@@ -38,7 +44,10 @@ export default async function ContactPage({}: {}) {
                 </div>
 
                 <div>
-                  <label htmlFor="email" className="block text-sm font-bold text-black mb-3">
+                  <label
+                    htmlFor="email"
+                    className="block text-sm font-bold text-black mb-3"
+                  >
                     Email Address *
                   </label>
                   <input
@@ -53,7 +62,10 @@ export default async function ContactPage({}: {}) {
               </div>
 
               <div>
-                <label htmlFor="subject" className="block text-sm font-bold text-black mb-3">
+                <label
+                  htmlFor="subject"
+                  className="block text-sm font-bold text-black mb-3"
+                >
                   Subject *
                 </label>
                 <input
@@ -67,7 +79,10 @@ export default async function ContactPage({}: {}) {
               </div>
 
               <div>
-                <label htmlFor="message" className="block text-sm font-bold text-black mb-3">
+                <label
+                  htmlFor="message"
+                  className="block text-sm font-bold text-black mb-3"
+                >
                   Message *
                 </label>
                 <textarea
