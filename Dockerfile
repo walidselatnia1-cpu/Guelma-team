@@ -55,8 +55,8 @@ ENV SHARP_FORCE_PLATFORM=true
 
 COPY package.json ./
 
-RUN npm install 
-RUN npm install --force @img/sharp-linuxmusl-arm64
+RUN yarn
+RUN yarn add --force @img/sharp-linuxmusl-arm64
 
 
 COPY prisma ./prisma
