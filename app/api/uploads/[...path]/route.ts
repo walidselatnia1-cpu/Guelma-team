@@ -76,8 +76,8 @@ export async function GET(
 
       // Force conversion to modern formats (AVIF preferred for better compression)
       const originalFormat = mimeType.split("/")[1];
-      let outputFormat = "avif";
-      let outputMimeType = "image/avif";
+      let outputFormat = "webp";
+      let outputMimeType = "image/webp";
 
       // Check if the original format is already WebP/AVIF
       if (originalFormat === "webp") {
