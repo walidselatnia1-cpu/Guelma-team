@@ -31,6 +31,8 @@ ENV DB_PASSWORD=${DB_PASSWORD}
 
 COPY package.json ./
 RUN yarn install 
+RUN npm install --os=linux --libc=musl --cpu=x64 sharp
+
 
 COPY prisma ./prisma
 RUN npx prisma generate
