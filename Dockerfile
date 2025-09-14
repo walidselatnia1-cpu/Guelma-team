@@ -36,7 +36,7 @@ RUN apt-get update && apt-get install -y \
     libvips-dev \
     && rm -rf /var/lib/apt/lists/*
 
-RUN yarn install
+RUN yarn install --ignore-optional=false
 
 
 COPY prisma ./prisma
