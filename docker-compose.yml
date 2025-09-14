@@ -43,6 +43,7 @@ services:
     restart: unless-stopped
     volumes:
       - uploads:/app/uploads
+      - ./data:/app/data
     healthcheck:
       test: ["CMD-SHELL", "wget -qO- http://localhost:3000/ || exit 1"]
       interval: 10s
@@ -52,3 +53,4 @@ services:
 volumes:
   postgres_data:
   uploads:
+  data:
