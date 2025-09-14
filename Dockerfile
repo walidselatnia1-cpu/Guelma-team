@@ -56,7 +56,7 @@ ENV SHARP_FORCE_PLATFORM=true
 COPY package.json ./
 
 RUN yarn
-RUN yarn add --force @img/sharp-linuxmusl-arm64
+RUN yarn add --force @img/sharp-linuxmusl-x64
 
 
 COPY prisma ./prisma
