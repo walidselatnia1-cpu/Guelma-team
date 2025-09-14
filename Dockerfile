@@ -54,7 +54,7 @@ ENV npm_config_arch=x64
 ENV SHARP_FORCE_PLATFORM=true
 
 COPY package.json ./
-RUN yarn install --ignore-optional=false
+RUN yarn install 
 
 
 COPY prisma ./prisma
