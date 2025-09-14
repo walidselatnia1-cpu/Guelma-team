@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import { NextResponse } from "next/server";
 import fs from "fs";
 import path from "path";
@@ -15,51 +17,11 @@ async function readSettings() {
     const settings = JSON.parse(fileContents);
     return (
       settings.robotsTxt ||
-      `User-agent: *
-Allow: /
-
-# Sitemap
-Sitemap: https://yourdomain.com/sitemap.xml
-
-# Disallow admin pages
-Disallow: /admin/
-Disallow: /api/
-
-# Allow search engines to crawl everything else
-Allow: /recipes/
-Allow: /categories/
-Allow: /about
-Allow: /contact
-Allow: /faq
-Allow: /explore
-Allow: /search
-
-# Crawl delay (optional)
-Crawl-delay: 1`
+      "# ads.txt file\n# Add your authorized seller information here"
     );
   } catch (error) {
     console.error("Error reading settings:", error);
-    return `User-agent: *
-Allow: /
-
-# Sitemap
-Sitemap: https://yourdomain.com/sitemap.xml
-
-# Disallow admin pages
-Disallow: /admin/
-Disallow: /api/
-
-# Allow search engines to crawl everything else
-Allow: /recipes/
-Allow: /categories/
-Allow: /about
-Allow: /contact
-Allow: /faq
-Allow: /explore
-Allow: /search
-
-# Crawl delay (optional)
-Crawl-delay: 1`;
+    return "# ads.txt file\n# Add your authorized seller information here";
   }
 }
 
@@ -71,7 +33,6 @@ export async function GET() {
       status: 200,
       headers: {
         "Content-Type": "text/plain",
-        "Cache-Control": "s-maxage=15, stale-while-revalidate",
       },
     });
   } catch (error) {
