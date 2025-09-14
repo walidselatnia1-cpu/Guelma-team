@@ -47,8 +47,7 @@ export default function Settings({ className }: SettingsProps) {
     body: { html: [], css: [], javascript: [] },
     footer: { html: [], css: [], javascript: [] },
     adsTxt: "# ads.txt file\n# Add your authorized seller information here",
-    robotsTxt:
-      "User-agent: *\nAllow: /\n\n# Sitemap\nSitemap: https://yourdomain.com/sitemap.xml\n\n# Disallow admin pages\nDisallow: /admin/\nDisallow: /api/\n\n# Allow search engines to crawl everything else\nAllow: /recipes/\nAllow: /categories/\nAllow: /about\nAllow: /contact\nAllow: /faq\nAllow: /explore\nAllow: /search\n\n# Crawl delay (optional)\nCrawl-delay: 1",
+    robotsTxt: "",
     lastUpdated: null,
     updatedBy: null,
   });
@@ -84,6 +83,7 @@ export default function Settings({ className }: SettingsProps) {
         return;
       }
 
+      // Load settings from API
       const response = await fetch("/api/admin/settings", {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -92,6 +92,16 @@ export default function Settings({ className }: SettingsProps) {
 
       if (response.ok) {
         const data = await response.json();
+        // Load robots.txt content from static file
+        try {
+          const robotsResponse = await fetch("/robots.txt");
+          if (robotsResponse.ok) {
+            const robotsContent = await robotsResponse.text();
+            data.robotsTxt = robotsContent;
+          }
+        } catch (robotsError) {
+          console.warn("Could not load robots.txt:", robotsError);
+        }
         setSettings(data);
       } else {
         setMessage({ type: "error", text: "Failed to load settings" });
@@ -213,11 +223,35 @@ export default function Settings({ className }: SettingsProps) {
     setEditingFile(true);
   };
 
-  const saveFileEdit = () => {
+  const saveFileEdit = async () => {
     if (activeTab === "ads") {
       setSettings((prev) => ({ ...prev, adsTxt: fileEditValue }));
     } else if (activeTab === "robots") {
-      setSettings((prev) => ({ ...prev, robotsTxt: fileEditValue }));
+      // Save robots.txt to static file
+      try {
+        const token = localStorage.getItem("admin_token");
+        const response = await fetch("/api/admin/save-robots", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({ content: fileEditValue }),
+        });
+
+        if (response.ok) {
+          setSettings((prev) => ({ ...prev, robotsTxt: fileEditValue }));
+          setMessage({
+            type: "success",
+            text: "Robots.txt saved successfully!",
+          });
+        } else {
+          setMessage({ type: "error", text: "Failed to save robots.txt" });
+        }
+      } catch (error) {
+        console.error("Error saving robots.txt:", error);
+        setMessage({ type: "error", text: "Error saving robots.txt" });
+      }
     }
     setEditingFile(false);
     setFileEditValue("");

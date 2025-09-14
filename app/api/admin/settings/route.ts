@@ -5,7 +5,7 @@ import { headers } from "next/headers";
 
 const SETTINGS_FILE_PATH = path.join(
   process.cwd(),
-  "data",
+  "public", // ← Change from "data" to "public"
   "custom-code-settings.json"
 );
 

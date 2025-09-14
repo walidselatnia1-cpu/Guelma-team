@@ -1,0 +1,21 @@
+User-agent: *
+Allow: /
+
+# Sitemap
+Sitemap: https://hahaha.com/sitemap.xml
+
+# Disallow admin pages
+Disallow: /admin/
+Disallow: /api/
+
+# Allow search engines to crawl everything else
+Allow: /recipes/
+Allow: /categories/
+Allow: /about
+Allow: /contact
+Allow: /faq
+Allow: /explore
+Allow: /search
+
+# Crawl delay (optional)
+Crawl-delay: 1

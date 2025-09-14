@@ -8,7 +8,9 @@
     "javascript": []
   },
   "body": {
-    "html": ["<div id=\"32123\"/>"],
+    "html": [
+      "<div id=\"32123\"/>"
+    ],
     "css": [],
     "javascript": []
   },
@@ -17,7 +19,8 @@
     "css": [],
     "javascript": []
   },
-  "adsTxt": "# ads.txt file\n# Add your authorized seller information here\n# kjashdkjsdhk\n# Example:\n# google.com, pub-0000000000000000, DIRECT, f08c47fec0942fa0\n# facebook.com, 0000000000000000, RESELLER, c3e20eee3f780d68",
-  "lastUpdated": "2025-09-14T17:40:28.555Z",
-  "updatedBy": "admin"
+  "adsTxt": "# ads.txt filesss\n# Add your authorized seller information here\n# kjashdkjsdhk\n# Example:\n# google.com, pub-0000000000000000, DIRECT, f08c47fec0942fa0\n# facebook.com, 0000000000000000, RESELLER, c3e20eee3f780d68",
+  "lastUpdated": "2025-09-14T18:50:25.676Z",
+  "updatedBy": "admin",
+  "robotsTxt": "User-agent: *\nAllow: /\n\n# Sitemap\nSitemap: https://hahaha.com/sitemap.xml\n\n# Disallow admin pages\nDisallow: /admin/\nDisallow: /api/\n\n# Allow search engines to crawl everything else\nAllow: /recipes/\nAllow: /categories/\nAllow: /about\nAllow: /contact\nAllow: /faq\nAllow: /explore\nAllow: /search\n\n# Crawl delay (optional)\nCrawl-delay: 1\n"
 }
