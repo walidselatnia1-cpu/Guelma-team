@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import { Recipe } from "@/outils/types";
 import Link from "next/link";
+import Image from "next/image";
 
 const Pagination = ({
   currentPage = 1,
@@ -102,7 +103,9 @@ const RecipeCard = ({ recipe }: { recipe: Recipe }) => {
         href={"/recipes/" + recipe.slug}
         className="block w-full h-40 overflow-hidden"
       >
-        <img
+        <Image
+          width={400}
+          height={160}
           src={recipe.img || recipe.heroImage}
           alt={recipe.imageAlt || recipe.title}
           className="w-full h-full object-cover object-center transition-transform duration-300 hover:scale-105"

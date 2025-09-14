@@ -27,6 +27,7 @@ import {
   Zap,
   HelpCircle,
 } from "lucide-react";
+import { categories } from "@/data/categories";
 
 interface IconProps {
   name: string;
@@ -60,6 +61,9 @@ const iconMap: Record<string, React.ElementType> = {
   globe: Globe,
   zap: Zap,
   help: HelpCircle,
+  categories: Grid3X3,
+  search2: Search,
+  info2: Info,
 };
 
 const Icon: React.FC<IconProps> = ({ name, size = 20, className }) => {

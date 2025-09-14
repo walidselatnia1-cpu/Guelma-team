@@ -2,6 +2,7 @@ import React from "react";
 import { getCategories } from "@/data/data";
 import { Category } from "@/outils/types";
 import Icon from "@/components/Icon";
+import Image from "next/image";
 
 interface CategoriesSectionProps {
   className?: string;
@@ -69,10 +70,12 @@ export default async function CategoriesSection({
                   title={category.title}
                   className="relative text-blue-700 box-border hover:scale-105 transform transition-transform duration-300 block h-40 overflow-hidden rounded-xl category-card"
                 >
-                  <img
+                  <Image
                     alt={category.alt}
                     src={category.image}
                     sizes={category.sizes}
+                    width={400}
+                    height={160}
                     className="transition-transform duration-300 group-hover:scale-110 object-cover w-full h-full z-0"
                   />
 

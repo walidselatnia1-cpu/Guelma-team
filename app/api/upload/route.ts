@@ -14,6 +14,7 @@ const ALLOWED_TYPES = [
   "image/jpg",
   "image/png",
   "image/webp",
+  "image/avif",
   "image/gif",
 ];
 const UPLOAD_DIR = path.join(process.cwd(), "uploads");

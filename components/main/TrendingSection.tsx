@@ -61,7 +61,7 @@ export default async function TrendingSection({
                 >
                   <img
                     alt={recipe.imageAlt || recipe.title}
-                    src={recipe.img || recipe.heroImage}
+                    src={(recipe.img || recipe.heroImage) + "?w=400&h=300"}
                     sizes="(max-width: 768px) 50vw, 16.67vw"
                     className="aspect-[auto_1024_/_1024] bg-stone-100 box-border transition-transform duration-300 h-full max-w-full object-cover w-full group-hover:scale-110"
                     loading="lazy"

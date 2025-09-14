@@ -1,4 +1,5 @@
 import { getFullUrl, getHostname } from "@/lib/utils";
+import Image from "next/image";
 
 export default function Side({ recipe, relatedRecipes = [] }: any) {
   recipe = Array.isArray(recipe) ? recipe[0] : recipe;
@@ -26,7 +27,7 @@ export default function Side({ recipe, relatedRecipes = [] }: any) {
               } | Delicious Home Cooking Made Easy`}
               className="no-underline"
             >
-              <img
+              <Image
                 height={144}
                 width={144}
                 alt={recipe?.author?.name || "Author"}
@@ -103,7 +104,9 @@ export default function Side({ recipe, relatedRecipes = [] }: any) {
               key={relatedRecipe.id || index}
               className="flex rounded-2xl overflow-hidden border border-dashed border-black bg-stone-100 shadow-md"
             >
-              <img
+              <Image
+                width={128}
+                height={112}
                 className="w-32 h-28 object-cover flex-shrink-0"
                 alt={relatedRecipe.title}
                 src={
