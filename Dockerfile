@@ -30,10 +30,11 @@ ENV DB_PASSWORD=${DB_PASSWORD}
 
 COPY package.json ./
 # In the builder stage, after COPY package.json ./
-RUN apk add --no-cache python3 make g++
-RUN npm rebuild sharp
-
+# In the builder stage
+ENV npm_config_platform=linuxmusl
+ENV npm_config_arch=x64
 RUN yarn install
+
 
 RUN yarn install 
 
