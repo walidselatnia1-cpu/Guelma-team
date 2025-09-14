@@ -55,7 +55,10 @@ html {
       <body className="layout-container">
         {/* Custom Body Code */}
         {bodyCode.html && (
-          <div dangerouslySetInnerHTML={{ __html: bodyCode.html }} />
+          <>
+            {/* Custom Body HTML [TODO: should be rendered html] */}
+            <span dangerouslySetInnerHTML={{ __html: bodyCode.html }} />
+          </>
         )}
         {bodyCode.css && (
           <style dangerouslySetInnerHTML={{ __html: bodyCode.css }} />

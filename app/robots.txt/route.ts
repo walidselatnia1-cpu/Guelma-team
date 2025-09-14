@@ -71,7 +71,7 @@ export async function GET() {
       status: 200,
       headers: {
         "Content-Type": "text/plain",
-        "Cache-Control": "s-maxage=86400, stale-while-revalidate",
+        "Cache-Control": "s-maxage=15, stale-while-revalidate",
       },
     });
   } catch (error) {

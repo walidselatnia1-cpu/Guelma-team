@@ -146,7 +146,7 @@ export default function Settings({ className }: SettingsProps) {
   const addCodeBlock = () => {
     if (activeTab === "ads" || activeTab === "robots") return;
 
-    const newCode = `/* New ${getCodeTypeLabel(activeCodeType)} code block */`;
+    const newCode = ""; // Start with empty code block for user to fill
     setSettings((prev) => ({
       ...prev,
       [activeTab]: {
