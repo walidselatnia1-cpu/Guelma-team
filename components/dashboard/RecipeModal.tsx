@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 import { Recipe } from "@/outils/types";
 import { useAdmin } from "@/contexts/AdminContext";
+import { AUTHOR_HERO_IMAGES } from "@/data/author-hero-images";
 
 // Import modular forms
 import { BasicInfoForm } from "@/components/admin/forms/BasicInfoForm";
@@ -708,23 +709,63 @@ export const RecipeModal: React.FC<RecipeModalProps> = ({
 
               {/* Hero Image (optional) */}
               <div className="space-y-4">
-                <h4 className="font-medium text-gray-700">
-                  Hero Image (Optional)
-                </h4>
-                <FileUpload
-                  label="Upload hero image"
-                  category="recipes"
-                  currentImage={formData.heroImage || ""}
-                  showRecipeLinking={mode === "add"}
-                  onFileUploaded={(fileUrl, fileName) => {
-                    console.log("🖼️ RecipeModal: Hero image uploaded", {
-                      fileUrl,
-                      fileName,
-                    });
-                    updateFormData("heroImage", fileUrl);
-                  }}
-                  className="w-full"
-                />
+                <h4 className="font-medium text-gray-700">Author Hero Image</h4>
+                <p className="text-sm text-gray-600 mb-3">
+                  Select from our 5 fixed author hero images. This image will be
+                  used for the author's profile.
+                </p>
+
+                {/* Hero Image Selection */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {AUTHOR_HERO_IMAGES.map((heroImage) => (
+                    <div
+                      key={heroImage.id}
+                      onClick={() =>
+                        updateFormData("heroImage", heroImage.imageUrl)
+                      }
+                      className={`relative cursor-pointer border-2 rounded-lg p-3 transition-all ${
+                        formData.heroImage === heroImage.imageUrl
+                          ? "border-blue-500 bg-blue-50"
+                          : "border-gray-200 hover:border-gray-300"
+                      }`}
+                    >
+                      <div className="aspect-video bg-gray-100 rounded mb-2 flex items-center justify-center">
+                        <img
+                          src={heroImage.imageUrl}
+                          alt={heroImage.name}
+                          className="w-full h-full object-cover rounded"
+                          onError={(e) => {
+                            // Fallback for missing images
+                            e.currentTarget.src = "/placeholder.jpg";
+                          }}
+                        />
+                      </div>
+                      <h5 className="font-medium text-sm text-gray-900">
+                        {heroImage.name}
+                      </h5>
+                      <p className="text-xs text-gray-600 mt-1">
+                        {heroImage.description}
+                      </p>
+                      {formData.heroImage === heroImage.imageUrl && (
+                        <div className="absolute top-2 right-2 w-5 h-5 bg-blue-500 rounded-full flex items-center justify-center">
+                          <span className="text-white text-xs">✓</span>
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+
+                {/* Current Selection Display */}
+                {formData.heroImage && (
+                  <div className="mt-4 p-3 bg-gray-50 rounded-lg">
+                    <p className="text-sm text-gray-700">
+                      <strong>Selected:</strong>{" "}
+                      {AUTHOR_HERO_IMAGES.find(
+                        (img) => img.imageUrl === formData.heroImage
+                      )?.name || "Custom Image"}
+                    </p>
+                  </div>
+                )}
               </div>
             </div>
 
@@ -826,7 +867,7 @@ export const RecipeModal: React.FC<RecipeModalProps> = ({
       case "author":
         return (
           <AuthorForm
-            img={recipe?.heroImage}
+            img={recipe?.heroImage || ""}
             author={
               formData.author || { name: "", link: "", avatar: "", bio: "" }
             }

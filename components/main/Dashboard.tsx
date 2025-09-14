@@ -5,6 +5,7 @@ import { Dashboard } from "@/components/dashboard/Dashboard";
 import { RecipeTable } from "@/components/dashboard/RecipeTable";
 import { RecipeModal } from "@/components/dashboard/RecipeModal";
 import { MediaLibrary } from "@/components/admin/MediaLibrary";
+import Settings from "@/components/admin/Settings";
 import { Recipe } from "@/outils/types";
 import { AdminProvider, useAdmin } from "@/contexts/AdminContext";
 
@@ -79,19 +80,7 @@ function AdminDashboardContent() {
           </div>
         );
       case "settings":
-        return (
-          <div className="space-y-6">
-            <div>
-              <h1 className="text-3xl font-bold text-gray-900 mb-2">
-                Settings
-              </h1>
-              <p className="text-gray-600">Configure your CMS preferences</p>
-            </div>
-            <div className="bg-white rounded-xl border border-gray-200 p-8 text-center">
-              <p className="text-gray-500">Settings panel coming soon...</p>
-            </div>
-          </div>
-        );
+        return <Settings />;
       default:
         return (
           <Dashboard recipes={state.recipes} onEditRecipe={handleEditRecipe} />

@@ -9,12 +9,14 @@ export default async function AuthorsPage() {
   const authorsMap = new Map<string, Author>();
   recipes.forEach((recipe: any) => {
     if (recipe.author && recipe.author.name) {
-      // Use recipe.heroImage instead of author.avatar
-      const authorWithHeroImage = {
+      // Use heroImage if available, otherwise fallback to avatar
+      const authorWithHero = {
         ...recipe.author,
-        avatar: recipe.heroImage,
+        avatar: recipe.author.heroImage
+          ? recipe.author.heroImage
+          : recipe.author.avatar,
       };
-      authorsMap.set(recipe.author.name, authorWithHeroImage);
+      authorsMap.set(recipe.author.name, authorWithHero);
     }
   });
   const authors = Array.from(authorsMap.values());
@@ -30,11 +32,11 @@ export default async function AuthorsPage() {
             key={author.name}
             className="bg-white rounded-lg shadow p-6 flex flex-col items-center"
           >
-            <Image
+            <img
               src={author.avatar}
               alt={author.name}
-              width={80}
-              height={80}
+              width={120}
+              height={120}
               className="rounded-full mb-4"
             />
             <h2 className="text-xl font-bold mb-2">{author.name}</h2>

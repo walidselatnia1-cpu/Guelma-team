@@ -1,0 +1,21 @@
+{
+  "header": {
+    "html": ["/* New HTML code block */"],
+    "css": [],
+    "javascript": []
+  },
+  "body": {
+    "html": [],
+    "css": [],
+    "javascript": []
+  },
+  "footer": {
+    "html": [],
+    "css": [],
+    "javascript": []
+  },
+  "adsTxt": "# ads.txt file\n# Add your authorized seller information here\n\n# Example:\n# google.com, pub-0000000000000000, DIRECT, f08c47fec0942fa0\n# facebook.com, 0000000000000000, RESELLER, c3e20eee3f780d68",
+  "robotsTxt": "User-agent: *\nAllow: /\n\n# Sitemap\nSitemap: https://yourdomain.com/sitemap.xml\n\n# Disallow admin pages\nDisallow: /admin/\nDisallow: /api/\n\n# Allow search engines to crawl everything else\nAllow: /recipes/\nAllow: /categories/\nAllow: /about\nAllow: /contact\nAllow: /faq\nAllow: /explore\nAllow: /search\n\n# Crawl delay (optional)\nCrawl-delay: 1",
+  "lastUpdated": "2025-09-13T12:40:50.993Z",
+  "updatedBy": "admin"
+}

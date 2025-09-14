@@ -1,6 +1,6 @@
 // ---------- Core Interfaces ----------
 
-interface Author {
+export interface Author {
   name: string;
   link: string;
   avatar: string;
