@@ -17,7 +17,7 @@ export function RecipeContent({ recipe }: RecipeContentProps) {
       {/* Hero Image */}
       <div className="relative w-full h-96 md:h-[500px] rounded-lg overflow-hidden">
         <Image
-          src={`${recipe.images[0]}?w=1200&h=600`}
+          src={`${recipe.images[0]}?w=1200&`}
           alt={recipe.title}
           fill
           className="object-cover"
@@ -49,7 +49,7 @@ export function RecipeContent({ recipe }: RecipeContentProps) {
       {/* Second Image */}
       <div className="relative w-full h-96 rounded-lg overflow-hidden">
         <Image
-          src={`${recipe.images[1]}?w=1000&h=600`}
+          src={`${recipe.images[1]}?w=1000&`}
           alt="Honey Sesame Chicken and Broccoli cooking process"
           fill
           className="object-cover"
@@ -63,7 +63,7 @@ export function RecipeContent({ recipe }: RecipeContentProps) {
       {/* Third Image */}
       <div className="relative w-full h-96 rounded-lg overflow-hidden">
         <Image
-          src={`${recipe.images[2]}?w=1000&h=600`}
+          src={`${recipe.images[2]}?w=1000&`}
           alt="Honey Sesame Chicken and Broccoli final dish"
           fill
           className="object-cover"
@@ -111,7 +111,7 @@ export function RecipeContent({ recipe }: RecipeContentProps) {
             {item.img != undefined ? (
               <div className="relative w-full h-96 rounded-lg overflow-hidden">
                 <Image
-                  src={`${recipe.images[1]}?w=1000&h=600`}
+                  src={`${recipe.images[1]}?w=1000&`}
                   alt="Honey Sesame Chicken and Broccoli final dish"
                   fill
                   className="object-cover"
