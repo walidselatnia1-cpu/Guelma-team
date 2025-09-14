@@ -30,19 +30,39 @@ export function RecipeContent({ recipe }: RecipeContentProps) {
     }
   );
 
-  // State for progressive loading
+  // State for progressive loading of all images
+  const [heroImageLoaded, setHeroImageLoaded] = useState(false);
+  const [secondImageLoaded, setSecondImageLoaded] = useState(false);
   const [thirdImageLoaded, setThirdImageLoaded] = useState(false);
+  const [sectionImagesLoaded, setSectionImagesLoaded] = useState<{
+    [key: number]: boolean;
+  }>({});
 
   return (
     <div className="space-y-8 mt-2 text-md max-w-none">
-      {/* Hero Image - Above the fold, load immediately */}
+      {/* Hero Image - Above the fold with blur placeholder */}
       <div className="relative w-full h-96 md:h-[500px] rounded-lg overflow-hidden">
+        {/* Low-quality blur placeholder */}
+        <Image
+          src={`${recipe.images[0]}?w=100&q=15`}
+          alt=""
+          fill
+          className={`object-cover transition-opacity duration-500 ${
+            heroImageLoaded ? "opacity-0" : "opacity-100"
+          }`}
+          style={{ filter: "blur(8px)" }}
+        />
+        {/* High-quality image */}
         <Image
           src={`${recipe.images[0]}?w=1200`}
           alt={recipe.title}
           fill
-          className="object-cover"
+          className={`object-cover transition-opacity duration-500 ${
+            heroImageLoaded ? "opacity-100" : "opacity-0"
+          }`}
           priority // Highest priority for LCP
+          loading="eager"
+          onLoad={() => setHeroImageLoaded(true)}
         />
         <div className="absolute bottom-4 left-4 bg-black/70 text-white px-3 py-1 rounded">
           {recipe.title} | {getHostname()}
@@ -67,19 +87,35 @@ export function RecipeContent({ recipe }: RecipeContentProps) {
       </div>
       {/* Essential Ingredient Guide */}
       <EssentialIngredients essIngredientGuide={recipe.essIngredientGuide} />
-      {/* Second Image - Scroll-based loading */}
+      {/* Second Image - Scroll-based loading with blur placeholder */}
       <div
         ref={secondImageRef}
         className="relative w-full h-96 rounded-lg overflow-hidden"
       >
         {secondImageVisible && (
-          <Image
-            src={`${recipe.images[1]}?w=1000`}
-            alt="Honey Sesame Chicken and Broccoli cooking process"
-            fill
-            className="object-cover"
-            loading="lazy"
-          />
+          <>
+            {/* Low-quality blur placeholder */}
+            <Image
+              src={`${recipe.images[1]}?w=100&q=20`}
+              alt=""
+              fill
+              className={`object-cover transition-opacity duration-500 ${
+                secondImageLoaded ? "opacity-0" : "opacity-100"
+              }`}
+              style={{ filter: "blur(10px)" }}
+            />
+            {/* High-quality image */}
+            <Image
+              src={`${recipe.images[1]}?w=1000`}
+              alt="Honey Sesame Chicken and Broccoli cooking process"
+              fill
+              className={`object-cover transition-opacity duration-500 ${
+                secondImageLoaded ? "opacity-100" : "opacity-0"
+              }`}
+              loading="lazy"
+              onLoad={() => setSecondImageLoaded(true)}
+            />
+          </>
         )}
         <div className="absolute bottom-4 left-4 bg-black/70 text-white px-3 py-1 rounded">
           {recipe.title} | {getHostname()}
@@ -170,13 +206,34 @@ export function RecipeContent({ recipe }: RecipeContentProps) {
                 className="relative w-full h-96 rounded-lg overflow-hidden"
               >
                 {sectionImageVisible && (
-                  <Image
-                    src={`${recipe.images[1]}?w=1000`}
-                    alt="Honey Sesame Chicken and Broccoli final dish"
-                    fill
-                    className="object-cover"
-                    loading="lazy"
-                  />
+                  <>
+                    {/* Low-quality blur placeholder */}
+                    <Image
+                      src={`${recipe.images[1]}?w=100&q=20`}
+                      alt=""
+                      fill
+                      className={`object-cover transition-opacity duration-500 ${
+                        sectionImagesLoaded[index] ? "opacity-0" : "opacity-100"
+                      }`}
+                      style={{ filter: "blur(10px)" }}
+                    />
+                    {/* High-quality image */}
+                    <Image
+                      src={`${recipe.images[1]}?w=1000`}
+                      alt="Honey Sesame Chicken and Broccoli final dish"
+                      fill
+                      className={`object-cover transition-opacity duration-500 ${
+                        sectionImagesLoaded[index] ? "opacity-100" : "opacity-0"
+                      }`}
+                      loading="lazy"
+                      onLoad={() =>
+                        setSectionImagesLoaded((prev) => ({
+                          ...prev,
+                          [index]: true,
+                        }))
+                      }
+                    />
+                  </>
                 )}
                 <div className="absolute bottom-4 left-4 bg-black/70 text-white px-3 py-1 rounded">
                   {recipe.title} | {getHostname()}

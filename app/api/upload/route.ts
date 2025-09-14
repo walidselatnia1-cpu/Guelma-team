@@ -3,6 +3,7 @@ import { writeFile, mkdir, readdir, unlink, stat } from "fs/promises";
 import { existsSync } from "fs";
 import path from "path";
 import { revalidatePath, revalidateTag } from "next/cache";
+import sharp from "sharp";
 
 // Next.js configuration for API route
 export const dynamic = "force-dynamic";
@@ -26,12 +27,12 @@ async function ensureUploadDir() {
   }
 }
 
-// Generate unique filename
+// Generate filename with WebP extension (keeping original name)
 function generateFileName(originalName: string): string {
   const timestamp = Date.now();
   const random = Math.random().toString(36).substring(2);
-  const ext = path.extname(originalName);
-  return `${timestamp}-${random}${ext}`;
+  const nameWithoutExt = path.parse(originalName).name;
+  return `${timestamp}-${random}-${nameWithoutExt}.webp`;
 }
 
 // Validate file
@@ -61,6 +62,7 @@ export async function POST(request: NextRequest) {
     // Parse form data
     const formData = await request.formData();
     const file = formData.get("file") as File;
+
     const category = (formData.get("category") as string) || "general";
 
     if (!file) {
@@ -83,10 +85,35 @@ export async function POST(request: NextRequest) {
 
     const filePath = path.join(categoryDir, fileName);
 
-    // Convert file to buffer and save
+    // Convert image to WebP format using Sharp
     const bytes = await file.arrayBuffer();
-    const buffer = Buffer.from(bytes);
-    await writeFile(filePath, buffer);
+    const inputBuffer = Buffer.from(bytes);
+
+    try {
+      // Convert to WebP with optimization
+      const webpBuffer = await sharp(inputBuffer)
+        .webp({
+          quality: 85, // Good balance between quality and file size
+          effort: 6, // Higher effort for better compression
+        })
+        .toBuffer();
+
+      // Save the converted WebP file
+      await writeFile(filePath, webpBuffer);
+
+      console.log(`✅ Image converted to WebP: ${file.name} → ${fileName}`);
+      console.log(
+        `📊 Size reduction: ${inputBuffer.length} → ${webpBuffer.length} bytes`
+      );
+    } catch (conversionError) {
+      console.warn(
+        `⚠️ WebP conversion failed for ${file.name}, saving original:`,
+        conversionError
+      );
+
+      // Fallback: save original file if conversion fails
+      await writeFile(filePath, inputBuffer);
+    }
 
     // Return success response with file info
     const fileUrl = `/uploads/${category}/${fileName}`;
@@ -110,8 +137,9 @@ export async function POST(request: NextRequest) {
       url: fileUrl,
       filename: fileName,
       originalName: file.name,
-      size: file.size,
-      type: file.type,
+      originalSize: file.size,
+      originalType: file.type,
+      convertedType: "image/webp",
       category,
       uploadedAt: new Date().toISOString(),
     });
