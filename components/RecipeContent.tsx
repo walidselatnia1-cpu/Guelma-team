@@ -21,7 +21,7 @@ export function RecipeContent({ recipe }: RecipeContentProps) {
           alt={recipe.title}
           fill
           className="object-cover"
-          priority
+          loading="eager"
         />
         <div className="absolute bottom-4 left-4 bg-black/70 text-white px-3 py-1 rounded">
           {recipe.title} | {getHostname()}
@@ -53,6 +53,7 @@ export function RecipeContent({ recipe }: RecipeContentProps) {
           alt="Honey Sesame Chicken and Broccoli cooking process"
           fill
           className="object-cover"
+          loading="eager"
         />
         <div className="absolute bottom-4 left-4 bg-black/70 text-white px-3 py-1 rounded">
           {recipe.title} | {getHostname()}
@@ -67,6 +68,7 @@ export function RecipeContent({ recipe }: RecipeContentProps) {
           alt="Honey Sesame Chicken and Broccoli final dish"
           fill
           className="object-cover"
+          loading="eager"
         />
         <div className="absolute bottom-4 left-4 bg-black/70 text-white px-3 py-1 rounded">
           {recipe.title} | {getHostname()}
@@ -115,6 +117,7 @@ export function RecipeContent({ recipe }: RecipeContentProps) {
                   alt="Honey Sesame Chicken and Broccoli final dish"
                   fill
                   className="object-cover"
+                  loading="eager"
                 />
                 <div className="absolute bottom-4 left-4 bg-black/70 text-white px-3 py-1 rounded">
                   {recipe.title} | {getHostname()}
