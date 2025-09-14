@@ -1,7 +1,7 @@
 # ========================
 # Builder (deps + prisma client)
 # ========================
-FROM node:20-alpine AS builder
+FROM node:21-alpine3.18 AS builder
 WORKDIR /app
 
 # build-time args
@@ -54,7 +54,9 @@ ENV npm_config_arch=x64
 ENV SHARP_FORCE_PLATFORM=true
 
 COPY package.json ./
-RUN npm install --include=optional
+
+RUN npm install 
+RUN npm install --force @img/sharp-linuxmusl-arm64
 
 
 COPY prisma ./prisma
@@ -65,7 +67,7 @@ COPY . .
 # ========================
 # Runner (runtime only)
 # ========================
-FROM node:20-alpine AS runner
+FROM node:21-alpine3.18 AS runner
 WORKDIR /app
 ENV NODE_ENV=production
 
