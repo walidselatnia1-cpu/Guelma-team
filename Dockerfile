@@ -1,8 +1,7 @@
 # ========================
 # Builder (deps + prisma client)
 # ========================
-FROM node:20-slim AS builder
-# ... rest of your Dockerfile remains the same
+FROM node:20-alpine AS builder
 WORKDIR /app
 
 # build-time args
@@ -30,12 +29,31 @@ ENV MOCK=${MOCK}
 ENV DB_PASSWORD=${DB_PASSWORD}
 
 COPY package.json ./
+RUN apk add --no-cache \
+    vips-dev \
+    vips-cpp \
+    libjpeg-turbo-dev \
+    libpng-dev \
+    giflib-dev \
+    librsvg-dev \
+    libwebp-dev \
+    tiff-dev \
+    lcms2-dev \
+    libexif-dev \
+    libheif-dev \
+    libimagequant-dev \
+    libraw-dev \
+    python3 \
+    make \
+    g++ \
+    build-base
 
-# Install Sharp's dependencies for Debian/Ubuntu
-RUN apt-get update && apt-get install -y \
-    libvips-dev \
-    && rm -rf /var/lib/apt/lists/*
+# Force Sharp to use correct platform
+ENV npm_config_platform=linuxmusl
+ENV npm_config_arch=x64
+ENV SHARP_FORCE_PLATFORM=true
 
+COPY package.json ./
 RUN yarn install --ignore-optional=false
 
 
@@ -78,10 +96,42 @@ ENV NEXT_PUBLIC_BASE_URL=${NEXT_PUBLIC_BASE_URL}
 
 RUN mkdir -p uploads && chmod 755 uploads
 RUN apk add --no-cache wget
+RUN apk add --no-cache \
+    vips \
+    vips-cpp \
+    libjpeg-turbo \
+    libpng \
+    giflib \
+    librsvg \
+    libwebp \
+    tiff \
+    lcms2 \
+    libexif \
+    libheif \
+    libimagequant \
+    libraw
 
 COPY --from=builder /app .
 
 
 EXPOSE 3000
+
+
+
+# ========================
+# Builder (deps + prisma client)
+# ========================
+
+# Install ALL Sharp dependencies for Alpine
+
+# ... rest of builder stage
+
+# ========================
+# Runner (runtime only)
+# ========================
+
+# Install RUNTIME Sharp dependencies for Alpine
+
+# ... rest of runner stage
 
 CMD ["sh", "-c", "echo '⏳ Waiting for database to be ready...' && until nc -z db 5432; do echo 'Database not ready, waiting...'; sleep 2; done && echo '✅ Database is ready, running migrations...' && npx prisma migrate deploy && echo '🚀 Starting application...' && yarn build && yarn start"]
