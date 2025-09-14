@@ -1,7 +1,8 @@
 # ========================
 # Builder (deps + prisma client)
 # ========================
-FROM node:20-alpine AS builder
+FROM node:20-slim AS builder
+# ... rest of your Dockerfile remains the same
 WORKDIR /app
 
 # build-time args
@@ -29,27 +30,7 @@ ENV MOCK=${MOCK}
 ENV DB_PASSWORD=${DB_PASSWORD}
 
 COPY package.json ./
-
-# Install Sharp's system dependencies for Alpine Linux
-RUN apk add --no-cache \
-    vips-dev \
-    vips-cpp \
-    libjpeg-turbo-dev \
-    libpng-dev \
-    giflib-dev \
-    librsvg-dev \
-    libwebp-dev \
-    tiff-dev \
-    lcms2-dev \
-    libexif-dev \
-    libheif-dev \
-    libimagequant-dev \
-    libraw-dev
-
-# Set platform for Sharp installation
-ENV npm_config_platform=linuxmusl
-ENV npm_config_arch=x64
-RUN yarn install
+RUN yarn install 
 
 COPY prisma ./prisma
 RUN npx prisma generate
@@ -89,23 +70,7 @@ ENV DB_PASSWORD=${DB_PASSWORD}
 ENV NEXT_PUBLIC_BASE_URL=${NEXT_PUBLIC_BASE_URL}
 
 RUN mkdir -p uploads && chmod 755 uploads
-
-# Install Sharp's runtime dependencies for Alpine Linux
-RUN apk add --no-cache \
-    wget \
-    vips \
-    vips-cpp \
-    libjpeg-turbo \
-    libpng \
-    giflib \
-    librsvg \
-    libwebp \
-    tiff \
-    lcms2 \
-    libexif \
-    libheif \
-    libimagequant \
-    libraw
+RUN apk add --no-cache wget
 
 COPY --from=builder /app .
 
