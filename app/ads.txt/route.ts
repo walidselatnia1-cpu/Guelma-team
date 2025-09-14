@@ -6,7 +6,7 @@ import path from "path";
 
 const SETTINGS_FILE_PATH = path.join(
   process.cwd(),
-  "data",
+  "uploads",
   "custom-code-settings.json"
 );
 
