@@ -30,8 +30,13 @@ ENV MOCK=${MOCK}
 ENV DB_PASSWORD=${DB_PASSWORD}
 
 COPY package.json ./
-RUN yarn install 
-RUN npm install --os=linux --libc=musl --cpu=x64 sharp
+
+# Install Sharp's dependencies for Debian/Ubuntu
+RUN apt-get update && apt-get install -y \
+    libvips-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+RUN yarn install
 
 
 COPY prisma ./prisma
