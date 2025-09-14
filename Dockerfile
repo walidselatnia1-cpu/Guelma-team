@@ -29,6 +29,11 @@ ENV MOCK=${MOCK}
 ENV DB_PASSWORD=${DB_PASSWORD}
 
 COPY package.json ./
+# In the builder stage, after COPY package.json ./
+RUN npm config set platform linuxmusl
+RUN npm config set arch x64
+RUN yarn install
+
 RUN yarn install 
 
 COPY prisma ./prisma
