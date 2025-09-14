@@ -52,6 +52,10 @@ const nextConfig = {
         source: "/uploads/:path*",
         destination: "/api/uploads/:path*", // forward to an API route
       },
+      {
+        source: "/robots.txt",
+        destination: "/api/robots", // your own route
+      },
     ];
   },
 
