@@ -1,5 +1,4 @@
 export const dynamic = "force-dynamic";
-
 import { NextResponse } from "next/server";
 import fs from "fs";
 import path from "path";
@@ -15,13 +14,10 @@ async function readSettings() {
   try {
     const fileContents = fs.readFileSync(SETTINGS_FILE_PATH, "utf8");
     const settings = JSON.parse(fileContents);
-    return (
-      settings.robotsTxt ||
-      "# ads.txt file\n# Add your authorized seller information here"
-    );
+    return settings.robotsTxt;
   } catch (error) {
     console.error("Error reading settings:", error);
-    return "# ads.txt file\n# Add your authorized seller information here";
+    return null;
   }
 }
 
