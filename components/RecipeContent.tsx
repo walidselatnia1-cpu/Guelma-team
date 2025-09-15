@@ -64,18 +64,17 @@ export function RecipeContent({ recipe }: RecipeContentProps) {
           priority
         />
 
-        {/* High-quality hero image */}
         <Image
-          src={getOptimizedImageUrl(recipe.images[0], 1200, 90)}
+          src={getOptimizedImageUrl(recipe.images[0], 1200, 65)}
           alt={recipe.title}
           fill
           className={`object-cover transition-opacity duration-500 ${
             heroImageLoaded ? "opacity-100" : "opacity-0"
           }`}
           priority
-          quality={90}
+          quality={65}
           onLoad={() => setHeroImageLoaded(true)}
-          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 90vw, 1200px"
+          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 65vw, 1200px"
         />
 
         <div className="absolute bottom-4 left-4 bg-black/70 text-white px-3 py-1 rounded backdrop-blur-sm">
@@ -119,7 +118,7 @@ export function RecipeContent({ recipe }: RecipeContentProps) {
             className="object-cover"
             loading="lazy"
             quality={85}
-            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 90vw, 800px"
+            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 65vw, 800px"
           />
         )}
         <div className="absolute bottom-4 left-4 bg-black/70 text-white px-3 py-1 rounded backdrop-blur-sm">
@@ -143,7 +142,7 @@ export function RecipeContent({ recipe }: RecipeContentProps) {
             className="object-cover"
             loading="lazy"
             quality={85}
-            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 90vw, 800px"
+            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 65vw, 800px"
           />
         )}
         <div className="absolute bottom-4 left-4 bg-black/70 text-white px-3 py-1 rounded backdrop-blur-sm">
@@ -208,7 +207,7 @@ export function RecipeContent({ recipe }: RecipeContentProps) {
                     )}
                     alt={`${recipe.title} - ${item.title}`}
                     fill
-                    className="object-contain"
+                    className="object-cover"
                     loading="lazy"
                     quality={80}
                     sizes="(max-width: 640px) 100vw, (max-width: 1024px) 85vw, 700px"
@@ -245,7 +244,7 @@ export function RecipeContent({ recipe }: RecipeContentProps) {
         <div className="space-y-6 text-[1.2rem]">
           {recipe.questions?.items?.map((item: any, index: any) => (
             <div key={index} className="border-b border-gray-200 pb-4">
-              <h3 className="flex font-bold items-center space-x-2 font-bold text-gray-900 mb-2">
+              <h3 className="flex font-bold items-center space-x-2 font-bold text-gray-650 mb-2">
                 <span>{"→" + item.question}</span>
               </h3>
               <p className="text-gray-700 leading-relaxed pl-6">
