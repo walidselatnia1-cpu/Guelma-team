@@ -13,6 +13,18 @@ interface RecipeContentProps {
   recipe: Recipe;
 }
 
+// Optimized image URL generator for Cloudflare CDN
+const getOptimizedImageUrl = (
+  src: string,
+  width: number,
+  quality = 85,
+  format = "webp"
+) => {
+  // Remove existing query parameters
+  const cleanSrc = src.split("?")[0];
+  return `${cleanSrc}?w=${width}&q=${quality}&f=${format}`;
+};
+
 export function RecipeContent({ recipe }: RecipeContentProps) {
   recipe = Array.isArray(recipe) ? recipe[0] : recipe;
 
@@ -30,104 +42,117 @@ export function RecipeContent({ recipe }: RecipeContentProps) {
     }
   );
 
-  // State for progressive loading of all images
+  // State for progressive loading
   const [heroImageLoaded, setHeroImageLoaded] = useState(false);
-  const [secondImageLoaded, setSecondImageLoaded] = useState(false);
-  const [thirdImageLoaded, setThirdImageLoaded] = useState(false);
-  const [sectionImagesLoaded, setSectionImagesLoaded] = useState<{
-    [key: number]: boolean;
-  }>({});
 
   return (
     <div className="space-y-8 mt-2 text-md max-w-none">
-      {/* Hero Image - Above the fold with blur placeholder */}
+      {/* Hero Image - Optimized for LCP */}
       <div className="relative w-full h-96 md:h-[500px] rounded-lg overflow-hidden">
-        {/* Low-quality blur placeholder */}
+        {/* Tiny blur placeholder for instant loading */}
         <Image
-          src={`${recipe.images[0]}?w=100&q=15`}
+          src={getOptimizedImageUrl(recipe.images[0], 20, 20)}
           alt=""
           fill
-          className={`object-contain transition-opacity duration-500 ${
+          className={`object-cover transition-opacity duration-300 ${
             heroImageLoaded ? "opacity-0" : "opacity-100"
           }`}
-          style={{ filter: "blur(8px)" }}
+          style={{
+            filter: "blur(20px)",
+            transform: "scale(1.1)",
+          }}
+          priority
         />
-        {/* High-quality image */}
+
+        {/* High-quality hero image */}
         <Image
-          src={`${recipe.images[0]}?w=800`}
+          src={getOptimizedImageUrl(recipe.images[0], 1200, 90)}
           alt={recipe.title}
           fill
-          className={`object-contain transition-opacity duration-500 ${
+          className={`object-cover transition-opacity duration-500 ${
             heroImageLoaded ? "opacity-100" : "opacity-0"
           }`}
-          priority // Highest priority for LCP
-          loading="eager"
+          priority
+          quality={90}
           onLoad={() => setHeroImageLoaded(true)}
+          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 90vw, 1200px"
         />
-        <div className="absolute bottom-4 left-4 bg-black/70 text-white px-3 py-1 rounded">
+
+        <div className="absolute bottom-4 left-4 bg-black/70 text-white px-3 py-1 rounded backdrop-blur-sm">
           {recipe.title} | {getHostname()}
         </div>
       </div>
+
       {/* Story */}
       <div className="prose prose-lg max-w-none">
         <p className="text-gray-700 leading-relaxed text-[1.2rem]">
           {recipe.story}
         </p>
       </div>
+
       {/* Why You'll Love This */}
       <TipCard
         title={recipe.whyYouLove?.title}
         items={recipe.whyYouLove?.items}
       />
+
       {/* Testimonial */}
       <div className="prose prose-lg max-w-none text-[1.2rem]">
         <p className="text-gray-700 leading-relaxed italic">
           {recipe.testimonial}
         </p>
       </div>
+
       {/* Essential Ingredient Guide */}
       <EssentialIngredients essIngredientGuide={recipe.essIngredientGuide} />
-      {/* Second Image - Scroll-based loading */}
+
+      {/* Second Image - Lazy loaded with optimized sizes */}
       <div
         ref={secondImageRef}
-        className="relative w-full h-96 rounded-lg overflow-hidden"
+        className="relative w-full h-96 rounded-lg overflow-hidden bg-gray-100"
       >
         {secondImageVisible && (
           <Image
-            src={`${recipe.images[1]}?w=600`}
-            alt="Honey Sesame Chicken and Broccoli cooking process"
+            src={getOptimizedImageUrl(recipe.images[1], 800, 85)}
+            alt={`${recipe.title} - cooking process`}
             fill
-            className="object-contain"
+            className="object-cover"
             loading="lazy"
+            quality={85}
+            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 90vw, 800px"
           />
         )}
-        <div className="absolute bottom-4 left-4 bg-black/70 text-white px-3 py-1 rounded">
+        <div className="absolute bottom-4 left-4 bg-black/70 text-white px-3 py-1 rounded backdrop-blur-sm">
           {recipe.title} | {getHostname()}
         </div>
       </div>
+
       {/* Complete Cooking Process */}
       <CompleteCookingProcess completeProcess={recipe.completeProcess} />
-      {/* Third Image - Scroll-based loading */}
+
+      {/* Third Image - Lazy loaded */}
       <div
         ref={thirdImageRef}
-        className="relative w-full h-96 rounded-lg overflow-hidden"
+        className="relative w-full h-96 rounded-lg overflow-hidden bg-gray-100"
       >
         {thirdImageVisible && (
           <Image
-            src={`${recipe.images[2]}?w=600`}
-            alt="Honey Sesame Chicken and Broccoli final dish"
+            src={getOptimizedImageUrl(recipe.images[2], 800, 85)}
+            alt={`${recipe.title} - final dish`}
             fill
-            className="object-contain"
+            className="object-cover"
             loading="lazy"
+            quality={85}
+            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 90vw, 800px"
           />
         )}
-        <div className="absolute bottom-4 left-4 bg-black/70 text-white px-3 py-1 rounded">
+        <div className="absolute bottom-4 left-4 bg-black/70 text-white px-3 py-1 rounded backdrop-blur-sm">
           {recipe.title} | {getHostname()}
         </div>
       </div>
-      {/* Sections */}
+
+      {/* Sections with optimized images */}
       {recipe.sections?.map((item: any, index: number) => {
-        // Create individual scroll loading hook for each section image
         const { ref: sectionImageRef, isVisible: sectionImageVisible } =
           useScrollLoading({
             threshold: 0.1,
@@ -168,28 +193,36 @@ export function RecipeContent({ recipe }: RecipeContentProps) {
                 </div>
               </>
             )}
-            {item.img != undefined ? (
+
+            {item.img !== undefined && (
               <div
                 ref={sectionImageRef}
-                className="relative w-full h-96 rounded-lg overflow-hidden"
+                className="relative w-full h-96 rounded-lg overflow-hidden bg-gray-100"
               >
                 {sectionImageVisible && (
                   <Image
-                    src={`${recipe.images[1]}?w=600`}
-                    alt="Honey Sesame Chicken and Broccoli final dish"
+                    src={getOptimizedImageUrl(
+                      recipe.images[item.img] || recipe.images[1],
+                      700,
+                      80
+                    )}
+                    alt={`${recipe.title} - ${item.title}`}
                     fill
                     className="object-contain"
                     loading="lazy"
+                    quality={80}
+                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 85vw, 700px"
                   />
                 )}
-                <div className="absolute bottom-4 left-4 bg-black/70 text-white px-3 py-1 rounded">
+                <div className="absolute bottom-4 left-4 bg-black/70 text-white px-3 py-1 rounded backdrop-blur-sm">
                   {recipe.title} | {getHostname()}
                 </div>
               </div>
-            ) : null}
+            )}
           </div>
         );
       })}
+
       {/* FAQ Section */}
       <div>
         <h2
@@ -222,6 +255,7 @@ export function RecipeContent({ recipe }: RecipeContentProps) {
           ))}
         </div>
       </div>
+
       <Card recipe={recipe} />
     </div>
   );
