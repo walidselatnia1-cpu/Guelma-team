@@ -56,10 +56,59 @@ export async function GET(
       });
     }
 
-    // Always optimize images (even without resize parameters for better performance)
+    console.log(mimeType, width, height);
+    // If image is webp and no resize requested, serve original
+    if (mimeType === "image/webp" && !width && !height) {
+      console.log("🟢 WebP image, no conversion or resize needed");
+      const fileBuffer = await fs.readFile(filePath);
+      return new NextResponse(new Uint8Array(fileBuffer), {
+        headers: {
+          "Content-Type": mimeType,
+          "Cache-Control": "public, max-age=31536000, immutable",
+        },
+      });
+    }
+
+    // If image is webp and resize requested, only resize, no format conversion
+    if (mimeType === "image/webp" && (width || height)) {
+      console.log("🟢 WebP image, resizing only");
+      try {
+        let sharpInstance = sharp(filePath);
+        const resizeOptions: any = {};
+        if (width) resizeOptions.width = parseInt(width);
+        if (height) resizeOptions.height = parseInt(height);
+        resizeOptions.fit = "cover";
+        resizeOptions.position = "center";
+        sharpInstance = sharpInstance
+          .resize(resizeOptions)
+          .webp({ quality: parseInt(quality) });
+
+        const optimizedBuffer = await sharpInstance.toBuffer();
+        return new NextResponse(new Uint8Array(optimizedBuffer), {
+          headers: {
+            "Content-Type": mimeType,
+            "Cache-Control": "public, max-age=31536000, immutable",
+            "X-Optimized": "true",
+          },
+        });
+      } catch (optimizationError) {
+        console.warn(
+          "WebP resize failed, serving original:",
+          optimizationError
+        );
+        const fileBuffer = await fs.readFile(filePath);
+        return new NextResponse(new Uint8Array(fileBuffer), {
+          headers: {
+            "Content-Type": mimeType,
+            "Cache-Control": "public, max-age=31536000, immutable",
+          },
+        });
+      }
+    }
+
+    // Always optimize other images (even without resize parameters for better performance)
     console.log("✅ Optimizing image");
 
-    // Optimize image
     try {
       let sharpInstance = sharp(filePath);
 
@@ -79,11 +128,8 @@ export async function GET(
       let outputFormat = "webp";
       let outputMimeType = "image/webp";
 
-      // Check if the original format is already WebP/AVIF
-      if (originalFormat === "webp") {
-        outputFormat = "webp";
-        outputMimeType = "image/webp";
-      } else if (originalFormat === "avif") {
+      // Check if the original format is already AVIF
+      if (originalFormat === "avif") {
         outputFormat = "avif";
         outputMimeType = "image/avif";
       }
@@ -96,7 +142,6 @@ export async function GET(
         height,
         quality,
       });
-      // For PNG/JPEG, we'll convert to AVIF (best compression)
 
       // Apply format-specific options
       const formatOptions: any = { quality: parseInt(quality) };

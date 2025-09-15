@@ -17,7 +17,7 @@ interface RecipeContentProps {
 const getOptimizedImageUrl = (
   src: string,
   width: number,
-  quality = 85,
+  quality = 65,
   format = "webp"
 ) => {
   // Remove existing query parameters
@@ -48,27 +48,35 @@ export function RecipeContent({ recipe }: RecipeContentProps) {
   return (
     <div className="space-y-8 mt-2 text-md max-w-none">
       {/* Hero Image - Optimized for LCP */}
-      <div className="relative w-full h-96 md:h-[500px] rounded-lg overflow-hidden">
-        {/* Tiny blur placeholder for instant loading */}
-        <Image
-          src={getOptimizedImageUrl(recipe.images[0], 20, 20)}
-          alt=""
-          fill
-          className={`object-cover transition-opacity duration-300 ${
-            heroImageLoaded ? "opacity-0" : "opacity-100"
-          }`}
-          style={{
-            filter: "blur(20px)",
-            transform: "scale(1.1)",
-          }}
-          priority
-        />
+      <div className="relative w-full rounded-lg overflow-hidden">
+        {!heroImageLoaded && (
+          <Image
+            src={getOptimizedImageUrl(recipe.images[0], 20, 20)}
+            alt=""
+            width={1200}
+            height={800}
+            style={{
+              width: "100%",
+              height: "auto",
+              filter: "blur(20px)",
+              transform: "scale(1.1)",
+              display: heroImageLoaded ? "none" : "block",
+            }}
+            className="transition-opacity duration-300"
+            priority
+          />
+        )}
 
         <Image
           src={getOptimizedImageUrl(recipe.images[0], 1200, 65)}
           alt={recipe.title}
-          fill
-          className={`object-cover transition-opacity duration-500 ${
+          width={1200}
+          height={800}
+          style={{
+            width: "100%",
+            height: "auto",
+          }}
+          className={`transition-opacity duration-500 ${
             heroImageLoaded ? "opacity-100" : "opacity-0"
           }`}
           priority
@@ -108,16 +116,20 @@ export function RecipeContent({ recipe }: RecipeContentProps) {
       {/* Second Image - Lazy loaded with optimized sizes */}
       <div
         ref={secondImageRef}
-        className="relative w-full h-96 rounded-lg overflow-hidden bg-gray-100"
+        className="relative w-full rounded-lg overflow-hidden bg-gray-100"
       >
         {secondImageVisible && (
           <Image
-            src={getOptimizedImageUrl(recipe.images[1], 800, 85)}
+            src={getOptimizedImageUrl(recipe.images[1], 800, 65)}
             alt={`${recipe.title} - cooking process`}
-            fill
-            className="object-cover"
+            width={800}
+            height={600}
+            style={{
+              width: "100%",
+              height: "auto",
+            }}
             loading="lazy"
-            quality={85}
+            quality={65}
             sizes="(max-width: 640px) 100vw, (max-width: 1024px) 65vw, 800px"
           />
         )}
@@ -132,16 +144,20 @@ export function RecipeContent({ recipe }: RecipeContentProps) {
       {/* Third Image - Lazy loaded */}
       <div
         ref={thirdImageRef}
-        className="relative w-full h-96 rounded-lg overflow-hidden bg-gray-100"
+        className="relative w-full rounded-lg overflow-hidden bg-gray-100"
       >
         {thirdImageVisible && (
           <Image
-            src={getOptimizedImageUrl(recipe.images[2], 800, 85)}
+            src={getOptimizedImageUrl(recipe.images[2], 800, 65)}
             alt={`${recipe.title} - final dish`}
-            fill
-            className="object-cover"
+            width={800}
+            height={600}
+            style={{
+              width: "100%",
+              height: "auto",
+            }}
             loading="lazy"
-            quality={85}
+            quality={65}
             sizes="(max-width: 640px) 100vw, (max-width: 1024px) 65vw, 800px"
           />
         )}
@@ -196,7 +212,7 @@ export function RecipeContent({ recipe }: RecipeContentProps) {
             {item.img !== undefined && (
               <div
                 ref={sectionImageRef}
-                className="relative w-full h-96 rounded-lg overflow-hidden bg-gray-100"
+                className="relative w-full rounded-lg overflow-hidden bg-gray-100"
               >
                 {sectionImageVisible && (
                   <Image
@@ -206,11 +222,15 @@ export function RecipeContent({ recipe }: RecipeContentProps) {
                       80
                     )}
                     alt={`${recipe.title} - ${item.title}`}
-                    fill
-                    className="object-cover"
+                    width={700}
+                    height={500}
+                    style={{
+                      width: "100%",
+                      height: "auto",
+                    }}
                     loading="lazy"
                     quality={80}
-                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 85vw, 700px"
+                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 65vw, 700px"
                   />
                 )}
                 <div className="absolute bottom-4 left-4 bg-black/70 text-white px-3 py-1 rounded backdrop-blur-sm">
