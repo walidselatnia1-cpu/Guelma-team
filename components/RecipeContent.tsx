@@ -219,7 +219,7 @@ export function RecipeContent({ recipe }: RecipeContentProps) {
                     src={getOptimizedImageUrl(
                       recipe.images[item.img] || recipe.images[1],
                       700,
-                      80
+                      65
                     )}
                     alt={`${recipe.title} - ${item.title}`}
                     width={700}
@@ -229,7 +229,7 @@ export function RecipeContent({ recipe }: RecipeContentProps) {
                       height: "auto",
                     }}
                     loading="lazy"
-                    quality={80}
+                    quality={65}
                     sizes="(max-width: 640px) 100vw, (max-width: 1024px) 65vw, 700px"
                   />
                 )}
