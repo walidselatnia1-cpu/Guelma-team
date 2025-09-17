@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { Home } from "lucide-react";
 import Dashboard from "../../components/main/Dashboard";
 
 export default function Admin() {
@@ -45,6 +46,10 @@ export default function Admin() {
     router.push("/admin/login");
   };
 
+  const handleGoHome = () => {
+    router.push("/");
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-100 flex items-center justify-center">
@@ -65,12 +70,21 @@ export default function Admin() {
             <h1 className="text-xl font-semibold text-gray-900">
               Admin Dashboard
             </h1>
-            <button
-              onClick={handleLogout}
-              className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-md text-sm font-medium"
-            >
-              Logout
-            </button>
+            <div className="flex gap-3">
+              <button
+                onClick={handleGoHome}
+                className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm font-medium flex items-center gap-2"
+              >
+                <Home className="w-4 h-4" />
+                Home
+              </button>
+              <button
+                onClick={handleLogout}
+                className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-md text-sm font-medium"
+              >
+                Logout
+              </button>
+            </div>
           </div>
         </div>
       </div>
