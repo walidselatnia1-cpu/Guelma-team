@@ -1,6 +1,7 @@
 export const dynamic = "force-dynamic";
 
 import React from "react";
+import Image from "next/image";
 import { Recipe } from "@/outils/types";
 import { notFound } from "next/navigation";
 import { getRecipesPaginated } from "@/data/data";
@@ -147,6 +148,18 @@ const Pagination = ({
   );
 };
 
+// Force static generation
+const getOptimizedImageUrl = (
+  src: string,
+  width: number,
+  quality = 65,
+  format = "webp"
+) => {
+  // Remove existing query parameters
+  const cleanSrc = src.split("?")[0];
+  return `${cleanSrc}?w=${width}&q=${quality}&f=${format}`;
+};
+
 const RecipeCard = ({ recipe }: { recipe: Recipe }) => {
   return (
     <div className="bg-white rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-lg flex flex-col shadow-sm">
@@ -155,8 +168,8 @@ const RecipeCard = ({ recipe }: { recipe: Recipe }) => {
         href={"/recipes/" + recipe.slug}
         className="block w-full h-40 overflow-hidden"
       >
-        <img
-          src={recipe.img || recipe.heroImage}
+        <Image
+          src={getOptimizedImageUrl(recipe.img || recipe.heroImage, 200, 20)}
           alt={recipe.imageAlt || recipe.title}
           className="w-full h-full object-cover object-center transition-transform duration-300 hover:scale-105"
         />
