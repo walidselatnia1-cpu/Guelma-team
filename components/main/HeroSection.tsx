@@ -13,6 +13,8 @@ export default function HeroSection({ className }: HeroSectionProps) {
       }`}
       style={{
         backgroundImage: "url('/Hero Background .webp')",
+        backgroundSize: "cover",
+        backgroundPosition: "center",
       }}
     >
       {/* Overlay for better text readability */}
