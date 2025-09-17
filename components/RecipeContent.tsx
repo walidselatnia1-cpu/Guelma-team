@@ -6,7 +6,7 @@ import { TipCard } from "./TipCard";
 import EssentialIngredients from "./EssentialIngerdients";
 import CompleteCookingProcess from "./CompleteProcess";
 import { Card } from "./Card";
-import { getHostname } from "@/lib/utils";
+import { getHostname, renderSafeHtml, hasHtmlTags } from "@/lib/utils";
 import { useScrollLoading } from "@/lib/hooks/useScrollLoading";
 
 interface RecipeContentProps {
@@ -92,9 +92,16 @@ export function RecipeContent({ recipe }: RecipeContentProps) {
 
       {/* Story */}
       <div className="prose prose-lg max-w-none">
-        <p className="text-gray-700 leading-relaxed text-[1.2rem]">
-          {recipe.story}
-        </p>
+        {hasHtmlTags(recipe.story) ? (
+          <div
+            className="text-gray-700 leading-relaxed text-[1.2rem]"
+            dangerouslySetInnerHTML={renderSafeHtml(recipe.story)}
+          />
+        ) : (
+          <p className="text-gray-700 leading-relaxed text-[1.2rem]">
+            {recipe.story}
+          </p>
+        )}
       </div>
 
       {/* Why You'll Love This */}
@@ -105,9 +112,16 @@ export function RecipeContent({ recipe }: RecipeContentProps) {
 
       {/* Testimonial */}
       <div className="prose prose-lg max-w-none text-[1.2rem]">
-        <p className="text-gray-700 leading-relaxed italic">
-          {recipe.testimonial}
-        </p>
+        {hasHtmlTags(recipe.testimonial) ? (
+          <div
+            className="text-gray-700 leading-relaxed italic"
+            dangerouslySetInnerHTML={renderSafeHtml(recipe.testimonial)}
+          />
+        ) : (
+          <p className="text-gray-700 leading-relaxed italic">
+            {recipe.testimonial}
+          </p>
+        )}
       </div>
 
       {/* Essential Ingredient Guide */}
@@ -202,9 +216,16 @@ export function RecipeContent({ recipe }: RecipeContentProps) {
                   {item.title}
                 </h2>
                 <div className="prose prose-lg max-w-none text-[1.2rem]">
-                  <p className="text-gray-700 leading-relaxed">
-                    {item.content}
-                  </p>
+                  {hasHtmlTags(item.content) ? (
+                    <div
+                      className="text-gray-700 leading-relaxed"
+                      dangerouslySetInnerHTML={renderSafeHtml(item.content)}
+                    />
+                  ) : (
+                    <p className="text-gray-700 leading-relaxed">
+                      {item.content}
+                    </p>
+                  )}
                 </div>
               </>
             )}
@@ -267,9 +288,16 @@ export function RecipeContent({ recipe }: RecipeContentProps) {
               <h3 className="flex font-bold items-center space-x-2 font-bold text-gray-650 mb-2">
                 <span>{"→" + item.question}</span>
               </h3>
-              <p className="text-gray-700 leading-relaxed pl-6">
-                {item.answer}
-              </p>
+              {hasHtmlTags(item.answer) ? (
+                <div
+                  className="text-gray-700 leading-relaxed pl-6"
+                  dangerouslySetInnerHTML={renderSafeHtml(item.answer)}
+                />
+              ) : (
+                <p className="text-gray-700 leading-relaxed pl-6">
+                  {item.answer}
+                </p>
+              )}
             </div>
           ))}
         </div>
