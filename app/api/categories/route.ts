@@ -40,17 +40,19 @@ export async function GET() {
     const categories: Category[] = Array.from(categoryMap.entries()).map(
       ([categoryName, { count, link, image }], index) => ({
         id: (index + 1).toString(),
-        slug: categoryName.toLowerCase().replace(/\s+/g, "_"),
+        slug: categoryName.toLowerCase().replace(/\s+/g, "-"),
         title: categoryName
           .replace(/_/g, " ")
+          .replace(/-/g, " ")
           .replace(/\b\w/g, (l) => l.toUpperCase()),
         href: link,
-        alt: `${categoryName.replace(/_/g, " ")} recipes`,
+        alt: `${categoryName.replace(/_/g, " ").replace(/-/g, " ")} recipes`,
         description: `Discover ${count} delicious ${categoryName.replace(
           /_/g,
           " "
         )} recipes`,
         image: image || "/placeholder.jpg", // Use the first recipe's image or default
+        sizes: "(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw",
         recipeCount: count,
       })
     );

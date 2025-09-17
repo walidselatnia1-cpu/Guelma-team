@@ -552,6 +552,7 @@ function createCategoryFromName(
     slug,
     title: categoryName
       .replace(/_/g, " ")
+      .replace(/-/g, " ")
       .replace(/\b\w/g, (l) => l.toUpperCase()),
     href: link,
     description: `Discover ${count} delicious ${categoryName
