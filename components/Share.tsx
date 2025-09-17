@@ -49,7 +49,7 @@ export default function SocialShareButtons() {
     <div className="flex flex-wrap gap-4 items-center text-sm">
       <button
         onClick={handlePinIt}
-        className="inline-flex items-center gap-1.5 px-2 py-2 border-2 border-black bg-yellow-300 rounded text-black font-bold transition-all duration-300 hover:bg-black hover:text-white cursor-pointer"
+        className="inline-flex items-center gap-1.5 px-2 py-2 border-2 border-black bg-transparent rounded text-black font-bold transition-all duration-300 hover:bg-black hover:text-white cursor-pointer"
       >
         <Pin className="w-5 h-5 flex-shrink-0" />
         <span>Pin it</span>
@@ -57,7 +57,7 @@ export default function SocialShareButtons() {
 
       <button
         onClick={handleShareIt}
-        className="inline-flex items-center gap-1.5 px-2 py-2 border-2 border-black bg-yellow-300 rounded text-black font-bold transition-all duration-300 hover:bg-black hover:text-white cursor-pointer"
+        className="inline-flex items-center gap-1.5 px-2 py-2 border-2 border-black bg-transparent rounded text-black font-bold transition-all duration-300 hover:bg-black hover:text-white cursor-pointer"
       >
         <Share2 className="w-5 h-5 flex-shrink-0" />
         <span>Share it</span>
@@ -65,7 +65,7 @@ export default function SocialShareButtons() {
 
       <button
         onClick={handleSendIt}
-        className="inline-flex items-center gap-1.5 px-2 py-2 border-2 border-black bg-yellow-300 rounded text-black font-bold transition-all duration-300 hover:bg-black hover:text-white cursor-pointer"
+        className="inline-flex items-center gap-1.5 px-2 py-2 border-2 border-black bg-transparent rounded text-black font-bold transition-all duration-300 hover:bg-black hover:text-white cursor-pointer"
       >
         <Mail className="w-5 h-5 flex-shrink-0" />
         <span>Send it</span>
@@ -73,7 +73,7 @@ export default function SocialShareButtons() {
 
       <button
         onClick={handlePrintIt}
-        className="inline-flex items-center gap-1.5 px-2 py-2 border-2 border-black bg-yellow-300 rounded text-black font-bold transition-all duration-300 hover:bg-black hover:text-white cursor-pointer"
+        className="inline-flex items-center gap-1.5 px-2 py-2 border-2 border-black bg-transparent rounded text-black font-bold transition-all duration-300 hover:bg-black hover:text-white cursor-pointer"
       >
         <Printer className="w-5 h-5 flex-shrink-0" />
         <span>Print it</span>
@@ -81,7 +81,7 @@ export default function SocialShareButtons() {
 
       <button
         onClick={handleJumpToRecipe}
-        className="inline-flex items-center gap-1.5 px-2 py-2 border-2 border-black bg-yellow-300 rounded text-black font-bold transition-all duration-300 hover:bg-black hover:text-white cursor-pointer"
+        className="inline-flex items-center gap-1.5 px-2 py-2 border-2 border-black bg-transparent rounded text-black font-bold transition-all duration-300 hover:bg-black hover:text-white cursor-pointer"
         aria-label="Jump To Recipe"
       >
         <ArrowDown className="w-5 h-5 flex-shrink-0" />

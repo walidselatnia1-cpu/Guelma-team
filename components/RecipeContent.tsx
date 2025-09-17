@@ -94,11 +94,11 @@ export function RecipeContent({ recipe }: RecipeContentProps) {
       <div className="prose prose-lg max-w-none">
         {hasHtmlTags(recipe.story) ? (
           <div
-            className="text-gray-700 leading-relaxed text-[1.2rem]"
+            className="text-black leading-relaxed text-[1.2rem]"
             dangerouslySetInnerHTML={renderSafeHtml(recipe.story)}
           />
         ) : (
-          <p className="text-gray-700 leading-relaxed text-[1.2rem]">
+          <p className="text-black leading-relaxed text-[1.2rem]">
             {recipe.story}
           </p>
         )}
@@ -114,11 +114,11 @@ export function RecipeContent({ recipe }: RecipeContentProps) {
       <div className="prose prose-lg max-w-none text-[1.2rem]">
         {hasHtmlTags(recipe.testimonial) ? (
           <div
-            className="text-gray-700 leading-relaxed italic"
+            className="text-black leading-relaxed italic"
             dangerouslySetInnerHTML={renderSafeHtml(recipe.testimonial)}
           />
         ) : (
-          <p className="text-gray-700 leading-relaxed italic">
+          <p className="text-black leading-relaxed italic">
             {recipe.testimonial}
           </p>
         )}
@@ -218,13 +218,11 @@ export function RecipeContent({ recipe }: RecipeContentProps) {
                 <div className="prose prose-lg max-w-none text-[1.2rem]">
                   {hasHtmlTags(item.content) ? (
                     <div
-                      className="text-gray-700 leading-relaxed"
+                      className="text-black leading-relaxed"
                       dangerouslySetInnerHTML={renderSafeHtml(item.content)}
                     />
                   ) : (
-                    <p className="text-gray-700 leading-relaxed">
-                      {item.content}
-                    </p>
+                    <p className="text-black leading-relaxed">{item.content}</p>
                   )}
                 </div>
               </>
@@ -290,13 +288,11 @@ export function RecipeContent({ recipe }: RecipeContentProps) {
               </h3>
               {hasHtmlTags(item.answer) ? (
                 <div
-                  className="text-gray-700 leading-relaxed pl-6"
+                  className="text-black leading-relaxed pl-6"
                   dangerouslySetInnerHTML={renderSafeHtml(item.answer)}
                 />
               ) : (
-                <p className="text-gray-700 leading-relaxed pl-6">
-                  {item.answer}
-                </p>
+                <p className="text-black leading-relaxed pl-6">{item.answer}</p>
               )}
             </div>
           ))}

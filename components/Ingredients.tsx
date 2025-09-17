@@ -12,7 +12,7 @@ const IngredientsList = ({
     >
       {ingredients.map((ingredientGroup: any, index: any) => (
         <div key={index} className="mb-4">
-          <h4 className="text-lg font-bold text-gray-900 mb-2">
+          <h4 className="text-lg font-bold text-black mb-2">
             {ingredientGroup.section}
           </h4>
           <ul className="space-y-2">

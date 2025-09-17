@@ -23,39 +23,45 @@ export function Header() {
           <nav className="hidden md:flex items-center space-x-8">
             <Link
               href="/"
-              className="text-gray-700 hover:text-green-600 transition-colors"
+              className="text-gray-700 hover:text-green-600 transition-colors flex items-center space-x-1"
             >
-              Home
+              <span>🏠</span>
+              <span>Home</span>
             </Link>
             <Link
               href="/recipes"
-              className="text-gray-700 hover:text-green-600 transition-colors"
+              className="text-gray-700 hover:text-green-600 transition-colors flex items-center space-x-1"
             >
-              Recipes
+              <span>🍽️</span>
+              <span>Recipes</span>
             </Link>
             <Link
               href="/categories"
-              className="text-gray-700 hover:text-green-600 transition-colors"
+              className="text-gray-700 hover:text-green-600 transition-colors flex items-center space-x-1"
             >
-              Categories
+              <span>📂</span>
+              <span>Categories</span>
             </Link>
             <Link
               href="/explore"
-              className="text-gray-700 hover:text-green-600 transition-colors"
+              className="text-gray-700 hover:text-green-600 transition-colors flex items-center space-x-1"
             >
-              Explore
+              <span>🔍</span>
+              <span>Explore</span>
             </Link>
             <Link
               href="/about"
-              className="text-gray-700 hover:text-green-600 transition-colors"
+              className="text-gray-700 hover:text-green-600 transition-colors flex items-center space-x-1"
             >
-              About
+              <span>ℹ️</span>
+              <span>About</span>
             </Link>
             <Link
               href="/contact"
-              className="text-gray-700 hover:text-green-600 transition-colors"
+              className="text-gray-700 hover:text-green-600 transition-colors flex items-center space-x-1"
             >
-              Contact
+              <span>📧</span>
+              <span>Contact</span>
             </Link>
           </nav>
 

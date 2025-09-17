@@ -26,23 +26,23 @@ export const Card: React.FC<{
         <h2 className="text-center font-[700]  color-[var(--mo-on-recipe-title)] recipe__title text-3xl font-bold text-[var(--mo-on-recipe-title)] mb-4">
           {recipe.title}
         </h2>
-        <p className="text-gray-600 mb-6">{recipe.description}</p>
+        <p className="text-black mb-6">{recipe.description}</p>
 
         {/* Timing Info */}
         <div className="grid grid-cols-3 gap-4 text-center border-b border-t border-gray-300 p-4 mb-4">
           <div className="space-y-1">
             <Clock className="h-5 w-5 text-gray-600 mx-auto" />
-            <p className="text-xs text-gray-500">Prep Time</p>
+            <p className="text-xs text-black">Prep Time</p>
             <p className="text-sm font-medium">{recipe?.timing?.prepTime}</p>
           </div>
           <div className="space-y-1">
             <ChefHat className="h-5 w-5 text-gray-600 mx-auto" />
-            <p className="text-xs text-gray-500">Cook Time</p>
+            <p className="text-xs text-black">Cook Time</p>
             <p className="text-sm font-medium">{recipe.timing?.cookTime}</p>
           </div>
           <div className="space-y-1">
             <Clock className="h-5 w-5 text-gray-600 mx-auto" />
-            <p className="text-xs text-gray-500">Total Time</p>
+            <p className="text-xs text-black">Total Time</p>
             <p className="text-sm font-medium">{recipe.timing?.totalTime}</p>
           </div>
         </div>
@@ -103,12 +103,12 @@ export const Card: React.FC<{
 
         {/* Title */}
         <h3 className="items-center flex recipe__separator text-2xl font-bold mb-6 text-[var(--mo-on-recipe-title)] after:content-[''] after:block after:w-full after:h-1 after:bg-[var(--mo-recipe-separator)] after:flex-1 after:rounded after:ml-[var(--mo-gap)] after:min-w-[var(--mo-gap)]">
-          <Info className="h-6 w-6 mr-2 text-gray-700" />
+          <Info className="h-6 w-6 mr-2 text-black" />
           Notes & Tips
         </h3>
         <div className="recipe__wrapper relative recipe-notes mb-8 px-4">
           {/* Notes List */}
-          <ul className="space-y-4 text-gray-800 max-w-full break-words">
+          <ul className="space-y-4 text-black max-w-full break-words">
             {recipe.notes.map((note: string, index: number) => (
               <li
                 key={index}
@@ -144,7 +144,7 @@ export const Card: React.FC<{
 
         <div className="recipe__wrapper relative recipe-notes px-2">
           {/* Notes List */}
-          <ul className="space-y-4 text-gray-800 max-w-full overflow-hidden">
+          <ul className="space-y-4 text-black max-w-full overflow-hidden">
             {recipe?.mustKnowTips?.map((note: string, index: number) => (
               <li
                 key={index}
