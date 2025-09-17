@@ -349,7 +349,7 @@ export function RecipeHero({ recipe }: { recipe?: Recipe }) {
             <span>By</span>
             <Link
               href={recipe?.author?.link || "#"}
-              className="text-green-600 font-medium hover:underline"
+              className="text-red-600 font-medium hover:underline"
             >
               {recipe?.author?.name || "Unknown Author"}
             </Link>

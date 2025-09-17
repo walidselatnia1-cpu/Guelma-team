@@ -1,5 +1,8 @@
 @import "tailwindcss";
 @import "tw-animate-css";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
 @custom-variant dark (&:is(.dark *));
 
@@ -295,5 +298,127 @@ main {
   }
   body {
     @apply bg-background text-foreground;
+  }
+}
+
+/* Print Styles - Show only recipe card */
+@media print {
+  /* Hide everything except the recipe card */
+  body * {
+    visibility: hidden;
+  }
+
+  /* Show only the recipe card and its contents */
+  #recipe,
+  #recipe * {
+    visibility: visible;
+  }
+
+  /* Make the recipe card take full width */
+  #recipe {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    max-width: none;
+    margin: 0;
+    padding: 0;
+    background: white !important;
+    box-shadow: none !important;
+    border: none !important;
+  }
+
+  /* Optimize recipe card styling for print */
+  .recipe__wrapper {
+    background: white !important;
+    border: 1px solid #ccc !important;
+    border-style: solid !important;
+    margin: 0 !important;
+    padding: 20px !important;
+    border-radius: 8px !important;
+  }
+
+  /* Improve typography for print */
+  .recipe__title {
+    font-size: 24px !important;
+    color: black !important;
+    margin-bottom: 16px !important;
+    page-break-after: avoid;
+  }
+
+  /* Recipe description */
+  #recipe p {
+    color: black !important;
+    line-height: 1.5 !important;
+  }
+
+  /* Timing grid - ensure it fits well */
+  #recipe .grid {
+    display: table !important;
+    width: 100% !important;
+    border-collapse: collapse !important;
+  }
+
+  #recipe .grid > div {
+    display: table-cell !important;
+    text-align: center !important;
+    padding: 8px !important;
+    border: 1px solid #ddd !important;
+  }
+
+  /* Ingredients and instructions */
+  #recipe h3 {
+    color: black !important;
+    font-size: 18px !important;
+    margin: 20px 0 10px 0 !important;
+    page-break-after: avoid;
+  }
+
+  /* Recipe notes and tips */
+  .recipe-notes li {
+    break-inside: avoid;
+    margin-bottom: 8px !important;
+  }
+
+  /* Ensure proper page breaks */
+  .recipe__separator {
+    page-break-after: avoid;
+  }
+
+  /* Hide icons in print */
+  #recipe svg,
+  #recipe .lucide {
+    display: none !important;
+  }
+
+  /* Adjust spacing for print */
+  #recipe .space-y-6 > * + * {
+    margin-top: 12px !important;
+  }
+
+  #recipe .space-y-4 > * + * {
+    margin-top: 8px !important;
+  }
+
+  #recipe .space-y-2 > * + * {
+    margin-top: 4px !important;
+  }
+
+  /* Ensure text is readable */
+  #recipe {
+    font-family: Arial, sans-serif !important;
+    font-size: 12px !important;
+    line-height: 1.4 !important;
+  }
+
+  /* Force page breaks for major sections */
+  #recipe h2 {
+    page-break-before: always;
+    page-break-after: avoid;
+  }
+
+  /* Avoid breaking instructions */
+  .recipe__interact-list > * {
+    page-break-inside: avoid;
   }
 }
