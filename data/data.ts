@@ -285,35 +285,41 @@ async function getRecipesPaginated(
     totalPages: number;
   };
 }> {
-  const response = await fetch(
+  return await fetchWithFallback(
+    async () => {
+      const prisma = await getPrisma();
+      const skip = (page - 1) * limit;
+
+      const [recipes, totalCount] = await Promise.all([
+        prisma.recipe.findMany({
+          orderBy: { createdAt: "desc" },
+          skip: skip,
+          take: limit,
+        }),
+        prisma.recipe.count(),
+      ]);
+
+      return {
+        recipes: recipes as unknown as Recipe[],
+        pagination: {
+          page,
+          limit,
+          total: totalCount,
+          totalPages: Math.ceil(totalCount / limit),
+        },
+      };
+    },
     `${BASE_URL}/api/recipe?page=${page}&limit=${limit}`,
     {
-      next: {
-        tags: [
-          "recipes",
-          "all-recipes",
-          `explore-page-${page}`,
-          `recipes-page-${page}`,
-        ],
-        revalidate: 3600, // Revalidate every hour
-      },
+      tags: [
+        "recipes",
+        "all-recipes",
+        `explore-page-${page}`,
+        `recipes-page-${page}`,
+      ],
+      revalidate: 3600, // Revalidate every hour
     }
   );
-
-  if (!response.ok) {
-    throw new Error(`Failed to fetch recipes: ${response.status}`);
-  }
-
-  const data = await response.json();
-  return {
-    recipes: data.recipes || [],
-    pagination: data.pagination || {
-      page,
-      limit,
-      total: 0,
-      totalPages: 0,
-    },
-  };
 }
 
 /**
