@@ -45,7 +45,6 @@ export default function HomePage() {
           <div className="sticky top-8">
             <CategoriesSection />
             <LatestRecipesSection />
-            <LatestArticlesSection />
             <TrendingSection />
           </div>
         </div>

@@ -44,7 +44,7 @@ export default async function TrendingSection({
             </h2>
           </div>
 
-          <div className="box-border gap-x-[25.6px] grid grid-cols-[repeat(1,1fr)] gap-y-[25.6px] sm:grid-cols-[repeat(2,1fr)] md:grid-cols-[repeat(3,1fr)]">
+          <div className="box-border gap-x-[25.6px] grid lg:grid-cols-[repeat(6,1fr)]  lx:grid-cols-[repeat(6,1fr)]  gap-y-[25.6px] sm:grid-cols-[repeat(2,1fr)] md:grid-cols-[repeat(3,1fr)]">
             {trendingRecipes.map((recipe) => (
               <div
                 key={recipe.id}
