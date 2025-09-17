@@ -2,7 +2,7 @@
 
 import React from "react";
 import { usePathname } from "next/navigation";
-import { navigationItems } from "@/data/navigation";
+import { mobileNavigationItems, navigationItems } from "@/data/navigation";
 import { siteConfig } from "@/config/site";
 import Icon from "@/components/Icon";
 import Logo from "@/components/Logo";
@@ -68,7 +68,6 @@ export default function Header({ className }: HeaderProps) {
             ))}
           </ul>
 
-          {/* Tablet Nav - Icons only on large screens */}
           <ul className="items-center hidden lg:flex xl:hidden gap-x-2 flex-shrink-0">
             {navigationItems.map((item) => (
               <li key={item.id}>
@@ -116,7 +115,7 @@ export default function Header({ className }: HeaderProps) {
               {/* Navigation items */}
               <div className="flex-1 overflow-y-auto">
                 <ul className="flex flex-col p-4 gap-y-2">
-                  {navigationItems.map((item) => (
+                  {mobileNavigationItems.map((item) => (
                     <li key={item.id}>
                       <a
                         href={item.href}

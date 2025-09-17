@@ -48,6 +48,7 @@ const iconMap: Record<string, React.ElementType> = {
   arrowRight: ArrowRight,
   menu: Menu,
   x: X,
+  close: X,
   facebook: Facebook,
   instagram: Instagram,
   twitter: Twitter,
@@ -64,6 +65,10 @@ const iconMap: Record<string, React.ElementType> = {
   categories: Grid3X3,
   search2: Search,
   info2: Info,
+  explore: Search,
+  about: Info,
+  contact: Mail,
+  authors: Users,
 };
 
 const Icon: React.FC<IconProps> = ({ name, size = 20, className }) => {

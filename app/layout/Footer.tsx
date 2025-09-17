@@ -53,13 +53,13 @@ const getIcon = (id: string) => {
 };
 
 // Social icon mapping
-const getSocialIcon = (iconSrc: string) => {
+const getSocialIcon = (id: string) => {
   const socialIconMap: { [key: string]: React.ReactNode } = {
     facebook: <Facebook className="w-5 h-5" />,
     instagram: <Instagram className="w-5 h-5" />,
     email: <Mail className="w-5 h-5" />,
   };
-  return socialIconMap[iconSrc] || <Mail className="w-5 h-5" />;
+  return socialIconMap[id] || <Mail className="w-5 h-5" />;
 };
 
 interface FooterProps {
@@ -127,7 +127,7 @@ export default function Footer({ className }: FooterProps) {
                 title={link.title}
                 className="text-white items-center bg-black box-border flex h-8 justify-center w-8 rounded-[50%] transition-transform duration-300 hover:scale-110"
               >
-                {getSocialIcon(link.iconSrc)}
+                {getSocialIcon(link.id)}
               </a>
             ))}
           </div>

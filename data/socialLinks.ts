@@ -13,7 +13,7 @@ export const socialLinks: SocialLink[] = [
     iconSrc: "https://c.animaapp.com/mer35j4wJPAxku/assets/icon-19.svg",
   },
   {
-    id: "pinterest",
+    id: "instagram",
     href: "https://www.pinterest.com/recipesbyclare",
     title: "Pinterest",
     iconSrc: "https://c.animaapp.com/mer35j4wJPAxku/assets/icon-20.svg",
