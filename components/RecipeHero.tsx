@@ -298,8 +298,9 @@ export function RecipeHero({ recipe }: { recipe?: Recipe }) {
     );
 
   return (
-    <div className="bg-stone-100 space-y-2 px-4 md:px-6">
+    <div className="bg-stone-100  space-y-2 px-4 md:px-6">
       {/* Breadcrumbs */}
+
       <nav>
         <Breadcrumbs />
       </nav>

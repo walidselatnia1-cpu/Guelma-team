@@ -23,14 +23,14 @@ export default async function Layout({
   );
   console.log(recipe);
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 ">
       <main>
         <div className="bg-stone-100 grid grid-cols-1  xl:grid-cols-16 w-full px-4 pt-2  mx-auto">
           {/* Main Content */}
           <div className=" xl:col-span-2 "></div>
 
           {/* Sidebar */}
-          <div className=" xl:col-span-12">
+          <div className=" xl:col-span-12 2xl:place-items-center">
             <div className="sticky">
               <RecipeHero recipe={recipe} />
             </div>
@@ -38,7 +38,6 @@ export default async function Layout({
 
           <div className=" xl:col-span-2"></div>
         </div>
-
         {children}
       </main>
     </div>

@@ -29,22 +29,22 @@ export default async function RecipePage({
 
   return (
     <>
-      <div className="grid grid-cols-1  xl:grid-cols-16 gap-8 px-4 py-8  mx-auto">
+      <div className="grid grid-cols-1 xl:grid-cols-16 gap-8 px-4 py-8 mx-auto 2xl:max-w-[85rem]">
         {/* Main Content */}
-        <div className=" xl:col-span-2 "></div>
+        <div className="xl:col-span-2"></div>
         <div className="xl:col-span-8">
           <ViewTracker recipeId={recipe.id} />
           <RecipeContent recipe={recipe} />
         </div>
 
         {/* Sidebar */}
-        <div className=" xl:col-span-4">
+        <div className="xl:col-span-4">
           <div className="sticky top-8">
             <Side recipe={recipe} relatedRecipes={relatedRecipes} />
           </div>
         </div>
 
-        <div className=" xl:col-span-2"></div>
+        <div className="xl:col-span-2"></div>
       </div>
     </>
   );
