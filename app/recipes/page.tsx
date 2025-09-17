@@ -1,9 +1,9 @@
-export const dynamic = "force-static";
+export const dynamic = "force-dynamic";
 
 import React from "react";
 import { Recipe } from "@/outils/types";
 import { notFound } from "next/navigation";
-import { getRecipes } from "@/data/data";
+import { getRecipesPaginated } from "@/data/data";
 import Link from "next/link";
 
 const Pagination = ({
@@ -235,18 +235,14 @@ export default async function Page({
   const currentPage = searchParams.page ? parseInt(searchParams.page) : 1;
   const pageSize = 9; // Show 9 recipes per page
 
-  const allRecipes = (await getRecipes()) as any[];
+  const { recipes: paginatedRecipes, pagination } = await getRecipesPaginated(
+    currentPage,
+    pageSize
+  );
 
-  if (!allRecipes) {
+  if (!paginatedRecipes) {
     notFound();
   }
-
-  // Calculate total pages
-  const totalPages = Math.ceil(allRecipes.length / pageSize);
-
-  // Get current page of recipes
-  const startIndex = (currentPage - 1) * pageSize;
-  const paginatedRecipes = allRecipes.slice(startIndex, startIndex + pageSize);
 
   return (
     <div className="page-content">
@@ -265,7 +261,7 @@ export default async function Page({
             <Explore
               recipes={paginatedRecipes}
               currentPage={currentPage}
-              totalPages={totalPages}
+              totalPages={pagination.totalPages}
             />
           </div>
         </div>

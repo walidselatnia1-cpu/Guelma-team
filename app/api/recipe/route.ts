@@ -8,6 +8,15 @@ import prisma from "@/lib/prisma";
 import { withRetry } from "@/lib/prisma-helpers";
 import { revalidateTag, revalidatePath } from "next/cache";
 
+// Ensure Node.js types are available
+declare const process: {
+  env: {
+    NEXT_PUBLIC_BASE_URL?: string;
+    ADMIN_SECRET?: string;
+    REVALIDATE_SECRET?: string;
+  };
+};
+
 /**
  * GET /api/recipe
  * Gets a single recipe by id, or all recipes if id is not provided
@@ -25,6 +34,8 @@ export async function GET(request: NextRequest) {
   const url = new URL(request.nextUrl);
   const id = url.searchParams.get("id");
   const slug = url.searchParams.get("slug");
+  const page = url.searchParams.get("page");
+  const limit = url.searchParams.get("limit");
 
   try {
     // Handle slug query
@@ -70,6 +81,35 @@ export async function GET(request: NextRequest) {
       return NextResponse.json(recipe);
     }
 
+    // Handle pagination
+    if (page && limit) {
+      const pageNum = parseInt(page);
+      const limitNum = parseInt(limit);
+      const skip = (pageNum - 1) * limitNum;
+
+      const [recipes, totalCount] = await Promise.all([
+        withRetry(() =>
+          prisma.recipe.findMany({
+            orderBy: { createdAt: "desc" },
+            skip: skip,
+            take: limitNum,
+          })
+        ),
+        withRetry(() => prisma.recipe.count()),
+      ]);
+
+      return NextResponse.json({
+        recipes,
+        pagination: {
+          page: pageNum,
+          limit: limitNum,
+          total: totalCount,
+          totalPages: Math.ceil(totalCount / limitNum),
+        },
+      });
+    }
+
+    // Default: return all recipes (for backward compatibility)
     const recipes = await withRetry(() =>
       prisma.recipe.findMany({
         orderBy: { createdAt: "desc" },

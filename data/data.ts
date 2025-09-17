@@ -3,6 +3,17 @@ import { apiClient } from "@/lib/api-client";
 import latestArticles from "./articles";
 import { unstable_cache } from "next/cache";
 
+// Ensure Node.js types are available
+declare const process: {
+  env: {
+    NODE_ENV?: string;
+    NEXT_PHASE?: string;
+    NEXT_PUBLIC_BASE_URL?: string;
+    NEXT_PUBLIC_REVALIDATE_SECRET?: string;
+    REVALIDATE_SECRET?: string;
+  };
+};
+
 // ============================================================================
 // CONFIGURATION
 // ============================================================================
@@ -219,41 +230,85 @@ async function fetchWithFallback<T>(
 // ============================================================================
 
 /**
- * Get all recipes with caching support
+ * Get all recipes with optional pagination
  */
-async function getRecipes(): Promise<Recipe[]> {
-  return await getData();
-}
-
-/**
- * Core data fetching function with environment-aware logic
- */
-async function getData(): Promise<Recipe[]> {
-  const getCachedRecipes = unstable_cache(
-    async (): Promise<Recipe[]> => {
-      return await fetchWithFallback(
-        async () => {
-          const prisma = await getPrisma();
-          const recipes = await prisma.recipe.findMany({
-            orderBy: { createdAt: "desc" },
-          });
-          return recipes as unknown as Recipe[];
-        },
-        `${BASE_URL}/api/recipe`,
-        {
+async function getRecipes(page?: number, limit?: number): Promise<Recipe[]> {
+  if (page && limit) {
+    // Use paginated API
+    const response = await fetch(
+      `${BASE_URL}/api/recipe?page=${page}&limit=${limit}`,
+      {
+        next: {
           tags: ["recipes", "all-recipes"],
           revalidate: 3600,
-        }
-      );
+        },
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error(`Failed to fetch recipes: ${response.status}`);
+    }
+
+    const data = await response.json();
+    return data.recipes || [];
+  }
+
+  // Fallback to direct DB access for backward compatibility
+  return await fetchWithFallback(
+    async () => {
+      const prisma = await getPrisma();
+      const recipes = await prisma.recipe.findMany({
+        orderBy: { createdAt: "desc" },
+      });
+      return recipes as unknown as Recipe[];
     },
-    ["all-recipes"],
+    `${BASE_URL}/api/recipe`,
     {
       tags: ["recipes", "all-recipes"],
       revalidate: 3600,
     }
   );
+}
 
-  return await getCachedRecipes();
+/**
+ * Get paginated recipes with metadata
+ */
+async function getRecipesPaginated(
+  page: number = 1,
+  limit: number = 9
+): Promise<{
+  recipes: Recipe[];
+  pagination: {
+    page: number;
+    limit: number;
+    total: number;
+    totalPages: number;
+  };
+}> {
+  const response = await fetch(
+    `${BASE_URL}/api/recipe?page=${page}&limit=${limit}`,
+    {
+      next: {
+        tags: ["recipes", "all-recipes"],
+        revalidate: 3600,
+      },
+    }
+  );
+
+  if (!response.ok) {
+    throw new Error(`Failed to fetch recipes: ${response.status}`);
+  }
+
+  const data = await response.json();
+  return {
+    recipes: data.recipes || [],
+    pagination: data.pagination || {
+      page,
+      limit,
+      total: 0,
+      totalPages: 0,
+    },
+  };
 }
 
 /**
@@ -741,7 +796,7 @@ async function adminDeleteRecipe(id: string): Promise<void> {
 export {
   // Core recipe functions
   getRecipes,
-  getData,
+  getRecipesPaginated,
   getRecipe,
   getTrending,
   getRelated,
