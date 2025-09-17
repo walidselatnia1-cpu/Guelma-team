@@ -36,7 +36,7 @@ export default async function CategoriesSection({
     return null;
   }
   return (
-    <section className={`box-border my-[51.2px] ${className || ""}`}>
+    <section className={`box-border ${className || ""}`}>
       <div className="relative box-border max-w-full w-full mx-auto px-4">
         <div className="box-border gap-x-2 flex flex-col gap-y-2">
           <div className="items-center box-border flex justify-between uppercase">
@@ -48,18 +48,10 @@ export default async function CategoriesSection({
               title="All categories"
               className="text-white text-[13.44px] font-bold items-center bg-neutral-900 box-border flex leading-[21.504px] ml-4 my-4 p-2 rounded-[50%] md:text-[17.28px] md:leading-[27.648px]"
             >
-              <Icon name="arrow-right" size={12} className="text-white" />
+              <svg className="w-3 h-3 text-white">
+                <use href="/symbols-v4.svg?#arrow-right"></use>
+              </svg>
             </a>
-          </div>
-
-          <div className="box-border">
-            <div className="box-border h-auto w-auto md:h-0 md:w-0">
-              <div className="box-border">
-                <div>
-                  <div className="items-center gap-x-2.5 flex justify-center min-h-[100px] gap-y-2.5 w-full"></div>
-                </div>
-              </div>
-            </div>
           </div>
 
           <div className="box-border gap-x-[25.6px] grid grid-cols-[1fr] gap-y-[25.6px] md:grid-cols-[repeat(3,1fr)]">

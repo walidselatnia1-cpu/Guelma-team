@@ -315,7 +315,7 @@ export function RecipeHero({ recipe }: { recipe?: Recipe }) {
           {recipe?.featuredText}{" "}
           <Link
             href={recipe?.categoryLink || "#"}
-            className="text-orange-600 hover:underline"
+            className="text-[#c64118] hover:underline"
           >
             {recipe?.category}
           </Link>
@@ -349,7 +349,7 @@ export function RecipeHero({ recipe }: { recipe?: Recipe }) {
             <span>By</span>
             <Link
               href={recipe?.author?.link || "#"}
-              className="text-red-600 font-medium hover:underline"
+              className="text-[#c64118] font-medium hover:underline"
             >
               {recipe?.author?.name || "Unknown Author"}
             </Link>
