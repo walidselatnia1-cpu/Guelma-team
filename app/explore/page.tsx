@@ -1,6 +1,3 @@
-export const dynamic = "force-static";
-export const revalidate = 3600; // ISR every hour
-
 import React from "react";
 import Image from "next/image";
 import { Recipe } from "@/outils/types";
