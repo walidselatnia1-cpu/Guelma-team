@@ -8,6 +8,17 @@ interface CategoriesSectionProps {
   className?: string;
 }
 
+const getOptimizedImageUrl = (
+  src: string,
+  width: number,
+  quality = 65,
+  format = "webp"
+) => {
+  // Remove existing query parameters
+  const cleanSrc = src.split("?")[0];
+  return `${cleanSrc}?w=${width}&q=${quality}&f=${format}`;
+};
+
 export default async function CategoriesSection({
   className,
 }: CategoriesSectionProps) {
@@ -64,7 +75,7 @@ export default async function CategoriesSection({
                 >
                   <Image
                     alt={category.alt}
-                    src={category.image}
+                    src={getOptimizedImageUrl(category.image, 400)}
                     sizes={category.sizes}
                     width={400}
                     height={160}
