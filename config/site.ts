@@ -1,6 +1,6 @@
 export const siteConfig = {
-  name: "Recipes by Clare",
-  domain: "recipesbyclare.com",
+  name: "Recipes by Calama",
+  domain: "flavorfable.com",
   url: "https://recipesbyclare.com",
   email: "hello@recipesbyclare.com",
   description: "Family-Friendly Recipes That Everyone Will Love",

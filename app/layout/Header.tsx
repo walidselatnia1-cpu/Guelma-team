@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { navigationItems } from "@/data/navigation";
 import { siteConfig } from "@/config/site";
 import Icon from "@/components/Icon";
+import Logo from "@/components/Logo";
 
 interface HeaderProps {
   className?: string;
@@ -41,11 +42,7 @@ export default function Header({ className }: HeaderProps) {
             title={siteConfig.description}
             className="flex items-center flex-shrink-0"
           >
-            <img
-              src="https://c.animaapp.com/mer35j4wJPAxku/assets/logo.svg"
-              alt={siteConfig.name}
-              className="h-10 sm:h-12 lg:h-14 xl:h-16 w-auto max-w-full"
-            />
+            <Logo className="h-10 sm:h-12 lg:h-14 xl:h-16 leading-none" />
           </a>
 
           {/* Desktop Nav - Full labels on XL screens */}
