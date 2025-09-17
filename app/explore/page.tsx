@@ -216,17 +216,6 @@ export default async function Page({
   const currentPage = searchParams.page ? parseInt(searchParams.page) : 1;
   const pageSize = 9; // Show 9 recipes per page
 
-  // Redirect to page 1 if no page parameter
-  if (!searchParams.page) {
-    return (
-      <script
-        dangerouslySetInnerHTML={{
-          __html: `window.location.href = '/explore?page=1';`,
-        }}
-      />
-    );
-  }
-
   const { recipes: paginatedRecipes, pagination } = await getRecipesPaginated(
     currentPage,
     pageSize
