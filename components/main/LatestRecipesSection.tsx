@@ -1,12 +1,22 @@
 import React from "react";
 import Recipe from "@/outils/types";
 import { getLatest } from "@/data/data";
+import Image from "next/image";
 
 interface LatestRecipesSectionProps {
   className?: string;
   limit?: number;
 }
-
+const getOptimizedImageUrl = (
+  src: string,
+  width: number,
+  quality = 65,
+  format = "webp"
+) => {
+  // Remove existing query parameters
+  const cleanSrc = src.split("?")[0];
+  return `${cleanSrc}?w=${width}&q=${quality}&f=${format}`;
+};
 export default async function LatestRecipesSection({
   className,
   limit = 6,
@@ -53,7 +63,7 @@ export default async function LatestRecipesSection({
             </a>
           </div>
 
-          <div className="box-border gap-x-[25.6px] grid grid-cols-[1fr] gap-y-[25.6px] xl:grid-cols-[repeat(4,1fr)] lg:grid-cols-[repeat(4,1fr)] md:grid-cols-[repeat(4,1fr)]">
+          <div className="box-border gap-x-[25.6px] grid grid-cols-[1fr] gap-y-[25.6px] xl:grid-cols-[repeat(3,1fr)] lg:grid-cols-[repeat(3,1fr)] md:grid-cols-[repeat(4,1fr)]">
             {latestRecipes.map((recipe) => (
               <div
                 key={recipe.id || recipe.slug}
@@ -68,30 +78,37 @@ export default async function LatestRecipesSection({
                   title={recipe.title}
                   className="text-blue-700 bg-stone-100 box-border block h-[300px] w-full overflow-hidden transform transition-transform duration-300 rounded-[14px] group-hover:scale-105"
                 >
-                  <img
-                    alt={recipe.title || recipe.imageAlt}
-                    src={(recipe.img || recipe.heroImage) + "?w=400&h=300"}
+                  <Image
+                    alt={recipe.title || recipe.imageAlt || "Recipe Image"}
+                    src={getOptimizedImageUrl(
+                      recipe.img || recipe.heroImage,
+                      400,
+                      65,
+                      "webp"
+                    )}
                     className="aspect-[auto_1024_/_1024] bg-stone-100 box-border  transition-transform duration-300 h-full max-w-full object-cover w-full group-hover:scale-110"
                   />
                 </a>
 
-                <a
-                  href={recipe.href}
-                  title={recipe.title}
-                  className="box-border block"
-                >
-                  <strong
-                    style={{
-                      textShadow:
-                        "-1px -1px 0 #f6f5f3, 1px -1px 0 #f6f5f3, -1px 1px 0 #f6f5f3, 1px 1px 0 #f6f5f3",
-                    }}
-                    className="  text-md font-bold box-border block leading-[21.504px]  md:leading-[26.88px]"
+                <div className="flex flex-col items-center min-h-[4rem] justify-center">
+                  <a
+                    href={recipe.href}
+                    title={recipe.title}
+                    className="box-border block"
                   >
-                    {recipe.title}
-                  </strong>
-                </a>
+                    <strong
+                      style={{
+                        textShadow:
+                          "-1px -1px 0 #f6f5f3, 1px -1px 0 #f6f5f3, -1px 1px 0 #f6f5f3, 1px 1px 0 #f6f5f3",
+                      }}
+                      className="text-md font-bold box-border block leading-[21.504px] md:leading-[26.88px] text-center"
+                    >
+                      {recipe.title}
+                    </strong>
+                  </a>
+                </div>
 
-                <p className="text-[13.44px] text-gray-900 box-border leading-[21.504px] md:text-[17.28px] md:leading-[27.648px]  w-48 line-clamp-3">
+                <p className="text-[13.44px] text-gray-900 box-border leading-[21.504px] md:text-[17.28px] md:leading-[27.648px] px-2 text-center line-clamp-3 flex-1">
                   {recipe.description}
                 </p>
               </div>

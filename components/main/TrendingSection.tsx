@@ -1,4 +1,5 @@
 import React from "react";
+import Image from "next/image";
 import { Recipe } from "../../outils/types"; // Adjust path as needed
 import { getTrending } from "@/data/data";
 
@@ -6,6 +7,17 @@ interface TrendingSectionProps {
   className?: string;
   limit?: number;
 }
+
+const getOptimizedImageUrl = (
+  src: string,
+  width: number,
+  quality = 65,
+  format = "webp"
+) => {
+  // Remove existing query parameters
+  const cleanSrc = src.split("?")[0];
+  return `${cleanSrc}?w=${width}&q=${quality}&f=${format}`;
+};
 
 export default async function TrendingSection({
   className,
@@ -59,10 +71,14 @@ export default async function TrendingSection({
                   title={recipe.title}
                   className="text-blue-700 bg-stone-100 box-border block h-[300px] transform transition-transform duration-300 w-full overflow-hidden rounded-[14px] group-hover:scale-105"
                 >
-                  <img
+                  <Image
                     alt={recipe.imageAlt || recipe.title}
-                    src={(recipe.img || recipe.heroImage) + "?w=400&h=300"}
-                    sizes="(max-width: 768px) 50vw, 16.67vw"
+                    src={getOptimizedImageUrl(
+                      recipe.img || recipe.heroImage,
+                      400,
+                      65,
+                      "webp"
+                    )}
                     className="aspect-[auto_1024_/_1024] bg-stone-100 box-border transition-transform duration-300 h-full max-w-full object-cover w-full group-hover:scale-110"
                     loading="lazy"
                   />
