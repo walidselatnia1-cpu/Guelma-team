@@ -5,6 +5,7 @@ import { RelatedRecipes } from "@/components/RelatedRecipes";
 import { notFound } from "next/navigation";
 import { getRecipe, getRecipes, getRelated } from "@/data/data";
 import Side from "@/components/Side";
+import ViewTracker from "@/components/ViewTracker";
 import Recipe from "@/outils/types";
 
 export default async function RecipePage({
@@ -33,6 +34,7 @@ export default async function RecipePage({
         <div className="lg:col-span-2 xl:col-span-3"></div>
 
         <div className="lg:col-span-6 xl:col-span-8">
+          <ViewTracker recipeId={recipe.id} />
           <RecipeContent recipe={recipe} />
         </div>
 

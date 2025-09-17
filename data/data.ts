@@ -302,14 +302,52 @@ async function getTrending(limit: number = 10): Promise<Recipe[]> {
     const recipes = await fetchWithFallback(
       async () => {
         const prisma = await getPrisma();
+        // Get recipes with view data for trending calculation
         const recipes = await prisma.recipe.findMany({
-          take: limit,
-          orderBy: [{ createdAt: "desc" }],
+          where: {
+            views: {
+              gt: 0, // Only include recipes that have been viewed
+            },
+          },
+          orderBy: [
+            { views: "desc" }, // Primary sort by views
+            { lastViewedAt: "desc" }, // Secondary sort by recency
+          ],
+          take: limit * 2, // Get more to allow for scoring
         });
-        return recipes.map((recipe: any) => ({
+
+        const now = new Date();
+        // Calculate trending score for each recipe
+        const trendingRecipes = recipes
+          .map((recipe) => {
+            const daysSinceLastView = recipe.lastViewedAt
+              ? Math.max(
+                  1,
+                  Math.floor(
+                    (now.getTime() - recipe.lastViewedAt.getTime()) /
+                      (1000 * 60 * 60 * 24)
+                  )
+                )
+              : 30; // Default to 30 days if never viewed
+
+            // Time decay formula: score = views / (1 + days_since_last_view)
+            const trendingScore = recipe.views / (1 + daysSinceLastView);
+
+            return {
+              ...recipe,
+              trendingScore,
+              featuredText: "Trending Now",
+            };
+          })
+          .sort((a, b) => b.trendingScore - a.trendingScore) // Sort by trending score
+          .slice(0, limit); // Take top N
+
+        return trendingRecipes.map((recipe) => ({
           ...recipe,
-          featuredText: "Trending Now",
-        })) as Recipe[];
+          createdAt: recipe.createdAt?.toISOString(),
+          updatedAt: recipe.updatedAt?.toISOString(),
+          lastViewedAt: recipe.lastViewedAt?.toISOString() || null,
+        })) as unknown as Recipe[];
       },
       `${BASE_URL}/api/recipe/trending?limit=${limit}`,
       {

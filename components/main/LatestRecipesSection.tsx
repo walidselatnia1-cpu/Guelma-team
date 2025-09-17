@@ -53,7 +53,7 @@ export default async function LatestRecipesSection({
             </a>
           </div>
 
-          <div className="box-border gap-x-[25.6px] grid grid-cols-[1fr] gap-y-[25.6px] md:grid-cols-[repeat(4,1fr)]">
+          <div className="box-border gap-x-[25.6px] grid grid-cols-[1fr] gap-y-[25.6px] md:grid-cols-[repeat(3,1fr)]">
             {latestRecipes.map((recipe) => (
               <div
                 key={recipe.id || recipe.slug}
@@ -91,7 +91,7 @@ export default async function LatestRecipesSection({
                   </strong>
                 </a>
 
-                <p className="text-[13.44px] text-gray-900 box-border leading-[21.504px] md:text-[17.28px] md:leading-[27.648px]  w-48 line-clamp-2">
+                <p className="text-[13.44px] text-gray-900 box-border leading-[21.504px] md:text-[17.28px] md:leading-[27.648px]  w-48 line-clamp-3">
                   {recipe.description}
                 </p>
               </div>

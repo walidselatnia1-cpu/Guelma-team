@@ -3,7 +3,7 @@ import path from "path";
 
 const SETTINGS_FILE_PATH = path.join(
   process.cwd(),
-  "data",
+  "public",
   "custom-code-settings.json"
 );
 
@@ -35,13 +35,8 @@ function sanitizeCode(code: string): string {
   if (!code || typeof code !== "string") return "";
 
   // Remove potentially dangerous script tags and event handlers
-  let sanitized = code
-    .replace(/<script[^>]*>[\s\S]*?<\/script>/gi, "") // Remove script tags
-    .replace(/<iframe[^>]*>[\s\S]*?<\/iframe>/gi, "") // Remove iframe tags
-    .replace(/javascript:/gi, "") // Remove javascript: URLs
-    .replace(/on\w+="[^"]*"/gi, "") // Remove event handlers
-    .replace(/on\w+='[^']*'/gi, "") // Remove event handlers with single quotes
-    .replace(/on\w+=[^>\s]*/gi, ""); // Remove event handlers without quotes
+  let sanitized = code;
+  // Remove event handlers without quotes
 
   return sanitized.trim();
 }

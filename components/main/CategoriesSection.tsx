@@ -81,7 +81,7 @@ export default async function CategoriesSection({
 
                   <div className="absolute inset-0 flex items-center justify-center px-4">
                     <span
-                      className="text-2xl md:text-3xl font-serif font-bold text-white text-center bg-black bg-opacity-60 px-4 py-2 rounded-lg backdrop-blur-sm"
+                      className="text-2xl md:text-3xl font-serif font-bold text-white text-opacity-80 text-center bg-black bg-opacity-60 px-4 py-2 rounded-lg backdrop-blur-sm"
                       style={{
                         textShadow: "2px 2px 4px rgba(0, 0, 0, 0.8)",
                       }}
