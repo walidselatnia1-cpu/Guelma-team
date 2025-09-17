@@ -25,7 +25,7 @@ const Instruction = ({
       <br />
       <br />
       <p
-        className={`recipe__interact-list-content text-black flex-1 leading-relaxed ${
+        className={`recipe__interact-list-content text-black flex-1 leading-relaxed text-[19.2px] ${
           clicked ? "line-through" : ""
         }`}
       >

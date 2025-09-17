@@ -18,7 +18,7 @@ const Ingredient = ({ ingredient, index: itemIndex }: any) => {
           {String(itemIndex + 1).padStart(2, "0")}
         </span>
         <span
-          className={`recipe__interact-list-content text-black flex-1 leading-relaxed ${
+          className={`recipe__interact-list-content text-black flex-1 leading-relaxed text-[19.2px] ${
             clicked ? "line-through" : ""
           }`}
         >

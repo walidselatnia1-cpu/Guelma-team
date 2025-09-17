@@ -51,7 +51,7 @@ export default function CompleteCookingProcess({
                 >
                   {step.title ?? step.section}:
                 </span>{" "}
-                <p className=" text-gray-700 leading-relaxed block">
+                <p className=" text-gray-700 leading-relaxed block text-[19.2px]">
                   {step.description}
                 </p>
               </div>

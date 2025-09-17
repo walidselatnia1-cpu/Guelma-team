@@ -23,7 +23,11 @@ export const TipCard: React.FC<any> = ({ title, items, after }) => {
           </div>
         </div>
       </div>
-      {after && <p className="p-6 pl-0 text-black leading-relaxed">{after}</p>}
+      {after && (
+        <p className="p-6 pl-0 text-black leading-relaxed text-[19.2px]">
+          {after}
+        </p>
+      )}
     </>
   );
 };

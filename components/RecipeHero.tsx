@@ -16,7 +16,7 @@ export default function Breadcrumbs() {
   const segments = pathname.split("/").filter(Boolean);
 
   return (
-    <ol className="breadcrumb flex flex-wrap items-center text-xs font-normal">
+    <ol className="breadcrumb flex flex-wrap items-center text-[19.2px] font-normal">
       {/* Home link */}
       <li className="breadcrumb__item after:content-['>>'] after:px-2 last:after:content-none">
         <Link href="/" className="text-[#c64118] font-bold no-underline">
@@ -90,7 +90,7 @@ export function RecipeHero({ recipe }: { recipe?: Recipe }) {
           <div className="space-y-4">
             <h1 className="leading-tight text-5xl text-black">All Recipes</h1>
 
-            <div className="text-[calc(var(--mo-font-size)*.8)] ">
+            <div className="text-[19.2px] ">
               Your one-stop recipe destination! Recipes by Clare offers
               everything from elaborate family feasts to simple personal treats,
               with plenty of delicious options waiting to inspire your next
@@ -117,13 +117,13 @@ export function RecipeHero({ recipe }: { recipe?: Recipe }) {
           <div className="space-y-4">
             <h1 className="leading-tight text-5xl text-black">Explore</h1>
 
-            <div className="text-[calc(var(--mo-font-size)*.8)] ">
+            <div className="text-[19.2px] ">
               Find your next favorite meal with our diverse recipe collection!
               From quick weeknight dinners to impressive holiday feasts, we've
               got culinary inspiration for every cooking level and occasion.
             </div>
 
-            <p className="text-xs">
+            <p className="text-[19.2px]">
               2792 results in this collection. Page 1 Of 311
             </p>
           </div>
@@ -143,7 +143,7 @@ export function RecipeHero({ recipe }: { recipe?: Recipe }) {
           <SearchBox />
 
           <div className="space-y-4">
-            <div className="text-[calc(var(--mo-font-size)*.8)] ">
+            <div className="text-[19.2px] ">
               Looking for the perfect recipe? Recipes by Clare has you covered!
               Search through our extensive collection of family-friendly dishes
               and uncover new meal inspiration for any day of the week.
@@ -164,13 +164,13 @@ export function RecipeHero({ recipe }: { recipe?: Recipe }) {
             {"Tasty Evening Meals"}
           </h1>
           <div className="space-y-4">
-            <div className="text-[calc(var(--mo-font-size)*.8)] ">
+            <div className="text-[19.2px] ">
               Make every dinner special with our Evening Meals collection.
               Whether you’re looking for a quick weeknight meal or a dish to
               impress, we’ve got recipes that will satisfy every craving.
               Perfect for family dinners or a cozy night in.
             </div>
-            <p className="text-xs">
+            <p className="text-[19.2px]">
               110 results in this collection. (Page 1 Of 10) Updated on Mon, 20
               Jan 2025 17:25:36 GMT
             </p>
@@ -191,7 +191,7 @@ export function RecipeHero({ recipe }: { recipe?: Recipe }) {
             </h1>
 
             <div className="space-y-4">
-              <div className="text-[calc(var(--mo-font-size)*.8)] ">
+              <div className="text-[19.2px] ">
                 Recipes by Clare offers a treasure trove of balanced, simple
                 recipes designed to bring families together in the kitchen and
                 create meaningful mealtime experiences.
@@ -221,7 +221,7 @@ export function RecipeHero({ recipe }: { recipe?: Recipe }) {
             </h1>
 
             <div className="space-y-4">
-              <div className="text-[calc(var(--mo-font-size)*.8)] ">
+              <div className="text-[19.2px] ">
                 Whether you need cooking advice, want to share feedback, or
                 simply want to say hello, feel free to drop me a line! I'm
                 always excited to discuss delicious recipes with you.
@@ -250,7 +250,7 @@ export function RecipeHero({ recipe }: { recipe?: Recipe }) {
             </h1>
 
             <div className="space-y-4">
-              <div className="text-[calc(var(--mo-font-size)*.8)] ">
+              <div className="text-[19.2px] ">
                 Looking for culinary inspiration? Browse through our diverse
                 recipe categories to find the perfect dish for any occasion.
                 We've got everything from quick weeknight dinners to impressive
@@ -280,7 +280,7 @@ export function RecipeHero({ recipe }: { recipe?: Recipe }) {
             </h1>
 
             <div className="space-y-4">
-              <div className="text-[calc(var(--mo-font-size)*.8)] ">
+              <div className="text-[19.2px] ">
                 Need help with something? We've got you covered! Browse our FAQ
                 section for answers to common questions about our recipes,
                 cooking methods, and kitchen hacks.
@@ -311,7 +311,7 @@ export function RecipeHero({ recipe }: { recipe?: Recipe }) {
           {recipe?.title}
         </h1>
 
-        <p className="text-sm text-gray-600">
+        <p className="text-[19.2px] text-gray-600">
           {recipe?.featuredText}{" "}
           <Link
             href={recipe?.categoryLink || "#"}
@@ -322,7 +322,7 @@ export function RecipeHero({ recipe }: { recipe?: Recipe }) {
           .
         </p>
 
-        <p className="text-[calc(var(--mo-font-size))] text-gray-700 leading-relaxed">
+        <p className="text-[19.2px] text-gray-700 leading-relaxed">
           {recipe?.shortDescription}
         </p>
       </div>
@@ -344,7 +344,7 @@ export function RecipeHero({ recipe }: { recipe?: Recipe }) {
           className="rounded-[50%] w-12 h-12 object-cover"
         />
         <div className="flex-1">
-          <div className="flex items-center space-x-2 text-sm text-gray-600">
+          <div className="flex items-center space-x-2 text-[19.2px] text-gray-600">
             <User className="h-4 w-4" />
             <span>By</span>
             <Link
@@ -354,7 +354,7 @@ export function RecipeHero({ recipe }: { recipe?: Recipe }) {
               {recipe?.author?.name || "Unknown Author"}
             </Link>
           </div>
-          <div className="flex items-center space-x-2 text-sm text-gray-500 mt-1">
+          <div className="flex items-center space-x-2 text-[19.2px] text-gray-500 mt-1">
             <Calendar className="h-4 w-4" />
             <span>
               Updated on{" "}

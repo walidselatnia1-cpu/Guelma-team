@@ -26,29 +26,35 @@ export const Card: React.FC<{
         <h2 className="text-center font-[700]  color-[var(--mo-on-recipe-title)] recipe__title text-3xl font-bold text-[var(--mo-on-recipe-title)] mb-4">
           {recipe.title}
         </h2>
-        <p className="text-black mb-6">{recipe.description}</p>
+        <p className="text-black mb-6 text-[19.2px]">{recipe.description}</p>
 
         {/* Timing Info */}
         <div className="grid grid-cols-3 gap-4 text-center border-b border-t border-gray-300 p-4 mb-4">
           <div className="space-y-1">
             <Clock className="h-5 w-5 text-gray-600 mx-auto" />
-            <p className="text-xs text-black">Prep Time</p>
-            <p className="text-sm font-medium">{recipe?.timing?.prepTime}</p>
+            <p className="text-[19.2px] text-black">Prep Time</p>
+            <p className="text-[19.2px] font-medium">
+              {recipe?.timing?.prepTime}
+            </p>
           </div>
           <div className="space-y-1">
             <ChefHat className="h-5 w-5 text-gray-600 mx-auto" />
-            <p className="text-xs text-black">Cook Time</p>
-            <p className="text-sm font-medium">{recipe.timing?.cookTime}</p>
+            <p className="text-[19.2px] text-black">Cook Time</p>
+            <p className="text-[19.2px] font-medium">
+              {recipe.timing?.cookTime}
+            </p>
           </div>
           <div className="space-y-1">
             <Clock className="h-5 w-5 text-gray-600 mx-auto" />
-            <p className="text-xs text-black">Total Time</p>
-            <p className="text-sm font-medium">{recipe.timing?.totalTime}</p>
+            <p className="text-[19.2px] text-black">Total Time</p>
+            <p className="text-[19.2px] font-medium">
+              {recipe.timing?.totalTime}
+            </p>
           </div>
         </div>
 
         {/* Recipe Details */}
-        <div className="space-y-2 text-sm  text-gray-800 mb-4">
+        <div className="space-y-2 text-[19.2px]  text-gray-800 mb-4">
           <div className="flex items-center space-x-2">
             <Users className="h-4 w-4" />
             <span className="">By:</span>
@@ -112,10 +118,10 @@ export const Card: React.FC<{
             {recipe.notes.map((note: string, index: number) => (
               <li
                 key={index}
-                className="relative pl-2 text-base overflow-hidden 
+                className="relative pl-2 text-[19.2px] overflow-hidden
               before:content-[counter(list-counter)]
-              before:absolute 
-              before:-left-[30px] 
+              before:absolute
+              before:-left-[30px]
               before:top-0
               before:bg-[var(--mo-recipe-number)]
               before:text-[var(--mo-on-recipe-number)]
@@ -148,7 +154,7 @@ export const Card: React.FC<{
             {recipe?.mustKnowTips?.map((note: string, index: number) => (
               <li
                 key={index}
-                className="list-disc relative pl-2 text-base marker:text-xl marker:text-gray-600 leading-relaxed break-words"
+                className="list-disc relative pl-2 text-[19.2px] marker:text-xl marker:text-gray-600 leading-relaxed break-words"
               >
                 {note}
               </li>
