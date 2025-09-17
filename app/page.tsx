@@ -7,8 +7,8 @@ import TrendingSection from "@/components/main/TrendingSection";
 
 export default function HomePage() {
   return (
-    <div className="page-content">
-      <div className="grid grid-cols-1 lg:grid-cols-6 gap-8 w-full bg-stone-100">
+    <div className="page-content justify-items-center">
+      <div className="grid grid-cols-1 lg:grid-cols-6 gap-8 w-full bg-stone-100 ">
         {/* Left Sidebar */}
         <div className="lg:col-span-1 ">
           <div className="sticky top-8">
@@ -31,7 +31,7 @@ export default function HomePage() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-6 gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-6 gap-8 lg:max-w-[85rem]">
         {/* Left Sidebar */}
         <div className="lg:col-span-1 ">
           <div className="sticky top-8">
