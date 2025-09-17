@@ -281,7 +281,11 @@ function Explore({
         </div>
 
         {/* Pagination */}
-        <Pagination currentPage={currentPage} totalPages={totalPages} />
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          basePath="/explore"
+        />
       </div>
     </div>
   );

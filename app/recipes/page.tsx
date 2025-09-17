@@ -4,27 +4,72 @@ import React from "react";
 import { Recipe } from "@/outils/types";
 import { notFound } from "next/navigation";
 import { getRecipes } from "@/data/data";
+import Link from "next/link";
 
-const Pagination = ({ currentPage = 1, totalPages = 311 }) => {
+const Pagination = ({
+  currentPage = 1,
+  totalPages = 311,
+  basePath = "/recipes",
+}) => {
   const isFirstPage = currentPage === 1;
   const isLastPage = currentPage === totalPages;
+
+  // Calculate page numbers to show
+  const getPageNumbers = () => {
+    let pages = [];
+    const maxPagesToShow = 5;
+
+    if (totalPages <= maxPagesToShow) {
+      // Show all pages if total pages is less than max
+      for (let i = 1; i <= totalPages; i++) {
+        pages.push(i);
+      }
+    } else {
+      // Always show first page
+      pages.push(1);
+
+      // Calculate middle pages
+      let startPage = Math.max(2, currentPage - 1);
+      let endPage = Math.min(totalPages - 1, currentPage + 1);
+
+      // Add ellipsis after page 1 if needed
+      if (startPage > 2) {
+        pages.push("...");
+      }
+
+      // Add middle pages
+      for (let i = startPage; i <= endPage; i++) {
+        pages.push(i);
+      }
+
+      // Add ellipsis before last page if needed
+      if (endPage < totalPages - 1) {
+        pages.push("...");
+      }
+
+      // Always show last page
+      pages.push(totalPages);
+    }
+
+    return pages;
+  };
 
   return (
     <nav className="flex justify-center mt-8">
       <ul className="flex gap-2 list-none p-0 m-0 text-sm">
-        {/* First / Previous Arrow */}
+        {/* First Arrow */}
         <li className="flex">
           {isFirstPage ? (
             <span className="px-3 py-2 rounded-2xl bg-gray-200 text-gray-600 cursor-not-allowed block">
               «
             </span>
           ) : (
-            <a
-              href="#"
+            <Link
+              href={`${basePath}?page=1`}
               className="px-3 py-2 rounded-2xl bg-black text-white hover:bg-gray-800 transition-colors block"
             >
               «
-            </a>
+            </Link>
           )}
         </li>
 
@@ -35,21 +80,36 @@ const Pagination = ({ currentPage = 1, totalPages = 311 }) => {
               Previous
             </span>
           ) : (
-            <a
-              href="#"
+            <Link
+              href={`${basePath}?page=${currentPage - 1}`}
               className="px-3 py-2 rounded-2xl bg-black text-white hover:bg-gray-800 transition-colors block"
             >
               Previous
-            </a>
+            </Link>
           )}
         </li>
 
-        {/* Current Page */}
-        <li className="flex">
-          <span className="px-3 py-2 rounded-2xl bg-gray-200 text-gray-600 cursor-not-allowed block">
-            {currentPage}
-          </span>
-        </li>
+        {/* Page Numbers */}
+        {getPageNumbers().map((page, index) => (
+          <li key={index} className="flex">
+            {page === "..." ? (
+              <span className="px-3 py-2 rounded-2xl bg-gray-200 text-gray-600 block">
+                ...
+              </span>
+            ) : page === currentPage ? (
+              <span className="px-3 py-2 rounded-2xl bg-gray-200 text-gray-600 cursor-not-allowed block">
+                {page}
+              </span>
+            ) : (
+              <Link
+                href={`${basePath}?page=${page}`}
+                className="px-3 py-2 rounded-2xl bg-black text-white hover:bg-gray-800 transition-colors block"
+              >
+                {page}
+              </Link>
+            )}
+          </li>
+        ))}
 
         {/* Next */}
         <li className="flex">
@@ -58,28 +118,28 @@ const Pagination = ({ currentPage = 1, totalPages = 311 }) => {
               Next
             </span>
           ) : (
-            <a
-              href="#"
+            <Link
+              href={`${basePath}?page=${currentPage + 1}`}
               className="px-3 py-2 rounded-2xl bg-black text-white hover:bg-gray-800 transition-colors block"
             >
               Next
-            </a>
+            </Link>
           )}
         </li>
 
-        {/* Last / Next Arrow */}
+        {/* Last Arrow */}
         <li className="flex">
           {isLastPage ? (
             <span className="px-3 py-2 rounded-2xl bg-gray-200 text-gray-600 cursor-not-allowed block">
               »
             </span>
           ) : (
-            <a
-              href="#"
+            <Link
+              href={`${basePath}?page=${totalPages}`}
               className="px-3 py-2 rounded-2xl bg-black text-white hover:bg-gray-800 transition-colors block"
             >
               »
-            </a>
+            </Link>
           )}
         </li>
       </ul>
@@ -133,7 +193,15 @@ const RecipeCard = ({ recipe }: { recipe: Recipe }) => {
   );
 };
 
-function Explore({ recipes }: any) {
+function Explore({
+  recipes,
+  currentPage,
+  totalPages,
+}: {
+  recipes: Recipe[];
+  currentPage: number;
+  totalPages: number;
+}) {
   return (
     <div className="p-6 bg-gray-50 min-h-screen">
       <div className=" xl mx-auto">
@@ -149,18 +217,36 @@ function Explore({ recipes }: any) {
         </div>
 
         {/* Pagination */}
-        <Pagination currentPage={1} totalPages={311} />
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          basePath="/recipes"
+        />
       </div>
     </div>
   );
 }
 
-export default async function Page() {
-  const recipes = (await getRecipes()) as any;
+export default async function Page({
+  searchParams,
+}: {
+  searchParams: { page?: string };
+}) {
+  const currentPage = searchParams.page ? parseInt(searchParams.page) : 1;
+  const pageSize = 9; // Show 9 recipes per page
 
-  if (!recipes) {
+  const allRecipes = (await getRecipes()) as any[];
+
+  if (!allRecipes) {
     notFound();
   }
+
+  // Calculate total pages
+  const totalPages = Math.ceil(allRecipes.length / pageSize);
+
+  // Get current page of recipes
+  const startIndex = (currentPage - 1) * pageSize;
+  const paginatedRecipes = allRecipes.slice(startIndex, startIndex + pageSize);
 
   return (
     <div className="page-content">
@@ -176,7 +262,11 @@ export default async function Page() {
         {/* Explore Content - Middle */}
         <div className="lg:col-span-4">
           <div className="sticky top-8">
-            <Explore recipes={recipes} />
+            <Explore
+              recipes={paginatedRecipes}
+              currentPage={currentPage}
+              totalPages={totalPages}
+            />
           </div>
         </div>
 
