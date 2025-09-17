@@ -12,7 +12,7 @@ export default function Side({ recipe, relatedRecipes = [] }: any) {
         <div className="absolute -top-20 left-1/2 transform -translate-x-1/2 w-40 h-40 z-10 flex items-center justify-center">
           {/* Avatar wrapper */}
           <div
-            className="w-[var(--mo-diameter-img)] h-[var(--mo-diameter-img)] relative z-[1] overflow-hidden rounded-full bg-[var(--mo-author)] mx-auto"
+            className=" w-[var(--mo-diameter-img)] h-[var(--mo-diameter-img)] relative z-[1] overflow-hidden rounded-full bg-[var(--mo-author)] mx-auto"
             style={{
               outline: "1px dashed var(--mo-outline-author)",
               outlineOffset: "calc(-1 * var(--mo-spacing) / 4)",
