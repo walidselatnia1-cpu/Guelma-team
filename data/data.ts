@@ -289,8 +289,13 @@ async function getRecipesPaginated(
     `${BASE_URL}/api/recipe?page=${page}&limit=${limit}`,
     {
       next: {
-        tags: ["recipes", "all-recipes"],
-        revalidate: 3600,
+        tags: [
+          "recipes",
+          "all-recipes",
+          `explore-page-${page}`,
+          `recipes-page-${page}`,
+        ],
+        revalidate: 3600, // Revalidate every hour
       },
     }
   );

@@ -1,4 +1,5 @@
-export const dynamic = "force-dynamic";
+export const dynamic = "force-static";
+export const revalidate = 3600; // ISR every hour
 
 import React from "react";
 import Image from "next/image";
@@ -214,6 +215,17 @@ export default async function Page({
 }) {
   const currentPage = searchParams.page ? parseInt(searchParams.page) : 1;
   const pageSize = 9; // Show 9 recipes per page
+
+  // Redirect to page 1 if no page parameter
+  if (!searchParams.page) {
+    return (
+      <script
+        dangerouslySetInnerHTML={{
+          __html: `window.location.href = '/explore?page=1';`,
+        }}
+      />
+    );
+  }
 
   const { recipes: paginatedRecipes, pagination } = await getRecipesPaginated(
     currentPage,
