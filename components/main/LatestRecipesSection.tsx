@@ -86,6 +86,7 @@ export default async function LatestRecipesSection({
                       65,
                       "webp"
                     )}
+                    quality={65}
                     className="aspect-[auto_1024_/_1024] bg-stone-100 box-border  transition-transform duration-300 h-full max-w-full object-cover w-full group-hover:scale-110"
                   />
                 </a>

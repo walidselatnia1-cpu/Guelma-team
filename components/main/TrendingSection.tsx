@@ -81,6 +81,7 @@ export default async function TrendingSection({
                     )}
                     className="aspect-[auto_1024_/_1024] bg-stone-100 box-border transition-transform duration-300 h-full max-w-full object-cover w-full group-hover:scale-110"
                     loading="lazy"
+                    quality={65}
                   />
                 </a>
 

@@ -76,6 +76,7 @@ export default async function CategoriesSection({
                     alt={category.alt}
                     src={getOptimizedImageUrl(category.image, 400, 65, "webp")}
                     sizes={category.sizes}
+                    quality={65}
                     className="transition-transform duration-300 group-hover:scale-110 object-cover w-full h-full z-0"
                   />
 
