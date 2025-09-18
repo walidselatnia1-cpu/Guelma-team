@@ -32,8 +32,8 @@ const nextConfig = {
       },
     ],
     // Custom loader to bypass Next.js optimization for /uploads/ paths
-    loader: "custom",
-    loaderFile: "./image-loader.js",
+    //loader: "custom",
+    // loaderFile: "./image-loader.js",
   },
 
   // Experimental features for better performance
