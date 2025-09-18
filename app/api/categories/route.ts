@@ -38,23 +38,31 @@ export async function GET() {
 
     // Convert to Category objects
     const categories: Category[] = Array.from(categoryMap.entries()).map(
-      ([categoryName, { count, link, image }], index) => ({
-        id: (index + 1).toString(),
-        slug: categoryName.toLowerCase().replace(/\s+/g, "-"),
-        title: categoryName
+      ([categoryName, { count, link, image }], index) => {
+        // Normalize category name for consistent slug generation
+        const normalizedName = categoryName
           .replace(/_/g, " ")
           .replace(/-/g, " ")
-          .replace(/\b\w/g, (l) => l.toUpperCase()),
-        href: link,
-        alt: `${categoryName.replace(/_/g, " ").replace(/-/g, " ")} recipes`,
-        description: `Discover ${count} delicious ${categoryName.replace(
-          /_/g,
-          " "
-        )} recipes`,
-        image: image || "/placeholder.jpg", // Use the first recipe's image or default
-        sizes: "(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw",
-        recipeCount: count,
-      })
+          .toLowerCase()
+          .trim();
+
+        const slug = normalizedName.replace(/\s+/g, "-");
+
+        return {
+          id: (index + 1).toString(),
+          slug,
+          title: normalizedName
+            .split(" ")
+            .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+            .join(" "),
+          href: link,
+          alt: `${normalizedName} recipes`,
+          description: `Discover ${count} delicious ${normalizedName} recipes`,
+          image: image || "/placeholder.jpg", // Use the first recipe's image or default
+          sizes: "(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw",
+          recipeCount: count,
+        };
+      }
     );
 
     // Sort by recipe count (most popular first)

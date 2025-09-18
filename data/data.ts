@@ -514,13 +514,25 @@ async function getRecipesByCategory(
   limit?: number
 ): Promise<Recipe[]> {
   try {
+    // Handle multiple category name formats for consistency
+    const categoryFormats = [
+      category, // exact match
+      category.replace(/-/g, "_"), // hyphens to underscores
+      category.replace(/_/g, "-"), // underscores to hyphens
+      category.replace(/-/g, " "), // hyphens to spaces
+      category.replace(/_/g, " "), // underscores to spaces
+    ];
+
+    // Remove duplicates
+    const uniqueFormats = [...new Set(categoryFormats)];
+
     return await fetchWithFallback(
       async () => {
         const prisma = await getPrisma();
         const recipes = await prisma.recipe.findMany({
           where: {
             category: {
-              equals: category,
+              in: uniqueFormats,
               mode: "insensitive",
             },
           },
@@ -556,21 +568,26 @@ function createCategoryFromName(
   link: string,
   image?: string
 ): Category {
-  const slug = categoryName.toLowerCase().replace(/\s+/g, "-");
+  // Normalize category name for consistent slug generation
+  const normalizedName = categoryName
+    .replace(/_/g, " ")
+    .replace(/-/g, " ")
+    .toLowerCase()
+    .trim();
+
+  const slug = normalizedName.replace(/\s+/g, "-");
 
   return {
     id: slug,
     slug,
-    title: categoryName
-      .replace(/_/g, " ")
-      .replace(/-/g, " ")
-      .replace(/\b\w/g, (l) => l.toUpperCase()),
+    title: normalizedName
+      .split(" ")
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(" "),
     href: link,
-    description: `Discover ${count} delicious ${categoryName
-      .replace(/_/g, " ")
-      .toLowerCase()} recipes`,
+    description: `Discover ${count} delicious ${normalizedName} recipes`,
     image: image || "/images/categories/default.jpg",
-    alt: `${categoryName.replace(/_/g, " ")} recipes`,
+    alt: `${normalizedName} recipes`,
     sizes: "(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw",
     recipeCount: count,
   };
