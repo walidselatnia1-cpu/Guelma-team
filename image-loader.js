@@ -4,25 +4,29 @@
  * Uses Next.js default loader for other images
  */
 
-export default function imageLoader({ src, width, quality }) {
+export default function imageLoader({ src, width, quality, format }) {
   // If the image is from /uploads/, route it through our API
   if (src.startsWith("/uploads/")) {
-    // Build the URL with optimization parameters
     const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
     const url = new URL(src, baseUrl);
 
-    // Add width and height parameters for optimization
+    // Add width parameter
     if (width) {
       url.searchParams.set("w", width.toString());
     }
 
-    // Add quality parameter (default to 80)
+    // Add quality parameter
     const qualityValue = quality || 80;
     url.searchParams.set("q", qualityValue.toString());
+
+    // Add format parameter if provided
+    if (format) {
+      url.searchParams.set("f", format);
+    }
 
     return url.pathname + url.search;
   }
 
-  // For all other images, use Next.js default loader
-  return `${src}?w=${width}&q=${quality || 75}`;
+  // For other images, use Next.js default loader
+  return `${src}?w=${width}&q=${quality || 75}${format ? `&f=${format}` : ""}`;
 }

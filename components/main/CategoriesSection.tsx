@@ -1,7 +1,6 @@
 import React from "react";
 import { getCategories } from "@/data/data";
 import { Category } from "@/outils/types";
-import Icon from "@/components/Icon";
 import Image from "next/image";
 
 interface CategoriesSectionProps {
@@ -75,10 +74,8 @@ export default async function CategoriesSection({
                 >
                   <Image
                     alt={category.alt}
-                    src={getOptimizedImageUrl(category.image, 400)}
+                    src={getOptimizedImageUrl(category.image, 400, 65, "webp")}
                     sizes={category.sizes}
-                    width={400}
-                    height={160}
                     className="transition-transform duration-300 group-hover:scale-110 object-cover w-full h-full z-0"
                   />
 
