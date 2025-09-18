@@ -41,14 +41,14 @@ export default async function AuthorsPage() {
             />
             <h2 className="text-xl font-bold mb-2">{author.name}</h2>
             <p className="text-gray-600 text-center mb-2">{author.bio}</p>
-            <a
+            {/* <a
               href={author.link}
               className="text-green-600 font-medium hover:underline"
               target="_blank"
               rel="noopener noreferrer"
             >
               View Profile
-            </a>
+            </a>*/}
           </div>
         ))}
       </div>
