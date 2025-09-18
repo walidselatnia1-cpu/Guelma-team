@@ -1,7 +1,6 @@
 export const dynamic = "force-static";
 
 import { RecipeContent } from "@/components/RecipeContent";
-import { RelatedRecipes } from "@/components/RelatedRecipes";
 import { notFound } from "next/navigation";
 import { getRecipe, getRecipes, getRelated } from "@/data/data";
 import Side from "@/components/Side";

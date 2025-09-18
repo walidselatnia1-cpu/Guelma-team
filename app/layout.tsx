@@ -6,7 +6,7 @@ import Header from "./layout/Header";
 import Footer from "./layout/Footer";
 import ClientLayout from "@/components/ClientLayout";
 import CustomCodeInjector from "@/components/CustomCodeInjector";
-import { getHeaderCode, getBodyCode, getFooterCode } from "@/lib/custom-code";
+import { getAdminSettings } from "@/lib/admin-settings";
 
 export const metadata: Metadata = {
   title: "Calama Team Recipes - Delicious Family-Friendly Recipes",
@@ -19,12 +19,27 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  // Load custom code settings
-  const [headerCode, bodyCode, footerCode] = await Promise.all([
-    getHeaderCode(),
-    getBodyCode(),
-    getFooterCode(),
-  ]);
+  // Load custom code settings from database
+  const settings = await getAdminSettings();
+
+  // Extract code for each section
+  const headerCode = {
+    html: settings.header.html.join("\n"),
+    css: settings.header.css.join("\n"),
+    javascript: settings.header.javascript.join("\n"),
+  };
+
+  const bodyCode = {
+    html: settings.body.html.join("\n"),
+    css: settings.body.css.join("\n"),
+    javascript: settings.body.javascript.join("\n"),
+  };
+
+  const footerCode = {
+    html: settings.footer.html.join("\n"),
+    css: settings.footer.css.join("\n"),
+    javascript: settings.footer.javascript.join("\n"),
+  };
 
   return (
     <html lang="en">
@@ -43,7 +58,10 @@ html {
 }
         `}
         </style>
-
+        <script
+          src="//d3u598arehftfk.cloudfront.net/prebid_hb_15746_26827.js"
+          async
+        ></script>
         <CustomCodeInjector />
       </head>
       <body className="layout-container">

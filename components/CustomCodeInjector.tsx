@@ -2,29 +2,25 @@
 
 import { useEffect } from "react";
 
-interface CustomCodeSettings {
-  header: {
-    html: string[];
-  };
-}
-
 export default function CustomCodeInjector() {
   useEffect(() => {
     const fetchSettings = async () => {
       try {
         const response = await fetch("/api/admin/settings");
         if (response.ok) {
-          const settings: CustomCodeSettings = await response.json();
-          const htmlStrings = settings.header.html || [];
+          const settings = await response.json();
+          const htmlStrings = settings.header?.html || [];
 
-          htmlStrings.forEach((htmlString) => {
-            const temp = document.createElement("template");
-            temp.innerHTML = htmlString.trim();
+          htmlStrings.forEach((htmlString: string) => {
+            if (htmlString && htmlString.trim()) {
+              const temp = document.createElement("template");
+              temp.innerHTML = htmlString.trim();
 
-            // append each node inside <head>
-            Array.from(temp.content.childNodes).forEach((node) => {
-              document.head.appendChild(node);
-            });
+              // append each node inside <head>
+              Array.from(temp.content.childNodes).forEach((node) => {
+                document.head.appendChild(node);
+              });
+            }
           });
         }
       } catch (error) {

@@ -1,8 +1,5 @@
 import { RecipeHero } from "@/components/RecipeHero";
 
-import { getRecipe } from "@/data/data";
-import { notFound } from "next/navigation";
-
 export default async function Layout({ children }: { children: any }) {
   return (
     <div className="min-h-screen bg-gray-50">

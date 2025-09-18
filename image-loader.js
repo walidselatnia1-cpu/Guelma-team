@@ -28,5 +28,5 @@ export default function imageLoader({ src, width, quality, format }) {
   }
 
   // For other images, use Next.js default loader
-  return `${src}?w=${width}&q=${quality || 75}${format ? `&f=${format}` : ""}`;
+  return `${src}?w=${width}&q=${quality || 65}${format ? `&f=${format}` : ""}`;
 }

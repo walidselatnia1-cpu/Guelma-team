@@ -3,7 +3,6 @@ export const dynamic = "force-dynamic";
 import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { Category } from "@/outils/types";
-import { unstable_cache } from "next/cache";
 
 export async function GET() {
   try {
@@ -11,7 +10,6 @@ export async function GET() {
     const recipes = await prisma.recipe.findMany({
       select: {
         category: true,
-        categoryLink: true,
         images: true,
       },
     });
@@ -27,10 +25,9 @@ export async function GET() {
         const existing = categoryMap.get(recipe.category);
         categoryMap.set(recipe.category, {
           count: existing ? existing.count + 1 : 1,
-          link:
-            existing?.link ||
-            recipe.categoryLink ||
-            `/categories/${recipe.category.toLowerCase().replace(/\s+/g, "-")}`,
+          link: `/categories/${recipe.category
+            .toLowerCase()
+            .replace(/\s+/g, "-")}`,
           image: existing?.image || recipe.images?.[0] || "/placeholder.jpg",
         });
       }

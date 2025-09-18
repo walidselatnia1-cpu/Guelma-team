@@ -65,11 +65,8 @@ export function RecipeHero({ recipe }: { recipe?: Recipe }) {
   const pathname = usePathname();
   const segments = pathname.split("/").filter(Boolean);
 
-  console.log("RecipeHero pathname:", pathname);
-  console.log("RecipeHero segments:", segments);
-  console.log("RecipeHero recipe:", recipe?.title || "No recipe");
-
   const isExplore = segments[segments.length - 1] === "explore";
+
   const isSearch = segments[segments.length - 1] === "search";
   const isAbout = segments[segments.length - 1] === "about";
   const isContact = segments[segments.length - 1] === "contact";

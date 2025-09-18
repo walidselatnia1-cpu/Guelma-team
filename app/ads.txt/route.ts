@@ -1,35 +1,17 @@
 export const dynamic = "force-dynamic";
 
 import { NextResponse } from "next/server";
-import fs from "fs";
-import path from "path";
-
-const SETTINGS_FILE_PATH = path.join(
-  process.cwd(),
-  "public",
-  "custom-code-settings.json"
-);
-
-// Helper function to read settings
-async function readSettings() {
-  try {
-    const fileContents = fs.readFileSync(SETTINGS_FILE_PATH, "utf8");
-    const settings = JSON.parse(fileContents);
-    return (
-      settings.adsTxt ||
-      "# ads.txt file\n# Add your authorized seller information here"
-    );
-  } catch (error) {
-    console.error("Error reading settings:", error);
-    return "# ads.txt file\n# Add your authorized seller information here";
-  }
-}
+import { getSettingValue } from "@/lib/admin-settings";
 
 export async function GET() {
   try {
-    const adsTxtContent = await readSettings();
+    const adsTxtContent = await getSettingValue("adsTxt");
 
-    return new NextResponse(adsTxtContent, {
+    const content =
+      adsTxtContent ||
+      "# ads.txt file\n# Add your authorized seller information here";
+
+    return new NextResponse(content, {
       status: 200,
       headers: {
         "Content-Type": "text/plain",

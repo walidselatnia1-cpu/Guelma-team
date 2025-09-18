@@ -626,11 +626,9 @@ async function getCategories(): Promise<Category[]> {
             } else {
               categoryMap.set(recipe.category, {
                 count: 1,
-                link:
-                  recipe.categoryLink ||
-                  `/categories/${recipe.category
-                    .toLowerCase()
-                    .replace(/\s+/g, "-")}`,
+                link: `/categories/${recipe.category
+                  .toLowerCase()
+                  .replace(/\s+/g, "-")}`,
                 image: recipe.images?.[0],
               });
             }

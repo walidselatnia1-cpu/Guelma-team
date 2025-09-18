@@ -1,54 +1,15 @@
 import { NextRequest, NextResponse } from "next/server";
-import fs from "fs";
-import path from "path";
 import { headers } from "next/headers";
-
-const SETTINGS_FILE_PATH = path.join(
-  process.cwd(),
-  "public", // ← Change from "data" to "public"
-  "custom-code-settings.json"
-);
-
-// Helper function to read settings
-async function readSettings() {
-  try {
-    const fileContents = fs.readFileSync(SETTINGS_FILE_PATH, "utf8");
-    return JSON.parse(fileContents);
-  } catch (error) {
-    console.error("Error reading settings:", error);
-    return {
-      header: { html: "", css: "", javascript: "" },
-      body: { html: "", css: "", javascript: "" },
-      footer: { html: "", css: "", javascript: "" },
-      lastUpdated: null,
-      updatedBy: null,
-    };
-  }
-}
-
-// Helper function to write settings
-async function writeSettings(settings: any) {
-  try {
-    const updatedSettings = {
-      ...settings,
-      lastUpdated: new Date().toISOString(),
-      updatedBy: "admin", // In a real app, you'd get this from the authenticated user
-    };
-    fs.writeFileSync(
-      SETTINGS_FILE_PATH,
-      JSON.stringify(updatedSettings, null, 2)
-    );
-    return true;
-  } catch (error) {
-    console.error("Error writing settings:", error);
-    return false;
-  }
-}
+import {
+  getAdminSettings,
+  saveAdminSettings,
+  AdminSettingsData,
+} from "@/lib/admin-settings";
 
 // GET - Retrieve current settings
 export async function GET() {
   try {
-    const settings = await readSettings();
+    const settings = await getAdminSettings();
     return NextResponse.json(settings);
   } catch (error) {
     console.error("Error in GET /api/admin/settings:", error);
@@ -117,14 +78,14 @@ export async function POST(request: NextRequest) {
     }
 
     // Read current settings and merge with updates
-    const currentSettings = await readSettings();
-    const updatedSettings = {
+    const currentSettings = await getAdminSettings();
+    const updatedSettings: AdminSettingsData = {
       ...currentSettings,
       ...body,
     };
 
     // Write updated settings
-    const success = await writeSettings(updatedSettings);
+    const success = await saveAdminSettings(updatedSettings);
 
     if (!success) {
       return NextResponse.json(
@@ -194,7 +155,7 @@ export async function PUT(request: NextRequest) {
     }
 
     // Write settings (replace entirely)
-    const success = await writeSettings(body);
+    const success = await saveAdminSettings(body as AdminSettingsData);
 
     if (!success) {
       return NextResponse.json(
