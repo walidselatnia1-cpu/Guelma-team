@@ -24,6 +24,17 @@
 9- categories are missing----------------------------------------------------------------------------OK
 10- latestrecipes more lines/content, images makethem grid 3 (more sqaured), three linse 3*3=9-------OK
 11- it stretches on home page------------------------------------------------------------------------OK
+12-Categories page-----------------------------------------------------------------------------------NO
+13- Admin dashboard (persistent modifying)-----------------------------------------------------------NO
+14- Admin dashboard (All pages content)--------------------------------------------------------------NO
+15- Admin Dashboard (preview Images)-----------------------------------------------------------------NO
+16- Admin Dashboard (block ads)----------------------------------------------------------------------NO
+17- UI improvements  (Main page wider)---------------------------------------------------------------NO
+18- UI improvements  (treding 4 grids)---------------------------------------------------------------NO
+19- UI improvements  (explore page, raise resolution)------------------------------------------------NO
+20- HTML embedded in content (now it does create links)----------------------------------------------NO
+21- deploy auth--------------------------------------------------------------------------------------NO
+
 */
 
 2025-Sep-07 22:09:50.795700

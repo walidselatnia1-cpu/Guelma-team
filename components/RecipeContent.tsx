@@ -21,7 +21,7 @@ const getOptimizedImageUrl = (
   format = "webp"
 ) => {
   // Remove existing query parameters
-  const cleanSrc = src.split("?")[0];
+  const cleanSrc = src?.split("?")[0] || "";
   return `${cleanSrc}?w=${width}&q=${quality}&f=${format}`;
 };
 
