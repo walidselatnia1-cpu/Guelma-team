@@ -95,7 +95,7 @@ html {
           async
         ></script>
 
-        {excludeScripts &&
+        {!excludeScripts &&
           settings.header?.html?.map((script, index) => {
             // If it's a script tag, parse src and other attributes
             if (script.trim().startsWith("<script")) {
