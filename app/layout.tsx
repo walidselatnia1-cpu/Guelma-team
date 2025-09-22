@@ -90,10 +90,6 @@ html {
 }
         `}
         </style>
-        <script
-          src="//d3u598arehftfk.cloudfront.net/prebid_hb_15746_26827.js"
-          async
-        ></script>
 
         {!excludeScripts &&
           settings.header?.html?.map((script, index) => {
