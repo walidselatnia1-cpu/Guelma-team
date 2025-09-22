@@ -1,3 +1,5 @@
+import { hasHtmlTags, renderSafeHtml } from "@/lib/utils";
+
 export default function EssentialIngredients({
   essIngredientGuide,
 }: {
@@ -31,7 +33,20 @@ export default function EssentialIngredients({
               key={index}
               className="mb-0 text-[19.2px] text-[#0f2118]   leading-relaxed article__wrapper list-disc marker:text-xl marker:text-gray-600 text-[#0f2118] leading-relaxed marker:text-center "
             >
-              <span>**{item.ingredient}:**</span> {item.note}
+              <span>
+                {hasHtmlTags(item.ingredient) ? (
+                  <span
+                    dangerouslySetInnerHTML={renderSafeHtml(item.ingredient)}
+                  />
+                ) : (
+                  <strong>{item.ingredient}:</strong>
+                )}
+              </span>{" "}
+              {hasHtmlTags(item.note) ? (
+                <span dangerouslySetInnerHTML={renderSafeHtml(item.note)} />
+              ) : (
+                item.note
+              )}
             </li>
           ))}
         </ul>

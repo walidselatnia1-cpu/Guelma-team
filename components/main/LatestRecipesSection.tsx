@@ -109,9 +109,10 @@ export default async function LatestRecipesSection({
                   </a>
                 </div>
 
-                <p className="text-[13.44px] text-gray-900 box-border leading-[21.504px] md:text-[17.28px] md:leading-[27.648px] px-2 text-center line-clamp-3 flex-1">
-                  {recipe.description}
-                </p>
+                <p
+                  className="text-[13.44px] text-gray-900 box-border leading-[21.504px] md:text-[17.28px] md:leading-[27.648px] px-2 text-center line-clamp-3 flex-1"
+                  dangerouslySetInnerHTML={{ __html: recipe.description }}
+                />
               </div>
             ))}
           </div>

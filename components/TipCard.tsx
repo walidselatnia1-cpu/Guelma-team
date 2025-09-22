@@ -1,3 +1,5 @@
+import { hasHtmlTags, renderSafeHtml } from "@/lib/utils";
+
 export const TipCard: React.FC<any> = ({ title, items, after }) => {
   return (
     <>
@@ -16,7 +18,11 @@ export const TipCard: React.FC<any> = ({ title, items, after }) => {
                   key={index}
                   className="mb-0 text-[19.2px] text-[#0f2118] leading-relaxed article__wrapper list-disc marker:text-xl marker:text-gray-600 leading-relaxed marker:text-center w-full"
                 >
-                  {item}
+                  {hasHtmlTags(item) ? (
+                    <span dangerouslySetInnerHTML={renderSafeHtml(item)} />
+                  ) : (
+                    item
+                  )}
                 </li>
               ))}
             </ul>
@@ -25,7 +31,11 @@ export const TipCard: React.FC<any> = ({ title, items, after }) => {
       </div>
       {after && (
         <p className="p-6 pl-0 text-black leading-relaxed text-[19.2px]">
-          {after}
+          {hasHtmlTags(after) ? (
+            <span dangerouslySetInnerHTML={renderSafeHtml(after)} />
+          ) : (
+            after
+          )}
         </p>
       )}
     </>

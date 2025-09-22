@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { hasHtmlTags, renderSafeHtml } from "@/lib/utils";
 
 const Instruction = ({
   index,
@@ -10,6 +11,8 @@ const Instruction = ({
   instruction: any;
 }) => {
   const [clicked, setClicked] = useState(false);
+  const instructionText = instruction.toString();
+
   return (
     <div key={index} className="block items-start">
       <span
@@ -29,7 +32,11 @@ const Instruction = ({
           clicked ? "line-through" : ""
         }`}
       >
-        {instruction.toString()}
+        {hasHtmlTags(instructionText) ? (
+          <span dangerouslySetInnerHTML={renderSafeHtml(instructionText)} />
+        ) : (
+          instructionText
+        )}
       </p>
     </div>
   );

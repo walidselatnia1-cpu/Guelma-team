@@ -6,6 +6,7 @@ import { Calendar, User } from "lucide-react";
 import SocialShareButtons from "./Share";
 import Recipe from "@/outils/types";
 import React from "react";
+import { hasHtmlTags, renderSafeHtml } from "@/lib/utils";
 
 /* -------------------- Breadcrumbs -------------------- */
 import { usePathname } from "next/navigation";
@@ -320,7 +321,15 @@ export function RecipeHero({ recipe }: { recipe?: Recipe }) {
         </p>
 
         <p className="text-[19.2px] text-gray-700 leading-relaxed">
-          {recipe?.shortDescription}
+          {hasHtmlTags(recipe?.shortDescription || "") ? (
+            <span
+              dangerouslySetInnerHTML={renderSafeHtml(
+                recipe?.shortDescription || ""
+              )}
+            />
+          ) : (
+            recipe?.shortDescription
+          )}
         </p>
       </div>
 

@@ -1,4 +1,5 @@
 import { TipCard } from "./TipCard";
+import { hasHtmlTags, renderSafeHtml } from "@/lib/utils";
 
 export default function CompleteCookingProcess({
   completeProcess,
@@ -52,7 +53,13 @@ export default function CompleteCookingProcess({
                   {step.title ?? step.section}:
                 </span>{" "}
                 <p className=" text-gray-700 leading-relaxed block text-[19.2px]">
-                  {step.description}
+                  {hasHtmlTags(step.description) ? (
+                    <span
+                      dangerouslySetInnerHTML={renderSafeHtml(step.description)}
+                    />
+                  ) : (
+                    step.description
+                  )}
                 </p>
               </div>
             );

@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 import IngredientsList from "./Ingredients";
 import Instruction from "./Instruction";
+import { hasHtmlTags, renderSafeHtml } from "@/lib/utils";
 
 import { Recipe } from "@/outils/types";
 
@@ -26,7 +27,15 @@ export const Card: React.FC<{
         <h2 className="text-center font-[700]  color-[var(--mo-on-recipe-title)] recipe__title text-3xl font-bold text-[var(--mo-on-recipe-title)] mb-4">
           {recipe.title}
         </h2>
-        <p className="text-black mb-6 text-[19.2px]">{recipe.description}</p>
+        <p className="text-black mb-6 text-[19.2px]">
+          {hasHtmlTags(recipe.description) ? (
+            <span
+              dangerouslySetInnerHTML={renderSafeHtml(recipe.description)}
+            />
+          ) : (
+            recipe.description
+          )}
+        </p>
 
         {/* Timing Info */}
         <div className="grid grid-cols-3 gap-4 text-center border-b border-t border-gray-300 p-4 mb-4">
@@ -136,7 +145,11 @@ export const Card: React.FC<{
               before:bg-orange-100"
               >
                 <span className="block w-full overflow-wrap-break-word hyphens-auto">
-                  {note}
+                  {hasHtmlTags(note) ? (
+                    <span dangerouslySetInnerHTML={renderSafeHtml(note)} />
+                  ) : (
+                    note
+                  )}
                 </span>
               </li>
             ))}
@@ -156,7 +169,11 @@ export const Card: React.FC<{
                 key={index}
                 className="list-disc relative pl-2 text-[19.2px] marker:text-xl marker:text-gray-600 leading-relaxed break-words"
               >
-                {note}
+                {hasHtmlTags(note) ? (
+                  <span dangerouslySetInnerHTML={renderSafeHtml(note)} />
+                ) : (
+                  note
+                )}
               </li>
             ))}
           </ul>
