@@ -16,13 +16,12 @@ export function getHostname(): string {
   }
 
   // Server-side: try to get from environment or use localhost as fallback
-  const env = process.env as any;
-  if (env.VERCEL_URL) {
-    return env.VERCEL_URL;
+  if ((process.env as any)["VERCEL_URL"]) {
+    return (process.env as any)["VERCEL_URL"];
   }
 
-  if (env.NEXT_PUBLIC_SITE_URL) {
-    return new URL(env.NEXT_PUBLIC_SITE_URL).hostname;
+  if ((process.env as any)["NEXT_PUBLIC_SITE_URL"]) {
+    return new URL((process.env as any)["NEXT_PUBLIC_SITE_URL"]).hostname;
   }
 
   // Fallback for development
@@ -38,8 +37,7 @@ export function getProtocol(): string {
   }
 
   // Default to https for production
-  const env = process.env as any;
-  return env.NODE_ENV === "production" ? "https:" : "http:";
+  return (process.env as any).NODE_ENV === "production" ? "https:" : "http:";
 }
 
 /**
@@ -84,21 +82,24 @@ export function renderSafeHtml(htmlContent: string): { __html: string } {
     );
 
   // Process internal links - convert relative URLs to absolute
-  sanitized = sanitized.replace(/href="([^"]*)"/gi, (match, url) => {
-    if (
-      url.startsWith("http") ||
-      url.startsWith("//") ||
-      url.startsWith("mailto:") ||
-      url.startsWith("#")
-    ) {
-      return match; // Keep external URLs, mailto, and anchors as-is
+  sanitized = sanitized.replace(
+    /href=(["'])([^"']*)\1/gi,
+    (match, quote, url) => {
+      if (
+        url.startsWith("http") ||
+        url.startsWith("//") ||
+        url.startsWith("mailto:") ||
+        url.startsWith("#")
+      ) {
+        return match; // Keep external URLs, mailto, and anchors as-is
+      }
+      // Convert relative URLs to absolute
+      const absoluteUrl = url.startsWith("/")
+        ? getFullUrl(url)
+        : getFullUrl(`/${url}`);
+      return `href="${absoluteUrl}"`;
     }
-    // Convert relative URLs to absolute
-    const absoluteUrl = url.startsWith("/")
-      ? getFullUrl(url)
-      : getFullUrl(`/${url}`);
-    return `href="${absoluteUrl}"`;
-  });
+  );
 
   return { __html: sanitized };
 }

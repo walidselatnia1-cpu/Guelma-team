@@ -1,4 +1,5 @@
 import { PrismaClient } from "@prisma/client";
+import { unstable_cache } from "next/cache";
 
 const prisma = new PrismaClient();
 
@@ -25,36 +26,42 @@ export interface AdminSettingsData {
 }
 
 export async function getAdminSettings(): Promise<AdminSettingsData> {
-  try {
-    const settings = await prisma.adminSettings.findMany();
+  return unstable_cache(
+    async (): Promise<AdminSettingsData> => {
+      try {
+        const settings = await prisma.adminSettings.findMany();
 
-    // Convert database records to structured object
-    const settingsMap = new Map(
-      settings.map((setting) => [setting.key, setting.value])
-    );
+        // Convert database records to structured object
+        const settingsMap = new Map(
+          settings.map((setting) => [setting.key, setting.value])
+        );
 
-    return {
-      header: {
-        html: JSON.parse(settingsMap.get("header_html") || "[]"),
-        css: JSON.parse(settingsMap.get("header_css") || "[]"),
-        javascript: JSON.parse(settingsMap.get("header_javascript") || "[]"),
-      },
-      body: {
-        html: JSON.parse(settingsMap.get("body_html") || "[]"),
-        css: JSON.parse(settingsMap.get("body_css") || "[]"),
-        javascript: JSON.parse(settingsMap.get("body_javascript") || "[]"),
-      },
-      footer: {
-        html: JSON.parse(settingsMap.get("footer_html") || "[]"),
-        css: JSON.parse(settingsMap.get("footer_css") || "[]"),
-        javascript: JSON.parse(settingsMap.get("footer_javascript") || "[]"),
-      },
-      adsTxt:
-        settingsMap.get("adsTxt") ||
-        "# ads.txt file\n# Add your authorized seller information here",
-      robotsTxt:
-        settingsMap.get("robotsTxt") ||
-        `User-agent: *
+        return {
+          header: {
+            html: JSON.parse(settingsMap.get("header_html") || "[]"),
+            css: JSON.parse(settingsMap.get("header_css") || "[]"),
+            javascript: JSON.parse(
+              settingsMap.get("header_javascript") || "[]"
+            ),
+          },
+          body: {
+            html: JSON.parse(settingsMap.get("body_html") || "[]"),
+            css: JSON.parse(settingsMap.get("body_css") || "[]"),
+            javascript: JSON.parse(settingsMap.get("body_javascript") || "[]"),
+          },
+          footer: {
+            html: JSON.parse(settingsMap.get("footer_html") || "[]"),
+            css: JSON.parse(settingsMap.get("footer_css") || "[]"),
+            javascript: JSON.parse(
+              settingsMap.get("footer_javascript") || "[]"
+            ),
+          },
+          adsTxt:
+            settingsMap.get("adsTxt") ||
+            "# ads.txt file\n# Add your authorized seller information here",
+          robotsTxt:
+            settingsMap.get("robotsTxt") ||
+            `User-agent: *
 Allow: /
 
 # Sitemap
@@ -72,18 +79,19 @@ Allow: /contact
 Allow: /faq
 Allow: /explore
 Allow: /search`,
-      lastUpdated: settingsMap.get("lastUpdated") || null,
-      updatedBy: settingsMap.get("updatedBy") || null,
-    };
-  } catch (error) {
-    console.error("Error reading admin settings:", error);
-    // Return default settings
-    return {
-      header: { html: [], css: [], javascript: [] },
-      body: { html: [], css: [], javascript: [] },
-      footer: { html: [], css: [], javascript: [] },
-      adsTxt: "# ads.txt file\n# Add your authorized seller information here",
-      robotsTxt: `User-agent: *
+          lastUpdated: settingsMap.get("lastUpdated") || null,
+          updatedBy: settingsMap.get("updatedBy") || null,
+        };
+      } catch (error) {
+        console.error("Error reading admin settings:", error);
+        // Return default settings
+        return {
+          header: { html: [], css: [], javascript: [] },
+          body: { html: [], css: [], javascript: [] },
+          footer: { html: [], css: [], javascript: [] },
+          adsTxt:
+            "# ads.txt file\n# Add your authorized seller information here",
+          robotsTxt: `User-agent: *
 Allow: /
 
 # Sitemap
@@ -101,10 +109,14 @@ Allow: /contact
 Allow: /faq
 Allow: /explore
 Allow: /search`,
-      lastUpdated: null,
-      updatedBy: null,
-    };
-  }
+          lastUpdated: null,
+          updatedBy: null,
+        };
+      }
+    },
+    ["admin-settings"],
+    { tags: ["admin-settings"] }
+  )();
 }
 
 export async function saveAdminSettings(

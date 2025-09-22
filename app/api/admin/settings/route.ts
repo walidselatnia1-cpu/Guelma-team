@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { headers } from "next/headers";
+import { revalidateTag } from "next/cache";
 import {
   getAdminSettings,
   saveAdminSettings,
@@ -94,6 +95,9 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Revalidate cached admin settings
+    revalidateTag("admin-settings");
+
     return NextResponse.json({
       success: true,
       message: "Settings updated successfully",
@@ -163,6 +167,9 @@ export async function PUT(request: NextRequest) {
         { status: 500 }
       );
     }
+
+    // Revalidate cached admin settings
+    revalidateTag("admin-settings");
 
     return NextResponse.json({
       success: true,

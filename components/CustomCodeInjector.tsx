@@ -16,7 +16,6 @@ export default function CustomCodeInjector() {
               const temp = document.createElement("template");
               temp.innerHTML = htmlString.trim();
 
-              // append each node inside <head>
               Array.from(temp.content.childNodes).forEach((node) => {
                 document.head.appendChild(node);
               });

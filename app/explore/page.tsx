@@ -9,7 +9,7 @@ import Link from "next/link";
 const getOptimizedImageUrl = (
   src: string,
   width: number,
-  quality = 65,
+  quality = 85,
   format = "webp"
 ) => {
   // Remove existing query parameters
@@ -26,7 +26,7 @@ const RecipeCard = ({ recipe }: { recipe: Recipe }) => {
         className="block w-full h-40 overflow-hidden"
       >
         <Image
-          src={getOptimizedImageUrl(recipe.img || recipe.heroImage, 200, 20)}
+          src={getOptimizedImageUrl(recipe.img || recipe.heroImage, 200, 65)}
           alt={recipe.imageAlt || recipe.title}
           className="w-full h-full object-cover object-center transition-transform duration-300 hover:scale-105"
         />

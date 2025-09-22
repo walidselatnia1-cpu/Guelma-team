@@ -7,6 +7,11 @@ import Footer from "./layout/Footer";
 import ClientLayout from "@/components/ClientLayout";
 import CustomCodeInjector from "@/components/CustomCodeInjector";
 import { getAdminSettings } from "@/lib/admin-settings";
+import { Fragment } from "react";
+import { headers } from "next/headers";
+
+// ISR: Revalidate every hour, but allow on-demand revalidation via cache tags
+export const revalidate = 36;
 
 export const metadata: Metadata = {
   title: "Calama Team Recipes - Delicious Family-Friendly Recipes",
@@ -14,11 +19,38 @@ export const metadata: Metadata = {
     "Discover amazing recipes from Guelma Team. Perfect for family meals, special occasions, and everyday cooking. Easy-to-follow instructions with professional tips.",
 };
 
+// Define pages where scripts should NOT be loaded
+const SCRIPT_EXCLUDED_ROUTES = [
+  "/admin",
+  "/admin/",
+  "/checkout",
+  "/checkout/",
+  "/privacy",
+  "/terms",
+  // Add more routes as needed
+];
+
+// Check if current route should exclude scripts
+function shouldExcludeScripts(pathname: string): boolean {
+  return SCRIPT_EXCLUDED_ROUTES.some((route) => {
+    // Exact match or starts with route (for sub-pages)
+    return pathname === route || pathname.startsWith(route + "/");
+  });
+}
+
 export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  // Get the current pathname
+  const headersList = headers() as any;
+  const pathname = headersList.get("x-pathname") || "";
+
+  // Check if scripts should be excluded for this route
+  const excludeScripts = shouldExcludeScripts(pathname);
+
+  // Load custo
   // Load custom code settings from database
   const settings = await getAdminSettings();
 
@@ -62,7 +94,32 @@ html {
           src="//d3u598arehftfk.cloudfront.net/prebid_hb_15746_26827.js"
           async
         ></script>
-        <CustomCodeInjector />
+
+        {excludeScripts &&
+          settings.header?.html?.map((script, index) => {
+            // If it's a script tag, parse src and other attributes
+            if (script.trim().startsWith("<script")) {
+              const srcMatch = script.match(/src=["']([^"']+)["']/);
+              const asyncMatch = script.includes("async");
+              const deferMatch = script.includes("defer");
+              const crossOriginMatch = script.match(
+                /crossorigin=["']([^"']+)["']/
+              ) as any;
+
+              if (srcMatch) {
+                return (
+                  <script
+                    key={`header-script-${index}`}
+                    src={srcMatch[1]}
+                    async={asyncMatch}
+                    defer={deferMatch}
+                    crossOrigin={crossOriginMatch[1]}
+                  />
+                );
+              }
+            }
+            return null;
+          })}
       </head>
       <body className="layout-container">
         {/* Custom Body Code */}
