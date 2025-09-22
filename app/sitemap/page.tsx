@@ -1,5 +1,3 @@
-export const dynamic = "force-static";
-
 import React from "react";
 import Sitemap from "@/components/main/Sitemap";
 
