@@ -34,8 +34,6 @@ services:
         STATIC_EXPORT: ${STATIC_EXPORT}
         MOCK: ${MOCK}
         DB_PASSWORD: ${DB_PASSWORD}
-    ports:
-      - "3000:3000"
     env_file:
       - .env
     depends_on:
