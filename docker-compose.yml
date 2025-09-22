@@ -10,7 +10,7 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
     ports:
-      - "127.0.0.1:5434:5434"
+      - "127.0.0.1:5434:5432"
 
     restart: unless-stopped
     healthcheck:
@@ -53,4 +53,5 @@ services:
 volumes:
   postgres_data:
   uploads:
+
 
