@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { headers } from "next/headers";
 import { revalidateTag } from "next/cache";
+import { auth } from "@/lib/auth";
 import {
   getAdminSettings,
   saveAdminSettings,
@@ -24,11 +25,9 @@ export async function GET() {
 // POST - Update settings
 export async function POST(request: NextRequest) {
   try {
-    // Check authentication (simplified - in production use proper JWT validation)
-    const headersList = await headers();
-    const authHeader = headersList.get("authorization");
-
-    if (!authHeader || !authHeader.startsWith("Bearer ")) {
+    // Check authentication
+    const token = await auth.getToken(request);
+    if (!token) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
@@ -116,10 +115,8 @@ export async function POST(request: NextRequest) {
 export async function PUT(request: NextRequest) {
   try {
     // Check authentication
-    const headersList = await headers();
-    const authHeader = headersList.get("authorization");
-
-    if (!authHeader || !authHeader.startsWith("Bearer ")) {
+    const token = await auth.getToken(request);
+    if (!token) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 

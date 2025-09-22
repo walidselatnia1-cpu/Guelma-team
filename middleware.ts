@@ -30,7 +30,12 @@ export function middleware(request: NextRequest) {
     const isPublicRoute = publicRoutes.some((route) =>
       pathname.startsWith(route)
     );
-    if (isPublicRoute) {
+
+    // Allow public GET requests to recipe endpoints (anyone can read recipes)
+    const isPublicRecipeRead =
+      pathname.startsWith("/api/recipe") && request.method === "GET";
+
+    if (isPublicRoute || isPublicRecipeRead) {
       return NextResponse.next();
     }
 

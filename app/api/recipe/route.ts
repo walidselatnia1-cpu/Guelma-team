@@ -128,13 +128,11 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
-    /*
     const token = await auth.getToken(request);
     if (!token) {
       return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
     }
 
-     */
     const recipe = await request.json();
     // Create the recipe using all fields from the incoming recipe object
     const createdRecipe = await prisma.recipe.create({
@@ -227,12 +225,11 @@ export async function PUT(request: NextRequest) {
   }
 
   try {
-    /*
     const token = await auth.getToken(request);
     if (!token) {
       return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
     }
-*/
+
     const updatedRecipe = await prisma.recipe.update({
       where: { id },
       data: {

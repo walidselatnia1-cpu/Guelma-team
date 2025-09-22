@@ -4,6 +4,7 @@ import { existsSync } from "fs";
 import path from "path";
 import { revalidatePath, revalidateTag } from "next/cache";
 import sharp from "sharp";
+import { auth } from "@/lib/auth";
 
 // Next.js configuration for API route
 export const dynamic = "force-dynamic";
@@ -56,6 +57,12 @@ function validateFile(file: File): { isValid: boolean; error?: string } {
 
 export async function POST(request: NextRequest) {
   try {
+    // Check authentication
+    const token = await auth.getToken(request);
+    if (!token) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
     // Ensure upload directory exists
     await ensureUploadDir();
 
@@ -219,6 +226,12 @@ export async function GET(request: NextRequest) {
 
 export async function DELETE(request: NextRequest) {
   try {
+    // Check authentication
+    const token = await auth.getToken(request);
+    if (!token) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
     const { searchParams } = new URL(request.url);
     const fileName = searchParams.get("file");
     const category = searchParams.get("category") || "general";
