@@ -10,7 +10,7 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
     ports:
-      - "127.0.0.1:5432:5432"
+      - "127.0.0.1:5434:5434"
 
     restart: unless-stopped
     healthcheck:
@@ -35,7 +35,7 @@ services:
         MOCK: ${MOCK}
         DB_PASSWORD: ${DB_PASSWORD}
     ports:
-      - "3000:3000"
+      - "3004:3004"
     env_file:
       - .env
     depends_on:
@@ -45,7 +45,7 @@ services:
     volumes:
       - uploads:/app/uploads
     healthcheck:
-      test: ["CMD-SHELL", "wget -qO- http://localhost:3000/ || exit 1"]
+      test: ["CMD-SHELL", "wget -qO- http://localhost:3004/ || exit 1"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -53,3 +53,4 @@ services:
 volumes:
   postgres_data:
   uploads:
+
