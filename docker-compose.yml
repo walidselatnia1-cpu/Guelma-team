@@ -9,8 +9,6 @@ services:
       POSTGRES_PASSWORD: admin
     volumes:
       - postgres_data:/var/lib/postgresql/data
-    ports:
-      - "127.0.0.1:5432:5432"
 
     restart: unless-stopped
     healthcheck:
@@ -34,8 +32,6 @@ services:
         STATIC_EXPORT: ${STATIC_EXPORT}
         MOCK: ${MOCK}
         DB_PASSWORD: ${DB_PASSWORD}
-    ports:
-      - "3000:3000"
     env_file:
       - .env
     depends_on:
