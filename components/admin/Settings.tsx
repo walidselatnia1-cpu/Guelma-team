@@ -33,6 +33,15 @@ interface CustomCodeSettings {
   };
   adsTxt: string;
   robotsTxt: string;
+  staticPages: {
+    about: string;
+    contact: string;
+    privacy: string;
+    terms: string;
+    faq: string;
+    disclaimer: string;
+    cookies: string;
+  };
   lastUpdated: string | null;
   updatedBy: string | null;
 }
@@ -48,6 +57,15 @@ export default function Settings({ className }: SettingsProps) {
     footer: { html: [], css: [], javascript: [] },
     adsTxt: "# ads.txt file\n# Add your authorized seller information here",
     robotsTxt: "",
+    staticPages: {
+      about: "",
+      contact: "",
+      privacy: "",
+      terms: "",
+      faq: "",
+      disclaimer: "",
+      cookies: "",
+    },
     lastUpdated: null,
     updatedBy: null,
   });
@@ -59,7 +77,18 @@ export default function Settings({ className }: SettingsProps) {
     text: string;
   } | null>(null);
   const [activeTab, setActiveTab] = useState<
-    "header" | "body" | "footer" | "ads" | "robots"
+    | "header"
+    | "body"
+    | "footer"
+    | "ads"
+    | "robots"
+    | "about"
+    | "contact"
+    | "privacy"
+    | "terms"
+    | "faq"
+    | "disclaimer"
+    | "cookies"
   >("header");
   const [activeCodeType, setActiveCodeType] = useState<
     "html" | "css" | "javascript"
@@ -154,7 +183,18 @@ export default function Settings({ className }: SettingsProps) {
   };
 
   const addCodeBlock = () => {
-    if (activeTab === "ads" || activeTab === "robots") return;
+    if (
+      activeTab === "ads" ||
+      activeTab === "robots" ||
+      activeTab === "about" ||
+      activeTab === "contact" ||
+      activeTab === "privacy" ||
+      activeTab === "terms" ||
+      activeTab === "faq" ||
+      activeTab === "disclaimer" ||
+      activeTab === "cookies"
+    )
+      return;
 
     const newCode = ""; // Start with empty code block for user to fill
     setSettings((prev) => ({
@@ -167,7 +207,18 @@ export default function Settings({ className }: SettingsProps) {
   };
 
   const updateCodeBlock = (index: number, value: string) => {
-    if (activeTab === "ads" || activeTab === "robots") return;
+    if (
+      activeTab === "ads" ||
+      activeTab === "robots" ||
+      activeTab === "about" ||
+      activeTab === "contact" ||
+      activeTab === "privacy" ||
+      activeTab === "terms" ||
+      activeTab === "faq" ||
+      activeTab === "disclaimer" ||
+      activeTab === "cookies"
+    )
+      return;
 
     setSettings((prev) => ({
       ...prev,
@@ -181,7 +232,18 @@ export default function Settings({ className }: SettingsProps) {
   };
 
   const removeCodeBlock = (index: number) => {
-    if (activeTab === "ads" || activeTab === "robots") return;
+    if (
+      activeTab === "ads" ||
+      activeTab === "robots" ||
+      activeTab === "about" ||
+      activeTab === "contact" ||
+      activeTab === "privacy" ||
+      activeTab === "terms" ||
+      activeTab === "faq" ||
+      activeTab === "disclaimer" ||
+      activeTab === "cookies"
+    )
+      return;
 
     setSettings((prev) => ({
       ...prev,
@@ -195,7 +257,18 @@ export default function Settings({ className }: SettingsProps) {
   };
 
   const startEditing = (index: number) => {
-    if (activeTab === "ads" || activeTab === "robots") return;
+    if (
+      activeTab === "ads" ||
+      activeTab === "robots" ||
+      activeTab === "about" ||
+      activeTab === "contact" ||
+      activeTab === "privacy" ||
+      activeTab === "terms" ||
+      activeTab === "faq" ||
+      activeTab === "disclaimer" ||
+      activeTab === "cookies"
+    )
+      return;
 
     setEditingIndex(index);
     setEditValue(settings[activeTab][activeCodeType][index]);
@@ -219,6 +292,11 @@ export default function Settings({ className }: SettingsProps) {
       setFileEditValue(settings.adsTxt);
     } else if (activeTab === "robots") {
       setFileEditValue(settings.robotsTxt);
+    } else {
+      // Static pages
+      setFileEditValue(
+        settings.staticPages[activeTab as keyof typeof settings.staticPages]
+      );
     }
     setEditingFile(true);
   };
@@ -252,6 +330,15 @@ export default function Settings({ className }: SettingsProps) {
         console.error("Error saving robots.txt:", error);
         setMessage({ type: "error", text: "Error saving robots.txt" });
       }
+    } else {
+      // Static pages
+      setSettings((prev) => ({
+        ...prev,
+        staticPages: {
+          ...prev.staticPages,
+          [activeTab]: fileEditValue,
+        },
+      }));
     }
     setEditingFile(false);
     setFileEditValue("");
@@ -309,7 +396,7 @@ export default function Settings({ className }: SettingsProps) {
     }
   };
 
-  const getSectionLabel = (section: "header" | "body" | "footer") => {
+  const getSectionLabel = (section: string) => {
     switch (section) {
       case "header":
         return "Header";
@@ -333,7 +420,16 @@ export default function Settings({ className }: SettingsProps) {
   }
 
   // Determine if we're in file mode or code mode
-  const isFileMode = activeTab === "ads" || activeTab === "robots";
+  const isFileMode =
+    activeTab === "ads" ||
+    activeTab === "robots" ||
+    activeTab === "about" ||
+    activeTab === "contact" ||
+    activeTab === "privacy" ||
+    activeTab === "terms" ||
+    activeTab === "faq" ||
+    activeTab === "disclaimer" ||
+    activeTab === "cookies";
 
   return (
     <div className={`space-y-6 ${className || ""}`}>
@@ -343,7 +439,8 @@ export default function Settings({ className }: SettingsProps) {
           Admin Settings
         </h1>
         <p className="text-gray-600">
-          Manage custom code blocks and SEO files for your website.
+          Manage custom code blocks, SEO files, and static page content for your
+          website.
         </p>
         {settings.lastUpdated && (
           <p className="text-sm text-gray-500 mt-2">
@@ -373,18 +470,25 @@ export default function Settings({ className }: SettingsProps) {
 
       {/* Main Tabs */}
       <div className="border-b border-gray-200">
-        <nav className="flex space-x-8">
+        <nav className="flex space-x-8 overflow-x-auto">
           {[
             { key: "header", label: "Header Code", icon: SettingsIcon },
             { key: "body", label: "Body Code", icon: SettingsIcon },
             { key: "footer", label: "Footer Code", icon: SettingsIcon },
             { key: "ads", label: "Ads.txt", icon: FileText },
             { key: "robots", label: "Robots.txt", icon: FileText },
+            { key: "about", label: "About", icon: FileText },
+            { key: "contact", label: "Contact", icon: FileText },
+            { key: "privacy", label: "Privacy", icon: FileText },
+            { key: "terms", label: "Terms", icon: FileText },
+            { key: "faq", label: "FAQ", icon: FileText },
+            { key: "disclaimer", label: "Disclaimer", icon: FileText },
+            { key: "cookies", label: "Cookies", icon: FileText },
           ].map(({ key, label, icon: Icon }) => (
             <button
               key={key}
               onClick={() => setActiveTab(key as any)}
-              className={`flex items-center gap-2 py-2 px-1 border-b-2 font-medium text-sm ${
+              className={`flex items-center gap-2 py-2 px-1 border-b-2 font-medium text-sm whitespace-nowrap ${
                 activeTab === key
                   ? "border-blue-500 text-blue-600"
                   : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
@@ -403,7 +507,12 @@ export default function Settings({ className }: SettingsProps) {
         <div className="space-y-4">
           <div className="flex items-center justify-between">
             <h3 className="text-lg font-medium text-gray-900">
-              {activeTab === "ads" ? "Ads.txt" : "Robots.txt"} File
+              {activeTab === "ads"
+                ? "Ads.txt"
+                : activeTab === "robots"
+                ? "Robots.txt"
+                : `${getSectionLabel(activeTab)} Page`}{" "}
+              Content
             </h3>
             <div className="flex gap-2">
               <button
@@ -495,7 +604,11 @@ export default function Settings({ className }: SettingsProps) {
               <pre className="bg-gray-50 p-3 rounded-md text-sm font-mono overflow-x-auto max-h-64 whitespace-pre-wrap">
                 {activeTab === "ads"
                   ? settings.adsTxt
-                  : settings.robotsTxt || `# Empty ${activeTab} file`}
+                  : activeTab === "robots"
+                  ? settings.robotsTxt || `# Empty ${activeTab} file`
+                  : settings.staticPages[
+                      activeTab as keyof typeof settings.staticPages
+                    ] || `# Empty ${activeTab} page content`}
               </pre>
             )}
           </div>
@@ -503,7 +616,11 @@ export default function Settings({ className }: SettingsProps) {
           {/* Help Text for Files */}
           <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
             <h4 className="text-sm font-medium text-blue-800 mb-2">
-              {activeTab === "ads" ? "Ads.txt" : "Robots.txt"} Guidelines
+              {activeTab === "ads"
+                ? "Ads.txt Guidelines"
+                : activeTab === "robots"
+                ? "Robots.txt Guidelines"
+                : `${getSectionLabel(activeTab)} Page Guidelines`}
             </h4>
             <ul className="text-sm text-blue-700 space-y-1">
               {activeTab === "ads" ? (
@@ -527,7 +644,7 @@ export default function Settings({ className }: SettingsProps) {
                     relationship type, certification authority ID
                   </li>
                 </>
-              ) : (
+              ) : activeTab === "robots" ? (
                 <>
                   <li>
                     • <strong>Robots.txt</strong> tells search engines which
@@ -547,6 +664,20 @@ export default function Settings({ className }: SettingsProps) {
                     • <code>Sitemap:</code> tells search engines where to find
                     your sitemap
                   </li>
+                </>
+              ) : (
+                <>
+                  <li>
+                    • <strong>Static Page Content</strong> allows you to manage
+                    the content of your website's static pages
+                  </li>
+                  <li>
+                    • Content can include HTML, text, and basic formatting
+                  </li>
+                  <li>
+                    • Changes will be reflected on the live website after saving
+                  </li>
+                  <li>• Use proper HTML structure for best display results</li>
                 </>
               )}
             </ul>
