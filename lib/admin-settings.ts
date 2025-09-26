@@ -21,6 +21,15 @@ export interface AdminSettingsData {
   };
   adsTxt: string;
   robotsTxt: string;
+  staticPages: {
+    about: string;
+    contact: string;
+    privacy: string;
+    terms: string;
+    faq: string;
+    disclaimer: string;
+    cookies: string;
+  };
   lastUpdated: string | null;
   updatedBy: string | null;
 }
@@ -79,6 +88,15 @@ Allow: /contact
 Allow: /faq
 Allow: /explore
 Allow: /search`,
+          staticPages: {
+            about: settingsMap.get("about_content") || "",
+            contact: settingsMap.get("contact_content") || "",
+            privacy: settingsMap.get("privacy_content") || "",
+            terms: settingsMap.get("terms_content") || "",
+            faq: settingsMap.get("faq_content") || "",
+            disclaimer: settingsMap.get("disclaimer_content") || "",
+            cookies: settingsMap.get("cookies_content") || "",
+          },
           lastUpdated: settingsMap.get("lastUpdated") || null,
           updatedBy: settingsMap.get("updatedBy") || null,
         };
@@ -109,6 +127,15 @@ Allow: /contact
 Allow: /faq
 Allow: /explore
 Allow: /search`,
+          staticPages: {
+            about: "",
+            contact: "",
+            privacy: "",
+            terms: "",
+            faq: "",
+            disclaimer: "",
+            cookies: "",
+          },
           lastUpdated: null,
           updatedBy: null,
         };
@@ -145,6 +172,13 @@ export async function saveAdminSettings(
       },
       { key: "adsTxt", value: settings.adsTxt },
       { key: "robotsTxt", value: settings.robotsTxt },
+      { key: "about_content", value: settings.staticPages.about },
+      { key: "contact_content", value: settings.staticPages.contact },
+      { key: "privacy_content", value: settings.staticPages.privacy },
+      { key: "terms_content", value: settings.staticPages.terms },
+      { key: "faq_content", value: settings.staticPages.faq },
+      { key: "disclaimer_content", value: settings.staticPages.disclaimer },
+      { key: "cookies_content", value: settings.staticPages.cookies },
       { key: "lastUpdated", value: new Date().toISOString() },
       { key: "updatedBy", value: updatedBy || "admin" },
     ];

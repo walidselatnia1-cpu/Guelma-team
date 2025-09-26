@@ -77,6 +77,30 @@ export async function POST(request: NextRequest) {
       }
     }
 
+    // Validate staticPages field
+    if (body.staticPages && typeof body.staticPages === "object") {
+      const staticPageFields = [
+        "about",
+        "contact",
+        "privacy",
+        "terms",
+        "faq",
+        "disclaimer",
+        "cookies",
+      ];
+      for (const field of staticPageFields) {
+        if (
+          body.staticPages[field] !== undefined &&
+          typeof body.staticPages[field] !== "string"
+        ) {
+          return NextResponse.json(
+            { error: `Invalid staticPages.${field} field - must be a string` },
+            { status: 400 }
+          );
+        }
+      }
+    }
+
     // Read current settings and merge with updates
     const currentSettings = await getAdminSettings();
     const updatedSettings: AdminSettingsData = {
