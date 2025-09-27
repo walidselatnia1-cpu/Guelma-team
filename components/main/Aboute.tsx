@@ -1,4 +1,5 @@
 import React from "react";
+import { getAdminSettings } from "@/lib/admin-settings";
 
 // ---------- Icons ----------
 const FlameIcon = () => (
@@ -90,7 +91,21 @@ const AboutCard = ({ icon, title, children, position = "left" }: any) => {
 };
 
 // ---------- Main ----------
-export default function About() {
+export default async function About() {
+  const settings = await getAdminSettings();
+  const aboutContent = settings.staticPages.about;
+
+  // If content exists in settings, render it as HTML
+  if (aboutContent && aboutContent.trim()) {
+    return (
+      <div
+        className="prose prose-lg max-w-none"
+        dangerouslySetInnerHTML={{ __html: aboutContent }}
+      />
+    );
+  }
+
+  // Fallback to default content
   return (
     <div className="flex flex-col gap-12">
       <ul className="grid grid-cols-1 md:grid-cols-12 auto-rows-auto gap-12 p-0">
